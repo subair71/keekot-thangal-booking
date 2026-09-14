@@ -1,0 +1,31 @@
+# Generated
+.dart_tool/
+.packages
+.pub-cache/
+build/
+coverage/
+.flutter-plugins*
+functions/lib/
+node_modules/
+.firebase/
+*-debug.log*
+# Local configuration & secrets
+.env
+.env.*
+!*.example
+config/*.local.json
+config/production.json
+config/staging.json
+web/firebase-config.js
+functions/.secret.local
+service-account*.json
+*serviceAccount*.json
+*-adminsdk-*.json
+*.pem
+*.key
+# Editor/OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.sites-runtime/
