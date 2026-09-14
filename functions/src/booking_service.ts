@@ -11,8 +11,8 @@ export class BookingService {
     const [slots, states, closure] = await Promise.all([
       this.db.collection('visitSlots').where('visitDate', '==', day).get(),
       this.db.collection('slotState').where('visitDate', '==', day).get(), this.db.doc(`closures/${day}`).get()]);
-    const byId = new Map(slots.docs.map(d => [d.id, d.data() as Slot]));
-    const state = new Map(states.docs.map(d => [d.id, (d.data().holds || {}) as HoldMap]));
+    const byId = new Map<string, Slot>(slots.docs.map(d => [d.id, d.data() as Slot]));
+    const state = new Map<string, HoldMap>(states.docs.map(d => [d.id, (d.data().holds || {}) as HoldMap]));
     return {serverNow: now, closed: closure.data()?.closed === true, reason: closure.data()?.reason || '',
       slots: generateSlots(day, c).map(s => publicSlot(byId.get(s.slotId) || s, state.get(s.slotId) || {}, now, closure.data()))};
   }

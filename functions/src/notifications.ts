@@ -1,8 +1,8 @@
-import {Firestore, FieldValue} from 'firebase-admin/firestore';
+import {Firestore, FieldValue, DocumentData} from 'firebase-admin/firestore';
 import {getMessaging} from 'firebase-admin/messaging';
 import {settingsFrom} from './domain.js';
 
-export async function queueNotice(db: Firestore, bookingId: string, kind: string, b: FirebaseFirestore.DocumentData) {
+export async function queueNotice(db: Firestore, bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
   const time=new Intl.DateTimeFormat('en-IN',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const date=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}).format(b.startAt);
