@@ -48,7 +48,7 @@ export class BookingService {
       tx.set(stateRef, {visitDate: input.visitDate, holds});
       tx.create(holdRef, {...hold, createdAt: FieldValue.serverTimestamp(), purgeAt: Timestamp.fromMillis(expiresAt + 86_400_000)});
       tx.set(uidRef, {holdId: holdRef.id, expiresAt});
-      tx.update(config.ref, {scheduleLockedUntil: c.scheduleLockedUntil && c.scheduleLockedUntil > input.visitDate ? c.scheduleLockedUntil : input.visitDate});
+      if (!c.scheduleLockedUntil || c.scheduleLockedUntil < input.visitDate) tx.update(config.ref, {scheduleLockedUntil: input.visitDate});
       return {...hold, serverNow: now};
     });
   }
@@ -172,7 +172,7 @@ export class BookingService {
     const keys: (keyof BookingSettings)[]=['timezone','openingTime','closingTime','slotDurationMinutes','bookingWindowDays','allowSameDayBooking','maxVisitorsPerBooking','defaultSlotCapacity','reminderEnabled','reminderMinutes','bookingEnabled','locationUrl','contactPhone','arrivalMinutes'];
     return this.db.runTransaction(async tx=>{
       const ref=this.db.doc('settings/booking'), prev=await tx.get(ref), p=prev.data();
-      if(p?.scheduleLockedUntil>=dateKey(this.clock()) && ['openingTime','closingTime','slotDurationMinutes','timezone'].some(k=>p[k]!==input[k as keyof BookingSettings]))
+      if(p && p.scheduleLockedUntil>=dateKey(this.clock()) && ['openingTime','closingTime','slotDurationMinutes','timezone'].some(k=>p[k]!==input[k as keyof BookingSettings]))
         throw new DomainError('failed-precondition',`Hours and duration are locked through ${p!.scheduleLockedUntil}. Change them after the existing schedule has elapsed.`);
       const data=Object.fromEntries(keys.map(k=>[k,c[k]]));
       tx.set(ref,{...data,environment:p?.environment || 'production',updatedAt:FieldValue.serverTimestamp()}, {merge:true});

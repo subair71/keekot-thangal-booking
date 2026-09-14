@@ -1,0 +1,10 @@
+import {initializeApp, applicationDefault} from 'firebase-admin/app';
+import {getAuth} from 'firebase-admin/auth';
+const [projectId,uid,role]=process.argv.slice(2);
+if(!projectId || !uid || !['admin','gate','revoke'].includes(role))throw new Error('Usage: npm run admin -- PROJECT_ID UID admin|gate|revoke (authorized Application Default Credentials required)');
+initializeApp({projectId,credential:applicationDefault()});
+const auth=getAuth(),user=await auth.getUser(uid),claims={...user.customClaims};
+delete claims.admin;delete claims.gate;
+if(role==='admin')claims.admin=true;if(role==='gate')claims.gate=true;
+await auth.setCustomUserClaims(uid,claims);await auth.revokeRefreshTokens(uid);
+console.log('Claims updated; user must sign in again.');

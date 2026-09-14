@@ -1,0 +1,15 @@
+{
+  "ENVIRONMENT": "development",
+  "USE_EMULATORS": true,
+  "FIREBASE_API_KEY": "demo-key",
+  "FIREBASE_APP_ID": "1:123456789:web:demo",
+  "FIREBASE_MESSAGING_SENDER_ID": "123456789",
+  "FIREBASE_PROJECT_ID": "demo-keekot-thangal",
+  "FIREBASE_AUTH_DOMAIN": "demo-keekot-thangal.firebaseapp.com",
+  "FIREBASE_STORAGE_BUCKET": "demo-keekot-thangal.appspot.com",
+  "FUNCTIONS_REGION": "asia-south1",
+  "EMULATOR_HOST": "127.0.0.1",
+  "VAPID_KEY": "",
+  "APP_CHECK_SITE_KEY": "",
+  "ENABLE_ANALYTICS": false
+}
