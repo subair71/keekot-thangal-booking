@@ -147,8 +147,9 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                 firstDate: DateTime(2020),
                 lastDate: DateTime(2100),
               );
-              if (picked != null)
+              if (picked != null) {
                 setState(() => day = VisitClock.dayKey(picked));
+              }
             },
             icon: const Icon(Icons.calendar_month),
             label: Text(VisitClock.dayLabel(day)),
@@ -177,8 +178,9 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                 ),
               )
               .toList();
-          if (bookings.isEmpty)
+          if (bookings.isEmpty) {
             return const EmptyState(title: 'No matching bookings');
+          }
           return Column(
             children: [
               for (final b in bookings)
@@ -225,8 +227,9 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                                                 'Cancel this booking?',
                                                 'The visitor will receive a booking update.',
                                                 confirmLabel: 'Cancel booking',
-                                              ))
+                                              )) {
                                             return;
+                                          }
                                           if (!mounted) return;
                                           setState(() => busy = true);
                                           try {
@@ -251,14 +254,16 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                                               adminDashboardProvider,
                                             );
                                           } catch (e) {
-                                            if (context.mounted)
+                                            if (context.mounted) {
                                               showMessage(
                                                 context,
                                                 failureMessage(e),
                                               );
+                                            }
                                           } finally {
-                                            if (mounted)
+                                            if (mounted) {
                                               setState(() => busy = false);
+                                            }
                                           }
                                         },
                                   child: Text(action.$2),

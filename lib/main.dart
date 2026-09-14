@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +22,11 @@ Future<void> main() async {
   const config = AppConfig();
   // Error metadata contains no names, numbers, tokens, or booking payloads.
   FlutterError.onError = (details) {
-    FlutterError.presentError(details);
+    if (kDebugMode) {
+      FlutterError.presentError(details);
+    } else {
+      debugPrint('Flutter error: ${details.exception.runtimeType}');
+    }
   };
   PlatformDispatcher.instance.onError = (error, stack) {
     debugPrint('Unhandled app error: ${error.runtimeType}');
@@ -42,26 +46,29 @@ Future<void> main() async {
     );
     if (config.emulators) {
       if (config.environment == 'production' ||
-          !config.projectId.startsWith('demo-'))
+          !config.projectId.startsWith('demo-')) {
         throw StateError('Emulators require a demo project');
+      }
       await FirebaseAuth.instance.useAuthEmulator(config.host, 9099);
       FirebaseFirestore.instance.useFirestoreEmulator(config.host, 8080);
       FirebaseFunctions.instanceFor(
         region: config.region,
       ).useFunctionsEmulator(config.host, 5001);
     } else {
-      if (config.appCheckKey.isEmpty)
+      if (config.appCheckKey.isEmpty) {
         throw StateError('App Check configuration is required');
+      }
       await FirebaseAppCheck.instance.activate(
-        webProvider: ReCaptchaV3Provider(config.appCheckKey),
+        providerWeb: ReCaptchaV3Provider(config.appCheckKey),
       );
       await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(
         config.analytics,
       );
-      if (config.analytics)
+      if (config.analytics) {
         unawaited(
           FirebaseAnalytics.instance.logAppOpen().catchError((Object _) {}),
         );
+      }
     }
     // Persistent Firestore disk caching is deliberately not enabled for shared visitor devices.
     runApp(const ProviderScope(child: KeekotApp()));

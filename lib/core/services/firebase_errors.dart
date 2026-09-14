@@ -7,8 +7,9 @@ AppFailure friendlyFailure(Object e) {
   if (e is AppFailure) return e;
   if (e is FirebaseFunctionsException && e.details is Map) {
     final message = (e.details as Map)['publicMessage'];
-    if (message is String && message.length < 300)
+    if (message is String && message.length < 300) {
       return AppFailure(message, code: e.code);
+    }
   }
   final code = e is FirebaseException ? e.code : 'unknown';
   return AppFailure(switch (code) {

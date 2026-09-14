@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -50,12 +51,33 @@ final closedDaysProvider = StreamProvider<Set<String>>(
   (ref) => ref.watch(bookingRepositoryProvider).watchClosedDays(),
 );
 final availabilityProvider = StreamProvider.autoDispose
-    .family<Availability, String>((ref, day) async* {
+    .family<Availability, String>((ref, day) {
       final repository = ref.watch(bookingRepositoryProvider);
-      yield await repository.availability(day);
-      await for (final _ in Stream.periodic(const Duration(seconds: 20))) {
-        yield await repository.availability(day);
+      final controller = StreamController<Availability>();
+      var disposed = false, refreshing = false;
+      Future<void> refresh() async {
+        if (disposed || refreshing) return;
+        refreshing = true;
+        try {
+          final availability = await repository.availability(day);
+          if (!disposed) controller.add(availability);
+        } catch (error, stack) {
+          if (!disposed) controller.addError(error, stack);
+        } finally {
+          refreshing = false;
+        }
       }
+
+      final timer = Timer.periodic(const Duration(seconds: 20), (_) {
+        unawaited(refresh());
+      });
+      ref.onDispose(() {
+        disposed = true;
+        timer.cancel();
+        unawaited(controller.close());
+      });
+      unawaited(refresh());
+      return controller.stream;
     });
 final myBookingsProvider = StreamProvider<List<VisitBooking>>((ref) {
   final user = ref.watch(authProvider).asData?.value;
@@ -64,9 +86,12 @@ final myBookingsProvider = StreamProvider<List<VisitBooking>>((ref) {
       : ref.watch(bookingRepositoryProvider).bookings(user.id);
 });
 final bookingProvider = StreamProvider.autoDispose
-    .family<VisitBooking?, String>(
-      (ref, id) => ref.watch(bookingRepositoryProvider).booking(id),
-    );
+    .family<VisitBooking?, String>((ref, id) {
+      final user = ref.watch(authProvider).asData?.value;
+      return user == null
+          ? Stream.value(null)
+          : ref.watch(bookingRepositoryProvider).booking(id);
+    });
 final noticesProvider = StreamProvider<List<VisitNotice>>((ref) {
   final user = ref.watch(authProvider).asData?.value;
   return user == null

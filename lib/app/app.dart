@@ -10,14 +10,16 @@ class KeekotApp extends ConsumerWidget {
   static final _messenger = GlobalKey<ScaffoldMessengerState>();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(appConfigProvider).configured)
+    if (ref.watch(appConfigProvider).configured) {
       ref.listen(foregroundMessagesProvider, (_, next) {
         final message = next.asData?.value;
-        if (message != null)
+        if (message != null) {
           _messenger.currentState?.showSnackBar(
             SnackBar(content: Text(message)),
           );
+        }
       });
+    }
     return MaterialApp.router(
       scaffoldMessengerKey: _messenger,
       title: 'Keekot Thangal | Visit Booking',

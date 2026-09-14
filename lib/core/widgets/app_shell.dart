@@ -72,6 +72,7 @@ class AppShell extends ConsumerWidget {
                                       fontFamily: 'Newsreader',
                                       fontWeight: FontWeight.w600,
                                       fontSize: wide ? 26 : 22,
+                                      height: 1.2,
                                       color: AppColors.emerald,
                                     ),
                                   ),
@@ -79,6 +80,7 @@ class AppShell extends ConsumerWidget {
                                     'Chavakkad, Kerala',
                                     style: TextStyle(
                                       fontSize: 12,
+                                      height: 1.2,
                                       color: AppColors.muted,
                                     ),
                                   ),
@@ -116,15 +118,20 @@ class AppShell extends ConsumerWidget {
                         onSelected: (value) async {
                           if (value == 'signout') {
                             try {
-                              await ref
-                                  .read(notificationRepositoryProvider)
-                                  .disable();
+                              try {
+                                await ref
+                                    .read(notificationRepositoryProvider)
+                                    .disable();
+                              } catch (_) {
+                                // Notification network failure must not prevent local sign-out.
+                              }
                               await ref.read(authRepositoryProvider).signOut();
                               ref.read(draftProvider.notifier).clear();
                               if (context.mounted) context.go('/');
                             } catch (e) {
-                              if (context.mounted)
+                              if (context.mounted) {
                                 showMessage(context, failureMessage(e));
+                              }
                             }
                           } else {
                             context.go(value);

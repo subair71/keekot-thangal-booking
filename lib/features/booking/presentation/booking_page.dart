@@ -7,7 +7,6 @@ import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
-import '../domain/booking_models.dart';
 import 'slot_card.dart';
 
 class BookingPage extends ConsumerStatefulWidget {
@@ -36,11 +35,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
             final dates = config.dates(),
                 closed =
                     ref.watch(closedDaysProvider).asData?.value ?? <String>{};
-            if (!config.bookingEnabled || dates.isEmpty)
+            if (!config.bookingEnabled || dates.isEmpty) {
               return const EmptyState(
                 title: 'Bookings are currently paused',
                 detail: 'Please check again soon.',
               );
+            }
             final day = dates.contains(date)
                 ? date!
                 : dates.firstWhere(
@@ -81,11 +81,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                           selectableDayPredicate: (d) =>
                               !closed.contains(VisitClock.dayKey(d)),
                         );
-                        if (picked != null)
+                        if (picked != null) {
                           setState(() {
                             date = VisitClock.dayKey(picked);
                             selectedId = null;
                           });
+                        }
                       },
                       icon: const Icon(Icons.calendar_month_outlined),
                       label: const Text('Calendar'),
@@ -172,11 +173,12 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                     final selected = availability.slots
                         .where((s) => s.id == selectedId && s.accepts(visitors))
                         .firstOrNull;
-                    if (availability.closed)
+                    if (availability.closed) {
                       return EmptyState(
                         title: 'No visits on this date',
                         detail: availability.reason,
                       );
+                    }
                     final main = Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [

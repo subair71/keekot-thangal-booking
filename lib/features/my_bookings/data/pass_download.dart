@@ -1,5 +1,4 @@
-import 'dart:typed_data';
-
+import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -9,10 +8,16 @@ import '../../booking/domain/booking_models.dart';
 
 class PassDownload {
   static Future<Uint8List> bytes(VisitBooking booking) async {
-    final doc = pw.Document();
+    final font = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/PlusJakartaSans.ttf'),
+    );
+    final doc = pw.Document(
+      theme: pw.ThemeData.withFont(base: font, bold: font),
+    );
     doc.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a5,
+        margin: const pw.EdgeInsets.all(24),
         build: (context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.stretch,
           children: [
@@ -36,6 +41,11 @@ class PassDownload {
             pw.Text(VisitClock.dayLabel(booking.visitDate)),
             pw.Text(
               '${VisitClock.timeLabel(booking.startTime)} - ${VisitClock.timeLabel(booking.endTime)} (India time)',
+            ),
+            pw.SizedBox(height: 8),
+            pw.Text(
+              booking.visitorName,
+              style: const pw.TextStyle(fontSize: 14),
             ),
             pw.SizedBox(height: 8),
             pw.Text('${booking.visitors} visitor(s)'),

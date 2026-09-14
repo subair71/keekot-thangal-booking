@@ -26,7 +26,7 @@ class HomePage extends ConsumerWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'As-salāmu ʿalaykum. You are welcome here.',
+                    'Assalamu alaikum. You are welcome here.',
                     style: TextStyle(color: AppColors.emerald),
                   ),
                 ),
@@ -173,11 +173,12 @@ class _LiveAvailability extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dates = config.dates();
-    if (!config.bookingEnabled || dates.isEmpty)
+    if (!config.bookingEnabled || dates.isEmpty) {
       return const EmptyState(
         title: 'Bookings are currently paused',
         detail: 'Please check again soon.',
       );
+    }
     final day = dates.first;
     return SurfaceCard(
       child: Column(

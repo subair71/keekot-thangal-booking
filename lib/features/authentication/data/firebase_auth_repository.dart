@@ -22,19 +22,22 @@ class FirebaseAuthRepository implements AuthRepository {
       });
   @override
   Future<void> sendCode(String phone) => protect(() async {
-    if (!RegExp(r'^\+[1-9]\d{6,14}$').hasMatch(phone))
+    if (!RegExp(r'^\+[1-9]\d{6,14}$').hasMatch(phone)) {
       throw const AppFailure(
         'Enter a valid number including the country code.',
       );
+    }
     // FlutterFire owns the web reCAPTCHA lifecycle. No OTP is saved to Firestore.
     _confirmation = await auth.signInWithPhoneNumber(phone);
   });
   @override
   Future<void> verifyCode(String code) => protect(() async {
-    if (_confirmation == null)
+    if (_confirmation == null) {
       throw const AppFailure('Request a new verification code.');
-    if (!RegExp(r'^\d{6}$').hasMatch(code))
+    }
+    if (!RegExp(r'^\d{6}$').hasMatch(code)) {
       throw const AppFailure('Enter the 6-digit SMS code.');
+    }
     await _confirmation!.confirm(code);
   });
   @override

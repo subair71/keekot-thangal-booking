@@ -49,14 +49,14 @@ class SurfaceCard extends StatelessWidget {
   final Color color;
   final double padding;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(padding),
-    decoration: BoxDecoration(
-      color: color,
+  Widget build(BuildContext context) => Material(
+    color: color,
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: AppColors.outline.withValues(alpha: .7)),
+      side: BorderSide(color: AppColors.outline.withValues(alpha: .7)),
     ),
-    child: child,
+    clipBehavior: Clip.antiAlias,
+    child: Padding(padding: EdgeInsets.all(padding), child: child),
   );
 }
 

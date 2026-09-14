@@ -134,8 +134,9 @@ class _PassCardState extends ConsumerState<PassCard> {
                       try {
                         await PassDownload.download(b);
                       } catch (e) {
-                        if (context.mounted)
+                        if (context.mounted) {
                           showMessage(context, failureMessage(e));
+                        }
                       } finally {
                         if (mounted) setState(() => busy = false);
                       }

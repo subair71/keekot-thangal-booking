@@ -8,7 +8,12 @@ export async function queueNotice(db: Firestore, bookingId: string, kind: string
   const date=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const body=kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekot Thangal visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
   const ref=db.doc(`notifications/${bookingId}_${kind}`);
-  await db.runTransaction(async tx=>{if((await tx.get(ref)).exists)return;
+  await db.runTransaction(async tx=>{
+    const [existing,booking]=await tx.getAll(ref,db.doc(`bookings/${bookingId}`));
+    if(existing.exists || !booking.exists)return;
+    const current=booking.data()!;
+    if(kind==='cancelled'?current.status!=='cancelled':current.status!=='confirmed')return;
+    if(kind==='reminder' && current.startAt<=Date.now())return;
     tx.create(ref,{userId:b.userId,bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()});
   });
 }
@@ -16,7 +21,11 @@ export async function deliverNotice(db: Firestore, id: string) {
   const ref=db.doc(`notifications/${id}`);
   const notice=await db.runTransaction(async tx=>{
     const d=(await tx.get(ref)).data(); const now=Date.now();
-    if(!d || ['sent','no-device','failed'].includes(d.delivery) || d.nextAttemptAt>now)return null;
+    if(!d || ['sent','no-device','failed','superseded'].includes(d.delivery) || d.nextAttemptAt>now)return null;
+    const b=(await tx.get(db.doc(`bookings/${d.bookingId}`))).data();
+    if(!b || (d.kind==='cancelled'?b.status!=='cancelled':b.status!=='confirmed') || (d.kind==='reminder' && b.startAt<=now)) {
+      tx.update(ref,{delivery:'superseded'});return null;
+    }
     tx.update(ref,{delivery:'pending',nextAttemptAt:now+120_000,attempts:d.attempts+1}); return d;
   });
   if(!notice)return;

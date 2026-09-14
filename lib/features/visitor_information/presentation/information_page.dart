@@ -123,11 +123,12 @@ class LocationCard extends ConsumerWidget {
                   Uri.parse(config!.locationUrl),
                   mode: LaunchMode.externalApplication,
                 );
-                if (!opened && context.mounted)
+                if (!opened && context.mounted) {
                   showMessage(
                     context,
                     'Directions could not be opened. Please try again.',
                   );
+                }
               },
               icon: const Icon(Icons.directions_outlined),
               label: const Text('Get directions'),
@@ -138,7 +139,7 @@ class LocationCard extends ConsumerWidget {
             const SizedBox(height: 12),
             TextButton.icon(
               onPressed: () =>
-                  launchUrl(Uri(scheme: 'tel', path: config!.contactPhone)),
+                  launchUrl(Uri(scheme: 'tel', path: config.contactPhone)),
               icon: const Icon(Icons.call_outlined),
               label: Text(config!.contactPhone),
             ),

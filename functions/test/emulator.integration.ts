@@ -7,6 +7,7 @@ import {initializeTestEnvironment,assertFails,assertSucceeds} from '@firebase/ru
 import {doc,getDoc,setDoc,collection,query,where,getDocs} from 'firebase/firestore';
 import {BookingService} from '../src/booking_service.js';
 import {BookingSettings, generateSlots} from '../src/domain.js';
+import {queueNotice} from '../src/notifications.js';
 
 if(!process.env.FIRESTORE_EMULATOR_HOST)throw new Error('Integration tests require a Firestore emulator.');
 const projectId='demo-keekot-thangal', app=initializeApp({projectId}), db=getFirestore(app);
@@ -39,6 +40,13 @@ test('Firestore transactions and rules',async t=>{
     const h=await hold(20,1,3);now+=301_000;
     const a=await service.availability(day);assert.equal(a.slots[1].remaining,3);
     await assert.rejects(()=>service.createBooking(actor(20),h.holdId,'Test Visitor'));
+  });
+  await t.test('a delayed confirmation event cannot notify a cancelled booking',async()=>{
+    const stale=(await db.doc(`bookings/${bookingId}`).get()).data()!;
+    await queueNotice(db,bookingId,'confirmed',{...stale,status:'confirmed'});
+    assert.equal((await db.doc(`notifications/${bookingId}_confirmed`).get()).exists,false);
+    await queueNotice(db,bookingId,'cancelled',stale);
+    assert.equal((await db.doc(`notifications/${bookingId}_cancelled`).get()).exists,true);
   });
   await t.test('day closure is rechecked at confirmation',async()=>{
     const h=await hold(21,2);

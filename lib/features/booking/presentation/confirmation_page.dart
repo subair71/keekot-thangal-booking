@@ -48,12 +48,13 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
         await repo.releaseHold(current.id);
         current = null;
       }
-      if (current == null && draft.slot != null)
+      if (current == null && draft.slot != null) {
         current = await repo.createHold(
           draft.slot!,
           draft.visitors,
           draft.requestId,
         );
+      }
       if (!mounted) return;
       hold = current;
       elapsed.reset();
@@ -70,8 +71,9 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   }
 
   Future<void> submit() async {
-    if (hold == null || remaining == 0 || !form.currentState!.validate())
+    if (hold == null || remaining == 0 || !form.currentState!.validate()) {
       return;
+    }
     setState(() {
       busy = true;
       error = null;
@@ -92,8 +94,9 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   Future<void> change() async {
     setState(() => busy = true);
     try {
-      if (hold != null)
+      if (hold != null) {
         await ref.read(bookingRepositoryProvider).releaseHold(hold!.id);
+      }
       ref.read(draftProvider.notifier).clear();
       if (mounted) context.go('/book');
     } catch (e) {

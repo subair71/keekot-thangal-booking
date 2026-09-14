@@ -53,8 +53,9 @@ class NotificationsPage extends ConsumerWidget {
                                   } catch (_) {
                                     /* Reading a booking remains possible if the read receipt fails. */
                                   }
-                                  if (context.mounted)
+                                  if (context.mounted) {
                                     context.go('/booking/${n.bookingId}');
+                                  }
                                 },
                                 child: const Text('View booking'),
                               ),
@@ -105,14 +106,17 @@ class _NotificationOptInState extends ConsumerState<NotificationOptIn> {
                         .enable();
                     if (mounted) {
                       setState(() => enabled = ok);
-                      if (!ok)
+                      if (!ok && context.mounted) {
                         showMessage(
                           context,
                           'You can enable notifications later in your browser settings.',
                         );
+                      }
                     }
                   } catch (e) {
-                    if (mounted) showMessage(context, failureMessage(e));
+                    if (context.mounted) {
+                      showMessage(context, failureMessage(e));
+                    }
                   } finally {
                     if (mounted) setState(() => busy = false);
                   }

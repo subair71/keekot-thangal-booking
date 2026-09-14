@@ -214,8 +214,9 @@ class SlotGenerator {
     String time(int m) =>
         '${(m ~/ 60).toString().padLeft(2, '0')}:${(m % 60).toString().padLeft(2, '0')}';
     final out = <VisitSlot>[];
-    if (c.slotDurationMinutes <= 0)
+    if (c.slotDurationMinutes <= 0) {
       throw ArgumentError('Slot duration must be positive.');
+    }
     for (
       var m = mins(c.openingTime);
       m + c.slotDurationMinutes <= mins(c.closingTime);

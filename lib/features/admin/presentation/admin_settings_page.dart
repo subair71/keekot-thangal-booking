@@ -119,16 +119,25 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                           controller: fields[e.key],
                           decoration: InputDecoration(labelText: e.value.$1),
                           validator: (v) {
-                            if (['locationUrl', 'contactPhone'].contains(e.key))
+                            if ([
+                              'locationUrl',
+                              'contactPhone',
+                            ].contains(e.key)) {
                               return null;
-                            if (v == null || v.trim().isEmpty)
+                            }
+                            if (v == null || v.trim().isEmpty) {
                               return 'This value is required.';
-                            if (['openingTime', 'closingTime'].contains(e.key))
+                            }
+                            if ([
+                              'openingTime',
+                              'closingTime',
+                            ].contains(e.key)) {
                               return RegExp(
                                     r'^([01]\d|2[0-3]):[0-5]\d$',
                                   ).hasMatch(v)
                                   ? null
                                   : 'Use HH:mm.';
+                            }
                             return int.tryParse(v) == null
                                 ? 'Enter a whole number.'
                                 : null;

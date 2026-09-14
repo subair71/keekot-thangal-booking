@@ -44,7 +44,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
             final items = bookings
                 .where((b) => past ? !b.upcoming : b.upcoming)
                 .toList();
-            if (items.isEmpty)
+            if (items.isEmpty) {
               return EmptyState(
                 title: past ? 'No past bookings' : 'No upcoming bookings',
                 detail: 'Your visits will appear here.',
@@ -53,6 +53,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
                   child: const Text('Book a visit'),
                 ),
               );
+            }
             return Column(
               children: [
                 for (final b in items)

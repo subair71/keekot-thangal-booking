@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/errors/app_failure.dart';
 import '../../../core/services/firebase_errors.dart';
@@ -18,10 +19,11 @@ class FirebaseBookingRepository implements BookingRepository {
   @override
   Stream<BookingConfiguration> watchConfiguration() =>
       db.doc('settings/booking').snapshots().map((doc) {
-        if (!doc.exists)
+        if (!doc.exists) {
           throw const AppFailure(
             'Visits are not open for booking yet. Please check again soon.',
           );
+        }
         return BookingConfiguration.fromMap(doc.data()!);
       });
   @override
@@ -74,10 +76,18 @@ class FirebaseBookingRepository implements BookingRepository {
       .snapshots()
       .map((s) => s.docs.map((d) => VisitBooking.fromMap(d.data())).toList());
   @override
-  Stream<VisitBooking?> booking(String id) => db
-      .doc('bookings/$id')
-      .snapshots()
-      .map((d) => d.exists ? VisitBooking.fromMap(d.data()!) : null);
+  Stream<VisitBooking?> booking(String id) =>
+      db.doc('bookings/$id').snapshots().asyncMap((d) async {
+        if (!d.exists) return null;
+        final user = FirebaseAuth.instance.currentUser;
+        if (user == null) return null;
+        final token = await user.getIdTokenResult();
+        // A shared browser must never display a former account's cached pass.
+        if (d.data()!['userId'] != user.uid && token.claims?['admin'] != true) {
+          throw const AppFailure('You do not have access to this booking.');
+        }
+        return VisitBooking.fromMap(d.data()!);
+      });
   @override
   Future<void> cancel(String id, String reason) async {
     await call('cancelBooking', {'bookingId': id, 'reason': reason});

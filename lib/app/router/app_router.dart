@@ -23,8 +23,9 @@ String safeNext(String? next) {
       !next.startsWith('/') ||
       next.startsWith('//') ||
       next.contains('://') ||
-      next.startsWith('/auth'))
+      next.startsWith('/auth')) {
     return '/my-bookings';
+  }
   return next;
 }
 
@@ -43,15 +44,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           path.startsWith('/booking/') ||
           path.startsWith('/pass/') ||
           path == '/notifications';
-      if (protected && user == null)
+      if (protected && user == null) {
         return '/auth?next=${Uri.encodeComponent(state.uri.toString())}';
+      }
       if (path.startsWith('/admin') &&
           user != null &&
           !user.admin &&
-          !(path == '/admin/gate' && user.gate))
+          !(path == '/admin/gate' && user.gate)) {
         return '/access-denied';
-      if (path == '/auth' && user != null)
+      }
+      if (path == '/auth' && user != null) {
         return safeNext(state.uri.queryParameters['next']);
+      }
       return null;
     },
     routes: [
