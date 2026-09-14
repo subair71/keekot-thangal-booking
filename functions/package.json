@@ -1,0 +1,27 @@
+{
+  "name": "keekot-thangal-functions",
+  "private": true,
+  "version": "1.0.0",
+  "main": "lib/src/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test lib/test/*.test.js",
+    "test:emulator": "npm run build && node --test lib/test/emulator.integration.js",
+    "seed": "npm run build && node lib/scripts/seed.js",
+    "admin": "npm run build && node lib/scripts/admin.js"
+  },
+  "dependencies": {
+    "firebase-admin": "latest",
+    "firebase-functions": "7.3.2"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/node": "^22",
+    "@firebase/rules-unit-testing": "latest",
+    "firebase": "latest",
+    "firebase-tools": "latest"
+  }
+}
