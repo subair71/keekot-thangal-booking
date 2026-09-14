@@ -1,0 +1,81 @@
+name: Validate and build
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: flutter pub get --enforce-lockfile
+      - run: dart run build_runner build
+      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: flutter analyze
+      - run: flutter test --coverage
+      - run: npm ci --prefix functions
+      - run: npm test --prefix functions
+      - name: Test transactions and Firestore rules
+        run: node functions/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore,auth --project demo-keekot-thangal 'npm --prefix functions run test:emulator'
+      - name: Build release with test configuration
+        run: |
+          python3 tool/configure_web.py config/development.json
+          flutter build web --release --dart-define-from-file=config/development.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-release-test-configuration
+          path: build/web
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_FIREBASE == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      - name: Write public Firebase web configuration
+        env:
+          WEB_CONFIG: ${{ vars.FIREBASE_WEB_CONFIG }}
+        run: python3 -c 'import os,pathlib; pathlib.Path("config/production.json").write_text(os.environ["WEB_CONFIG"])'
+      - run: flutter pub get --enforce-lockfile
+      - run: dart run build_runner build
+      - run: python3 tool/configure_web.py config/production.json
+      - run: flutter build web --release --dart-define-from-file=config/production.json
+      - run: npm ci --prefix functions
+      - name: Deploy Firebase resources
+        env:
+          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+        run: node functions/node_modules/firebase-tools/lib/bin/firebase.js deploy --project "$FIREBASE_PROJECT_ID" --only firestore,functions,hosting --non-interactive
