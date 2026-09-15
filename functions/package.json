@@ -14,15 +14,19 @@
     "admin": "npm run build && node lib/scripts/admin.js"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^9.1.0",
     "firebase-admin": "^14.4.0",
     "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
-    "typescript": "^7.0.2",
-    "@types/node": "^22.20.2",
     "@firebase/rules-unit-testing": "^5.0.2",
+    "@types/node": "^22.20.2",
     "firebase": "^12.19.0",
-    "firebase-tools": "^15.30.0"
+    "firebase-tools": "^15.30.0",
+    "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "jwks-rsa": "3.1.0"
   },
   "type": "module"
 }
