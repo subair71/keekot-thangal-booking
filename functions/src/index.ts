@@ -18,8 +18,9 @@ function actor(r: CallableRequest, role: 'visitor'|'admin'|'gate'='visitor'): Ac
   if(role==='admin'&&!a.admin || role==='gate'&&!a.admin&&!a.gate)throw new HttpsError('permission-denied','You do not have access to this area.');
   if(role==='visitor'&&!a.phone)throw new HttpsError('failed-precondition','A verified phone number is required.'); return a;
 }
+const enforceAppCheck = !emulator && process.env.ENFORCE_APP_CHECK === 'true';
 function callable<T>(fn:(r:CallableRequest)=>Promise<T>) {
-  return onCall({enforceAppCheck:!emulator},async r=>{
+  return onCall({enforceAppCheck},async r=>{
     try{return await fn(r);}catch(e){
       if(e instanceof HttpsError)throw e;
       if(e instanceof DomainError)throw new HttpsError(e.code,e.message,{publicMessage:e.message});
