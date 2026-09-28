@@ -32,6 +32,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   }
 
   Future<void> submit() async {
+    if (busy) return;
     if (!consent) {
       setState(() => error = 'Please agree to receive the verification SMS.');
       return;
@@ -136,6 +137,13 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                  ],
+                  if (busy && !sent) ...[
+                    const Text(
+                      'Waiting for phone verification. Complete the security '
+                      'check if it appears. This can take up to 90 seconds.',
+                    ),
+                    const SizedBox(height: 16),
                   ],
                   if (error != null) ...[
                     Semantics(
