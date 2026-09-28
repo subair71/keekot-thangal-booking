@@ -41,7 +41,10 @@ class FirebaseAuthRepository implements AuthRepository {
     final failure = Completer<ConfirmationResult>();
     try {
       verifier = RecaptchaVerifier(
-        auth: FirebaseAuthPlatform.instance.delegateFor(app: auth.app),
+        auth: FirebaseAuthPlatform.instanceFor(
+          app: auth.app,
+          pluginConstants: const {},
+        ),
         onError: (error) {
           if (!failure.isCompleted) failure.completeError(error);
         },
