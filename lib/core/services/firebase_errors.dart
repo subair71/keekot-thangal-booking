@@ -35,20 +35,17 @@ AppFailure friendlyFailure(Object e) {
     'not-found' => 'We could not find this booking.',
     'operation-not-allowed' =>
       'Phone sign-in is not enabled for this Firebase project.',
-    'unauthorized-domain' ||
-    'app-not-authorized' =>
+    'unauthorized-domain' || 'app-not-authorized' =>
       'This website domain is not authorized for phone verification. Please add subair71.github.io to Firebase Authentication authorized domains.',
     'captcha-check-failed' =>
       'The reCAPTCHA verification failed. Check that subair71.github.io is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.',
     'invalid-app-credential' =>
       'Firebase could not validate the verification request. Check the authorized domain, reCAPTCHA configuration, and Firebase web app settings.',
-    'missing-client-type' ||
-    'missing-app-credential' =>
+    'missing-client-type' || 'missing-app-credential' =>
       'The phone verification configuration is incomplete. Please check the Firebase web authentication setup.',
     'billing-not-enabled' =>
       'SMS verification is unavailable because billing is not enabled for the Firebase project.',
-    'invalid-api-key' ||
-    'api-key-not-valid' =>
+    'invalid-api-key' || 'api-key-not-valid' =>
       'The Firebase web configuration is invalid. Please check the project API key.',
     _ => 'We could not complete this request. Error: $code.',
   };
