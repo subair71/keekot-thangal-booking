@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart'
-    show FirebaseAuthPlatform;
 
 import '../../../core/errors/app_failure.dart';
 import '../../../core/services/firebase_errors.dart';
@@ -37,43 +35,19 @@ class FirebaseAuthRepository implements AuthRepository {
     }
     _sending = true;
     _confirmation = null;
-    RecaptchaVerifier? verifier;
-    final failure = Completer<ConfirmationResult>();
     try {
-      verifier = RecaptchaVerifier(
-        auth: FirebaseAuthPlatform.instanceFor(
-          app: auth.app,
-          pluginConstants: const {},
-        ),
-        onError: (error) {
-          if (!failure.isCompleted) failure.completeError(error);
-        },
-        onExpired: () {
-          if (!failure.isCompleted) {
-            failure.completeError(
-              const AppFailure(
-                'Verification expired. Please request a new code.',
-              ),
-            );
-          }
-        },
-      );
-      // Own the verifier so failed and timed-out challenges are also removed.
-      // Await before assigning: a late response cannot replace a newer request.
-      _confirmation =
-          await Future.any([
-            auth.signInWithPhoneNumber(phone, verifier),
-            failure.future,
-          ]).timeout(
+      // Use FirebaseAuth's existing delegate. Creating another platform
+      // delegate replaces the web auth streams and breaks router listeners.
+      _confirmation = await auth
+          .signInWithPhoneNumber(phone)
+          .timeout(
             const Duration(seconds: 90),
             onTimeout: () => throw const AppFailure(
-              'Verification took too long. Complete the security check if shown, '
-              'check your connection, and try again.',
+              'Verification took too long. Refresh the page and request a new code.',
             ),
           );
     } finally {
       _sending = false;
-      verifier?.clear();
     }
   });
   @override
@@ -84,7 +58,14 @@ class FirebaseAuthRepository implements AuthRepository {
     if (!RegExp(r'^\d{6}$').hasMatch(code)) {
       throw const AppFailure('Enter the 6-digit SMS code.');
     }
-    await _confirmation!.confirm(code);
+    await _confirmation!
+        .confirm(code)
+        .timeout(
+          const Duration(seconds: 45),
+          onTimeout: () => throw const AppFailure(
+            'Sign-in is taking too long. Check your connection and try again.',
+          ),
+        );
   });
   @override
   Future<void> signOut() => protect(auth.signOut);
