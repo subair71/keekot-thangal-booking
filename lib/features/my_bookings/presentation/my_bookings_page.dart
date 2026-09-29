@@ -123,7 +123,7 @@ class PassPage extends ConsumerWidget {
           success ? 'Your visit is confirmed' : 'Your visitor pass',
           eyebrow: success
               ? 'We look forward to welcoming you'
-              : 'Keekkot Thangal',
+              : 'Keekkott Thangal',
         ),
         AsyncPanel(
           value: ref.watch(bookingProvider(id)),

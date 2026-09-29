@@ -13,7 +13,7 @@ class Emblem extends StatelessWidget {
     'assets/brand/emblem.svg',
     width: size,
     height: size,
-    semanticsLabel: 'Keekkot Thangal emblem',
+    semanticsLabel: 'Keekkott Thangal emblem',
   );
 }
 

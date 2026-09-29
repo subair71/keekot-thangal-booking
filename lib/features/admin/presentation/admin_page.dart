@@ -21,7 +21,7 @@ class AdminPage extends ConsumerWidget {
         children: [
           PageHeading(
             section == 'gate' ? 'Visitor entry' : 'Administration',
-            eyebrow: 'Keekkot Thangal',
+            eyebrow: 'Keekkott Thangal',
           ),
           if (!gateOnly) ...[
             Wrap(

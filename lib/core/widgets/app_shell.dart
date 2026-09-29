@@ -67,7 +67,7 @@ class AppShell extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Keekkot Thangal',
+                                    'Keekkott Thangal',
                                     style: TextStyle(
                                       fontFamily: 'Newsreader',
                                       fontWeight: FontWeight.w600,

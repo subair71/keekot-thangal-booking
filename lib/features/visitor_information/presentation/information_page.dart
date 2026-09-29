@@ -110,7 +110,7 @@ class LocationCard extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'Keekkot Thangal Maqam',
+            'Keekkott Thangal Maqam',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 8),

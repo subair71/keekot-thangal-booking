@@ -22,7 +22,7 @@ class KeekotApp extends ConsumerWidget {
     }
     return MaterialApp.router(
       scaffoldMessengerKey: _messenger,
-      title: 'Keekkot Thangal | Visit Booking',
+      title: 'Keekkott Thangal | Visit Booking',
       debugShowCheckedModeBanner: false,
       theme: buildTheme(),
       routerConfig: ref.watch(routerProvider),
