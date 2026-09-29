@@ -74,7 +74,7 @@ class _PassCardState extends ConsumerState<PassCard> {
           const SizedBox(height: 24),
           const InfoLine(
             Icons.location_on_outlined,
-            'Keekot Thangal Maqam',
+            'Keekkot Thangal Maqam',
             'Chavakkad, Kerala',
           ),
           const SizedBox(height: 22),

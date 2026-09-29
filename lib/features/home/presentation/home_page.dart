@@ -58,7 +58,7 @@ class HomePage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Reserve your time at Keekot Thangal Maqam, Chavakkad. Make space for quiet reflection, together.',
+                    'Reserve your time at Keekkot Thangal Maqam, Chavakkad. Make space for quiet reflection, together.',
                     style: TextStyle(
                       color: AppColors.white,
                       fontSize: 16,
@@ -158,7 +158,7 @@ class HomePage extends ConsumerWidget {
           const Divider(),
           const SizedBox(height: 16),
           const Text(
-            'Keekot Thangal · Visit Booking\nAll visit times are in India Standard Time.',
+            'Keekkot Thangal · Visit Booking\nAll visit times are in India Standard Time.',
             textAlign: TextAlign.center,
           ),
         ],

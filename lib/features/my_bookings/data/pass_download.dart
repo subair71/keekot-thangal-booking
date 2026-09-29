@@ -22,7 +22,7 @@ class PassDownload {
           crossAxisAlignment: pw.CrossAxisAlignment.stretch,
           children: [
             pw.Text(
-              'KEEKOT THANGAL',
+              'KEEKKOT THANGAL',
               style: pw.TextStyle(
                 fontSize: 24,
                 fontWeight: pw.FontWeight.bold,
