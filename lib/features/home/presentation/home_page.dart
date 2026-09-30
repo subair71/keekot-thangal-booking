@@ -193,8 +193,9 @@ class HomePage extends ConsumerWidget {
           Text(
             '“Enter with peace. Leave with tranquility.”',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineMedium!
-                .copyWith(fontStyle: FontStyle.italic),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium!.copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 32),
           const Divider(),

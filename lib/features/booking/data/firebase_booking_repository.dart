@@ -19,7 +19,8 @@ class FirebaseBookingRepository implements BookingRepository {
   // Keep existing passes readable during the backend/frontend rollout.
   Future<Map<String, dynamic>?> ensureTokens(String bookingId) async {
     try {
-      final result = await functions.httpsCallable('ensureBookingTokens')
+      final result = await functions
+          .httpsCallable('ensureBookingTokens')
           .call<dynamic>({'bookingId': bookingId});
       return Map<String, dynamic>.from(result.data as Map);
     } on FirebaseFunctionsException catch (e) {
