@@ -1,0 +1,35 @@
+name: Build ChatGPT Site
+on:
+  push:
+    branches: [design/premium-booking]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - run: flutter analyze
+      - run: flutter test
+      - name: Read existing public Firebase configuration
+        run: |
+          python3 - <<'PY'
+          import pathlib, re
+          workflow = pathlib.Path('.github/workflows/deploy_pages.yml').read_text()
+          config = re.search(r'\{\s*"ENVIRONMENT": "production".*?\}', workflow, re.S).group(0)
+          pathlib.Path('config/production.json').write_text(config)
+          PY
+      - run: python3 tool/configure_web.py config/production.json
+      - run: flutter build web --release --base-href=/ --dart-define-from-file=config/production.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatgpt-site-release
+          path: build/web
+          retention-days: 7
