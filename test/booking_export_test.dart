@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:archive/archive.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keekot_thangal/features/admin/data/booking_export.dart';
@@ -18,6 +19,8 @@ VisitBooking example(String day, String ref, {String name = 'Test Visitor'}) =>
       startAt: 1,
       endAt: 2,
       visitors: 2,
+      tokenStart: 3,
+      tokenEnd: 4,
       status: 'confirmed',
       qrToken: 'private-token-never-export',
     );
@@ -41,6 +44,8 @@ void main() {
     expect(sheet, isNot(contains('OTHER-DAY')));
     expect(sheet, isNot(contains('private-token')));
     expect(sheet, contains('12 Test Street'));
+    expect(sheet, contains('Token numbers'));
+    expect(sheet, contains('3–4'));
     await Directory('build/export-qa').create(recursive: true);
     await File('build/export-qa/bookings.xlsx').writeAsBytes(bytes);
   });

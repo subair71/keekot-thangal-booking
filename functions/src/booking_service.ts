@@ -1,3 +1,4 @@
+import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
 import {Firestore, FieldValue, Timestamp} from 'firebase-admin/firestore';
 import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
 
@@ -85,11 +86,15 @@ export class BookingService {
       const slot=s.data() as Slot, holds=activeHolds(state.data()?.holds || {},now);
       if(!holds[holdId]) throw new DomainError('failed-precondition','Your hold has expired.');
       delete holds[holdId]; requireCapacity(slot,holds,hold.visitorCount,now);
+      const sequence=await readTokenSequence(this.db,tx,slot.slotId);
+      const tokenStart=sequence.nextToken, tokenEnd=tokenStart+hold.visitorCount-1;
       const bookingReference=referenceFor(hold.visitDate);
       const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,visitorName,visitorAddress:address,phoneNumberMasked:maskPhone(actor.phone),
         visitDate:slot.visitDate,slotId:slot.slotId,startTime:slot.startTime,endTime:slot.endTime,startAt:slot.startAt,endAt:slot.endAt,
-        timezone:c.timezone,visitorCount:hold.visitorCount,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
+        timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
         reminderAt:slot.startAt-c.reminderMinutes*60_000,reminderQueued:false,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()};
+      writeLegacyTokens(tx,sequence.assignments);
+      tx.set(sequence.counter,{nextToken:tokenEnd+1});
       tx.create(bookingRef,booking);
       tx.create(this.db.doc(`passTokens/${tokenHash(qrToken)}`),{bookingId:bookingRef.id});
       tx.update(slotRef,{occupancy:slot.occupancy+hold.visitorCount});
@@ -97,6 +102,21 @@ export class BookingService {
       tx.update(holdRef,{status:'converted',bookingId:bookingRef.id});
       if(user.data()?.holdId===holdId)tx.delete(userRef);
       return {bookingId:bookingRef.id};
+    });
+  }
+  async ensureBookingTokens(actor: Actor, bookingId: string) {
+    return this.db.runTransaction(async tx=>{
+      const booking=await tx.get(this.db.doc(`bookings/${bookingId}`));
+      if(!booking.exists)throw new DomainError('not-found','Booking not found.');
+      const b=booking.data()!;
+      if(b.userId!==actor.uid && !actor.admin && !actor.gate)throw new DomainError('permission-denied','You cannot access this booking.');
+      if(b.tokenStart != null && b.tokenEnd != null)return {tokenStart:b.tokenStart,tokenEnd:b.tokenEnd};
+      const sequence=await readTokenSequence(this.db,tx,b.slotId);
+      const assigned=sequence.assignments.find(a=>a.ref.id===bookingId);
+      if(!assigned)throw new DomainError('failed-precondition','Token sequence needs administrator review.');
+      writeLegacyTokens(tx,sequence.assignments);
+      tx.set(sequence.counter,{nextToken:sequence.nextToken});
+      return {tokenStart:assigned.tokenStart,tokenEnd:assigned.tokenEnd};
     });
   }
   async cancelBooking(actor: Actor, bookingId: string, reason: string) {
@@ -119,6 +139,9 @@ export class BookingService {
   async validatePass(actor: Actor, qrToken: string, checkIn: boolean) {
     if(!actor.admin && !actor.gate)throw new DomainError('permission-denied','Entry staff access is required.');
     if(typeof qrToken!=='string' || !/^[A-Za-z0-9_-]{43}$/.test(qrToken))return {valid:false};
+    const tokenDocument=await this.db.doc(`passTokens/${tokenHash(qrToken)}`).get();
+    if(!tokenDocument.exists)return {valid:false};
+    await this.ensureBookingTokens(actor,tokenDocument.data()!.bookingId);
     return this.db.runTransaction(async tx=>{
       const p=await tx.get(this.db.doc(`passTokens/${tokenHash(qrToken)}`)); if(!p.exists)return {valid:false};
       const [booking,config]=await tx.getAll(this.db.doc(`bookings/${p.data()!.bookingId}`),this.db.doc('settings/booking'));
@@ -129,7 +152,7 @@ export class BookingService {
         tx.update(booking.ref,{status:'completed',checkedInAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});
         tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'checkIn',bookingId:booking.id,at:FieldValue.serverTimestamp()});
       }
-      return {valid,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,status:valid && checkIn?'completed':b.status};
+      return {valid,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,tokenStart:b.tokenStart ?? null,tokenEnd:b.tokenEnd ?? null,status:valid && checkIn?'completed':b.status};
     });
   }
   async cleanupExpiredHolds() {

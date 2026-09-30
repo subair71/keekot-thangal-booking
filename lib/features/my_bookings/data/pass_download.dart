@@ -30,8 +30,14 @@ class PassDownload {
               ),
             ),
             pw.Text('Chavakkad, Kerala | Visitor pass'),
-            pw.SizedBox(height: 24),
+            pw.SizedBox(height: 16),
             pw.Text(booking.status.toUpperCase()),
+            pw.SizedBox(height: 8),
+            pw.Text(
+              'Token${booking.visitors == 1 ? '' : 's'}: ${booking.tokenLabel}',
+              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Text('Valid for the date and slot below only.'),
             pw.SizedBox(height: 8),
             pw.Text(
               booking.reference,
@@ -49,16 +55,16 @@ class PassDownload {
             ),
             pw.SizedBox(height: 8),
             pw.Text('${booking.visitors} visitor(s)'),
-            pw.SizedBox(height: 24),
+            pw.SizedBox(height: 16),
             pw.Center(
               child: pw.BarcodeWidget(
                 barcode: pw.Barcode.qrCode(),
                 data: booking.qrToken,
-                width: 160,
-                height: 160,
+                width: 140,
+                height: 140,
               ),
             ),
-            pw.SizedBox(height: 24),
+            pw.SizedBox(height: 16),
             pw.Text(
               'Show this pass to entry staff. Keep this QR private. Entry staff verify current booking status when you arrive.',
             ),

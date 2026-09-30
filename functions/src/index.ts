@@ -41,6 +41,7 @@ export const getActiveHold=callable(async r=>{
 export const createHold=callable(r=>service.createHold(actor(r),r.data));
 export const releaseHold=callable(r=>service.releaseHold(actor(r),id(r.data?.holdId)));
 export const createBooking=callable(r=>service.createBooking(actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress));
+export const ensureBookingTokens=callable(r=>service.ensureBookingTokens(actor(r),id(r.data?.bookingId)));
 export const cancelBooking=callable(r=>service.cancelBooking(actor(r),id(r.data?.bookingId),r.data?.reason));
 export const validatePass=callable(r=>service.validatePass(actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));
 export const adminUpdateSlot=callable(r=>service.adminUpdateSlots(actor(r,'admin'),r.data));

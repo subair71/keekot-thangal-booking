@@ -161,6 +161,8 @@ class VisitBooking {
     required this.reference,
     required this.visitorName,
     this.visitorAddress = '',
+    this.tokenStart,
+    this.tokenEnd,
     required this.phoneMasked,
     required this.visitDate,
     required this.startTime,
@@ -182,11 +184,19 @@ class VisitBooking {
       status,
       qrToken;
   final int startAt, endAt, visitors;
+  final int? tokenStart, tokenEnd;
+  String get tokenLabel => tokenStart == null || tokenEnd == null
+      ? 'Not assigned yet'
+      : tokenStart == tokenEnd
+      ? '$tokenStart'
+      : '$tokenStart–$tokenEnd';
   factory VisitBooking.fromMap(Map<String, dynamic> m) => VisitBooking(
     id: m['bookingId'] as String,
     reference: m['bookingReference'] as String,
     visitorName: m['visitorName'] as String,
     visitorAddress: m['visitorAddress'] as String? ?? '',
+    tokenStart: (m['tokenStart'] as num?)?.toInt(),
+    tokenEnd: (m['tokenEnd'] as num?)?.toInt(),
     phoneMasked: m['phoneNumberMasked'] as String? ?? '',
     visitDate: m['visitDate'] as String,
     startTime: m['startTime'] as String,

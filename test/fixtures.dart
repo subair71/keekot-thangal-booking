@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:keekot_thangal/features/authentication/domain/auth_repository.dart';
 import 'package:keekot_thangal/features/booking/domain/booking_repository.dart';
 import 'package:keekot_thangal/features/booking/domain/booking_models.dart';
@@ -48,6 +49,8 @@ VisitBooking sampleBooking({String visitorName = 'Test Visitor'}) {
     startAt: VisitClock.epoch(day, '10:00'),
     endAt: VisitClock.epoch(day, '10:30'),
     visitors: 2,
+    tokenStart: 1,
+    tokenEnd: 2,
     status: 'confirmed',
     qrToken: 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG',
   );
@@ -89,7 +92,8 @@ class FakeBookings implements BookingRepository {
   @override
   Future<void> releaseHold(String id) async {}
   @override
-  Future<String> confirm(String holdId, String name, String address) async => 'sample';
+  Future<String> confirm(String holdId, String name, String address) async =>
+      'sample';
   @override
   Stream<List<VisitBooking>> bookings(String uid) => Stream.value(items);
   @override

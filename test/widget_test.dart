@@ -16,6 +16,7 @@ import 'package:keekot_thangal/features/booking/presentation/slot_card.dart';
 import 'package:keekot_thangal/features/my_bookings/presentation/my_bookings_page.dart';
 import 'package:keekot_thangal/features/my_bookings/presentation/pass_card.dart';
 import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
+
 import 'fixtures.dart';
 
 final captureKey = GlobalKey();
@@ -174,6 +175,8 @@ void main() {
       ),
     );
     expect(find.text('Download pass (PDF)'), findsOneWidget);
+    expect(find.text('TOKEN NUMBERS'), findsOneWidget);
+    expect(find.text('1–2'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await capturePage(tester, 'pass_375');
   });

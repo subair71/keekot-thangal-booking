@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:archive/archive.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 
@@ -17,13 +19,18 @@ class BookingExport {
     'Time slot (IST)',
     'Visitors',
     'Status',
+    'Token numbers',
   ];
 
   static List<List<String>> rows(String day, List<VisitBooking> bookings) {
     final selected = bookings.where((b) => b.visitDate == day).toList()
       ..sort((a, b) {
         final time = a.startAt.compareTo(b.startAt);
-        return time == 0 ? a.reference.compareTo(b.reference) : time;
+        if (time != 0) return time;
+        final token = (a.tokenStart ?? 2147483647).compareTo(
+          b.tokenStart ?? 2147483647,
+        );
+        return token == 0 ? a.reference.compareTo(b.reference) : token;
       });
     return selected
         .map(
@@ -36,6 +43,7 @@ class BookingExport {
             '${b.startTime} - ${b.endTime}',
             '${b.visitors}',
             b.status,
+            b.tokenLabel,
           ],
         )
         .toList();
@@ -53,7 +61,7 @@ class BookingExport {
     final data = [headers, ...rows(day, bookings)];
     final sheet = StringBuffer(
       '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/><col min="5" max="6" width="24" customWidth="1"/><col min="7" max="8" width="16" customWidth="1"/></cols><sheetData>''',
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/><col min="5" max="6" width="24" customWidth="1"/><col min="7" max="9" width="16" customWidth="1"/></cols><sheetData>''',
     );
     for (var r = 0; r < data.length; r++) {
       sheet.write('<row r="${r + 1}">');
@@ -71,19 +79,15 @@ class BookingExport {
       sheet.write('</row>');
     }
     sheet.write(
-      '</sheetData><autoFilter ref="A1:H${data.length}"/></worksheet>',
+      '</sheetData><autoFilter ref="A1:I${data.length}"/></worksheet>',
     );
     final files = <String, String>{
-      '[Content_Types].xml':
-          '''<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>''',
-      '_rels/.rels':
-          '''<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>''',
+      '[Content_Types].xml': '''<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>''',
+      '_rels/.rels': '''<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>''',
       'xl/workbook.xml':
           '''<?xml version="1.0"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Bookings $day" sheetId="1" r:id="rId1"/></sheets></workbook>''',
-      'xl/_rels/workbook.xml.rels':
-          '''<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>''',
-      'xl/styles.xml':
-          '''<?xml version="1.0"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF123F35"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs></styleSheet>''',
+      'xl/_rels/workbook.xml.rels': '''<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>''',
+      'xl/styles.xml': '''<?xml version="1.0"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF123F35"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs></styleSheet>''',
       'xl/worksheets/sheet1.xml': sheet.toString(),
     };
     final archive = Archive();
@@ -150,7 +154,8 @@ class BookingExport {
               cellStyle: const pw.TextStyle(fontSize: 8),
               cellPadding: const pw.EdgeInsets.all(5),
               cellAlignments: {
-                for (var i = 0; i < 8; i++) i: pw.Alignment.topLeft,
+                for (var i = 0; i < headers.length; i++)
+                  i: pw.Alignment.topLeft,
               },
               columnWidths: const {
                 0: pw.FlexColumnWidth(1),
@@ -161,6 +166,7 @@ class BookingExport {
                 5: pw.FlexColumnWidth(1),
                 6: pw.FlexColumnWidth(.6),
                 7: pw.FlexColumnWidth(1),
+                8: pw.FlexColumnWidth(.8),
               },
             ),
         ],

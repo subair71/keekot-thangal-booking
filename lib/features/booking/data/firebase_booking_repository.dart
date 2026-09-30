@@ -16,6 +16,18 @@ class FirebaseBookingRepository implements BookingRepository {
         final result = await functions.httpsCallable(name).call<dynamic>(data);
         return Map<String, dynamic>.from(result.data as Map);
       });
+  // Keep existing passes readable during the backend/frontend rollout.
+  Future<Map<String, dynamic>?> ensureTokens(String bookingId) async {
+    try {
+      final result = await functions.httpsCallable('ensureBookingTokens')
+          .call<dynamic>({'bookingId': bookingId});
+      return Map<String, dynamic>.from(result.data as Map);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'not-found' || e.code == 'unimplemented') return null;
+      rethrow;
+    }
+  }
+
   @override
   Stream<BookingConfiguration> watchConfiguration() =>
       db.doc('settings/booking').snapshots().map((doc) {
@@ -87,7 +99,12 @@ class FirebaseBookingRepository implements BookingRepository {
         if (d.data()!['userId'] != user.uid && token.claims?['admin'] != true) {
           throw const AppFailure('You do not have access to this booking.');
         }
-        return VisitBooking.fromMap(d.data()!);
+        final data = d.data()!;
+        if (data['tokenStart'] == null || data['tokenEnd'] == null) {
+          final tokens = await ensureTokens(id);
+          return VisitBooking.fromMap({...data, ...?tokens});
+        }
+        return VisitBooking.fromMap(data);
       });
   @override
   Future<void> cancel(String id, String reason) async {

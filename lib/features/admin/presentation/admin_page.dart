@@ -207,7 +207,7 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel} · ${b.phoneMasked}',
+                          '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel} · ${b.phoneMasked}\nTokens: ${b.tokenLabel}',
                         ),
                         const SizedBox(height: 16),
                         if (b.visitorAddress.isNotEmpty) ...[
@@ -388,7 +388,7 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               const SizedBox(height: 12),
               if (result!['bookingReference'] != null)
                 Text(
-                  '${result!['bookingReference']}\n${result!['visitDate']} · ${result!['timeSlot']}\n${result!['visitorCount']} visitors · ${result!['status']}',
+                  '${result!['bookingReference']}\n${result!['visitDate']} · ${result!['timeSlot']}\n${result!['visitorCount']} visitors · ${result!['status']}\nTokens: ${result!['tokenStart'] ?? 'Not assigned'}${result!['tokenEnd'] != null && result!['tokenEnd'] != result!['tokenStart'] ? '–${result!['tokenEnd']}' : ''}',
                 ),
             ],
           ],
