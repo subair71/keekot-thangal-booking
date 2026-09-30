@@ -29,7 +29,7 @@ List<Map<String, dynamic>> scheduleChanges({
           'wholeDay': wholeDay,
           'blocked': blocked,
           'reason': reason.trim(),
-          if (capacity != null) 'capacity': capacity,
+          'capacity': ?capacity,
         },
   ];
 }
