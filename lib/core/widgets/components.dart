@@ -18,7 +18,7 @@ class Emblem extends StatelessWidget {
 }
 
 class PageContainer extends StatelessWidget {
-  const PageContainer({super.key, required this.child, this.width = 1280});
+  const PageContainer({super.key, required this.child, this.width = 1240});
   final Widget child;
   final double width;
   @override
@@ -29,7 +29,7 @@ class PageContainer extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.sizeOf(context).width < 600 ? 18 : 32,
-            vertical: 32,
+            vertical: 36,
           ),
           child: child,
         ),
@@ -51,8 +51,10 @@ class SurfaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: color,
+    elevation: 1,
+    shadowColor: AppColors.emerald.withValues(alpha: .08),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24),
       side: BorderSide(color: AppColors.outline.withValues(alpha: .7)),
     ),
     clipBehavior: Clip.antiAlias,

@@ -39,7 +39,7 @@ class AppShell extends ConsumerWidget {
         preferredSize: Size.fromHeight(wide ? 96 : 76),
         child: Container(
           decoration: const BoxDecoration(
-            color: AppColors.ivory,
+            color: AppColors.white,
             border: Border(bottom: BorderSide(color: AppColors.outline)),
           ),
           child: SafeArea(
@@ -60,7 +60,7 @@ class AppShell extends ConsumerWidget {
                           padding: const EdgeInsets.all(4),
                           child: Row(
                             children: [
-                              Emblem(size: wide ? 52 : 42),
+                              Emblem(size: wide ? 48 : 34),
                               const SizedBox(width: 10),
                               Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -71,7 +71,7 @@ class AppShell extends ConsumerWidget {
                                     style: TextStyle(
                                       fontFamily: 'Newsreader',
                                       fontWeight: FontWeight.w600,
-                                      fontSize: wide ? 26 : 22,
+                                      fontSize: wide ? 26 : 19,
                                       height: 1.2,
                                       color: AppColors.emerald,
                                     ),

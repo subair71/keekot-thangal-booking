@@ -47,9 +47,10 @@ class SlotCard extends StatelessWidget {
       child: Material(
         color: color,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(
-            color: selected ? AppColors.emerald : AppColors.outline,
+            color: selected ? AppColors.gold : AppColors.outline,
+            width: selected ? 2 : 1,
           ),
         ),
         clipBehavior: Clip.antiAlias,
@@ -78,7 +79,7 @@ class SlotCard extends StatelessWidget {
                       child: Text(
                         label,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           height: 1.4,
                           color: selected
                               ? AppColors.mintStrong
