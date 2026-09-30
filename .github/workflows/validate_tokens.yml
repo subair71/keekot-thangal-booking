@@ -27,6 +27,7 @@ jobs:
       - run: npm test --prefix functions
       - run: node functions/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore,auth --project demo-keekot-thangal 'npm --prefix functions run test:emulator'
       - run: flutter pub get --enforce-lockfile
+      - run: dart run build_runner build
       - run: dart format lib test
       - run: flutter analyze
       - run: flutter test --dart-define=CAPTURE_QA=true
