@@ -8,6 +8,7 @@ import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import 'admin_settings_page.dart';
 import 'admin_slots_page.dart';
+import 'admin_export_button.dart';
 
 class AdminPage extends ConsumerWidget {
   const AdminPage({super.key, this.section = 'dashboard'});
@@ -24,6 +25,8 @@ class AdminPage extends ConsumerWidget {
             eyebrow: 'Keekkott Thangal',
           ),
           if (!gateOnly) ...[
+            const AdminExportButton(),
+            const SizedBox(height: 20),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -208,7 +211,11 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                         ),
                         const SizedBox(height: 16),
                         if (b.visitorAddress.isNotEmpty) ...[
-                          InfoLine(Icons.home_outlined, 'Address', b.visitorAddress),
+                          InfoLine(
+                            Icons.home_outlined,
+                            'Address',
+                            b.visitorAddress,
+                          ),
                           const SizedBox(height: 16),
                         ],
                         if (b.status == 'confirmed')
