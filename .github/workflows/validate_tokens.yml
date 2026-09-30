@@ -1,0 +1,69 @@
+name: Validate visitor tokens
+on:
+  push:
+    branches: [feature/visitor-tokens]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --prefix functions
+      - run: npm test --prefix functions
+      - run: node functions/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore,auth --project demo-keekot-thangal 'npm --prefix functions run test:emulator'
+      - run: flutter pub get --enforce-lockfile
+      - run: dart format lib test
+      - run: flutter analyze
+      - run: flutter test --dart-define=CAPTURE_QA=true
+      - run: flutter build web --release --dart-define-from-file=config/development.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-visitor-tokens
+          path: |
+            lib
+            test
+            build/qa/pass_375.png
+            build/qa/visitor-pass.pdf
+            build/export-qa
+  deploy-tokens:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check Firebase deployment identity
+        env:
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$WIF_PROVIDER" ] || [ -z "$DEPLOY_SERVICE_ACCOUNT" ]; then
+            echo 'Firebase deployment identity is not configured. Deploy createBooking, ensureBookingTokens and validatePass before enabling live tokens.'
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      - run: npm ci --prefix functions
+      - run: node functions/node_modules/firebase-tools/lib/bin/firebase.js deploy --project keekot-thangal-booking --only functions:createBooking,functions:ensureBookingTokens,functions:validatePass --non-interactive

@@ -35,10 +35,13 @@ class HomePage extends ConsumerWidget {
           ),
           TwoColumn(
             main: Container(
-              padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 24 : 40),
+              padding: EdgeInsets.all(
+                MediaQuery.sizeOf(context).width < 600 ? 24 : 40,
+              ),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [Color(0xFF163F35), Color(0xFF245F50)],
                 ),
                 borderRadius: BorderRadius.circular(28),
@@ -46,40 +49,90 @@ class HomePage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Wrap(spacing: 16, runSpacing: 16,
+                  const Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [Emblem(size: 52), Text('ZIYARAT & VISITOR ENTRY',
-                      style: TextStyle(color: AppColors.mintStrong, fontSize: 12,
-                        letterSpacing: 2, fontWeight: FontWeight.w600))]),
+                    children: [
+                      Emblem(size: 52),
+                      Text(
+                        'ZIYARAT & VISITOR ENTRY',
+                        style: TextStyle(
+                          color: AppColors.mintStrong,
+                          fontSize: 12,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 28),
-                  Text('A little planning.\nA peaceful visit.',
-                    style: (MediaQuery.sizeOf(context).width < 600
-                      ? Theme.of(context).textTheme.headlineLarge
-                      : Theme.of(context).textTheme.displayLarge)!
-                      .copyWith(color: AppColors.white)),
+                  Text(
+                    'A little planning.\nA peaceful visit.',
+                    style:
+                        (MediaQuery.sizeOf(context).width < 600
+                                ? Theme.of(context).textTheme.headlineLarge
+                                : Theme.of(context).textTheme.displayLarge)!
+                            .copyWith(color: AppColors.white),
+                  ),
                   const SizedBox(height: 18),
-                  const Text('Reserve your time at Keekkott Thangal Maqam, Chavakkad. Make space for quiet reflection, together.',
-                    style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 16, height: 1.8)),
+                  const Text(
+                    'Reserve your time at Keekkott Thangal Maqam, Chavakkad. Make space for quiet reflection, together.',
+                    style: TextStyle(
+                      color: Color(0xFFD9E6DF),
+                      fontSize: 16,
+                      height: 1.8,
+                    ),
+                  ),
                   const SizedBox(height: 28),
-                  Wrap(spacing: 12, runSpacing: 12, children: [
-                    FilledButton.icon(
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.mintStrong,
-                        foregroundColor: AppColors.emerald),
-                      onPressed: () => context.go('/book'),
-                      icon: const Icon(Icons.calendar_month_outlined, size: 20),
-                      label: const Text('Book a visit')),
-                    OutlinedButton(onPressed: () => context.go('/my-bookings'),
-                      style: OutlinedButton.styleFrom(foregroundColor: AppColors.white,
-                        side: const BorderSide(color: Color(0xFF799A89))),
-                      child: const Text('My bookings')),
-                  ]),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.mintStrong,
+                          foregroundColor: AppColors.emerald,
+                        ),
+                        onPressed: () => context.go('/book'),
+                        icon: const Icon(
+                          Icons.calendar_month_outlined,
+                          size: 20,
+                        ),
+                        label: const Text('Book a visit'),
+                      ),
+                      OutlinedButton(
+                        onPressed: () => context.go('/my-bookings'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.white,
+                          side: const BorderSide(color: Color(0xFF799A89)),
+                        ),
+                        child: const Text('My bookings'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 28),
                   const Divider(color: Color(0xFF4B7563)),
                   const SizedBox(height: 12),
-                  const Row(children: [Icon(Icons.location_on_outlined,
-                    size: 18, color: AppColors.mintStrong), SizedBox(width: 8),
-                    Expanded(child: Text('Chavakkad · Kerala · India',
-                      style: TextStyle(color: AppColors.mintStrong, fontSize: 14)))])
+                  const Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 18,
+                        color: AppColors.mintStrong,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Chavakkad · Kerala · India',
+                          style: TextStyle(
+                            color: AppColors.mintStrong,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -95,7 +148,11 @@ class HomePage extends ConsumerWidget {
             onRetry: () => ref.invalidate(configurationProvider),
             builder: (c) => LayoutBuilder(
               builder: (context, constraints) {
-                final columns = constraints.maxWidth > 1000 ? 4 : constraints.maxWidth > 600 ? 2 : 1;
+                final columns = constraints.maxWidth > 1000
+                    ? 4
+                    : constraints.maxWidth > 600
+                    ? 2
+                    : 1;
                 final items = [
                   InfoLine(Icons.schedule, 'Visiting hours', c.hours),
                   InfoLine(
@@ -136,9 +193,8 @@ class HomePage extends ConsumerWidget {
           Text(
             '“Enter with peace. Leave with tranquility.”',
             textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium!.copyWith(fontStyle: FontStyle.italic),
+            style: Theme.of(context).textTheme.headlineMedium!
+                .copyWith(fontStyle: FontStyle.italic),
           ),
           const SizedBox(height: 32),
           const Divider(),

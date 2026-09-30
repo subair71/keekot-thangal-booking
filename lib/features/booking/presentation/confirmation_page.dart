@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
@@ -231,8 +233,10 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                         alignLabelWithHint: true,
                         prefixIcon: Icon(Icons.home_outlined),
                       ),
-                      validator: (value) => value == null || value.trim().length < 5
-                          ? 'Enter your address.' : null,
+                      validator: (value) =>
+                          value == null || value.trim().length < 5
+                          ? 'Enter your address.'
+                          : null,
                     ),
                     const SizedBox(height: 18),
                     InfoLine(

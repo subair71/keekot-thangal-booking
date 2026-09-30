@@ -87,7 +87,12 @@ class FirebaseBookingRepository implements BookingRepository {
         if (d.data()!['userId'] != user.uid && token.claims?['admin'] != true) {
           throw const AppFailure('You do not have access to this booking.');
         }
-        return VisitBooking.fromMap(d.data()!);
+        final data = d.data()!;
+        if (data['tokenStart'] == null || data['tokenEnd'] == null) {
+          final tokens = await call('ensureBookingTokens', {'bookingId': id});
+          return VisitBooking.fromMap({...data, ...tokens});
+        }
+        return VisitBooking.fromMap(data);
       });
   @override
   Future<void> cancel(String id, String reason) async {
