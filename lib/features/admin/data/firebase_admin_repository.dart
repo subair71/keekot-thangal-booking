@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../booking/data/firebase_booking_repository.dart';
 import '../../booking/domain/booking_models.dart';
 import '../domain/admin_repository.dart';
@@ -17,6 +18,13 @@ class FirebaseAdminRepository implements AdminRepository {
       .orderBy('startAt')
       .snapshots()
       .map((s) => s.docs.map((d) => VisitBooking.fromMap(d.data())).toList());
+  @override
+  Future<List<VisitBooking>> exportBookingsForDate(String date) async {
+    final snapshot = await source.db.collection('bookings')
+        .where('visitDate', isEqualTo: date)
+        .get(const GetOptions(source: Source.server));
+    return snapshot.docs.map((d) => VisitBooking.fromMap(d.data())).toList();
+  }
   @override
   Future<void> updateSlots(Map<String, dynamic> change) async {
     await source.call('adminUpdateSlot', change);

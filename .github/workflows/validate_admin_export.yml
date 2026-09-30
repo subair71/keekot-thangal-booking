@@ -1,0 +1,31 @@
+name: Validate administration exports
+on:
+  push:
+    branches: [admin/daily-export]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+      - run: dart format lib/features/admin test/booking_export_test.dart
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build web --release --dart-define-from-file=config/development.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validated-admin-export
+          path: |
+            lib/features/admin
+            test/booking_export_test.dart
+            pubspec.yaml
+            pubspec.lock
+            build/export-qa
+          retention-days: 7
