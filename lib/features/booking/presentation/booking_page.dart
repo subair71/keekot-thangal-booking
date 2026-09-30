@@ -336,7 +336,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                           .select(selected, visitors);
                                       context.go('/book/confirmation');
                                     },
-                              icon: const Icon(Icons.arrow_forward),
+                              icon: const Icon(Icons.check_circle_outline),
                               label: const Text('Continue'),
                             ),
                             const SizedBox(height: 14),

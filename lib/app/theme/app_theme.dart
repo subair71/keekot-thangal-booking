@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const emerald = Color(0xFF064E3B),
-      secondary = Color(0xFF047857),
-      ivory = Color(0xFFFDFBF7);
+  static const emerald = Color(0xFF123F35),
+      secondary = Color(0xFF276854),
+      ivory = Color(0xFFF5F7F5);
   static const white = Color(0xFFFFFFFF),
-      cream = Color(0xFFF9F6F0),
-      outline = Color(0xFFE7E2D9);
-  static const gold = Color(0xFFD97706),
-      mint = Color(0xFFECFDF5),
-      mintStrong = Color(0xFFA7F3D0);
+      cream = Color(0xFFF3F0E8),
+      outline = Color(0xFFDCE5DF);
+  static const gold = Color(0xFF9A712E),
+      mint = Color(0xFFEDF4EF),
+      mintStrong = Color(0xFFE4D5AF);
   static const ink = Color(0xFF182D26),
       muted = Color(0xFF59665F),
       rose = Color(0xFFFFF1F2),
@@ -31,7 +31,7 @@ ThemeData buildTheme() {
     ),
   );
   const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12)),
+    borderRadius: BorderRadius.all(Radius.circular(16)),
   );
   return base.copyWith(
     textTheme: base.textTheme
@@ -73,8 +73,8 @@ ThemeData buildTheme() {
           ),
           bodyMedium: const TextStyle(
             fontFamily: 'Plus Jakarta Sans',
-            fontSize: 15,
-            height: 1.5,
+            fontSize: 16,
+            height: 1.6,
             color: AppColors.muted,
           ),
           labelLarge: const TextStyle(
@@ -109,15 +109,15 @@ ThemeData buildTheme() {
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.all(18),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: AppColors.secondary, width: 2),
       ),
     ),

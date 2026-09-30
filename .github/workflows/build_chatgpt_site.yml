@@ -1,0 +1,73 @@
+name: Build ChatGPT Site
+on:
+  push:
+    branches: [design/premium-booking]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.4'
+          channel: stable
+          cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci --prefix functions
+      - run: npm test --prefix functions
+      - run: node functions/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore,auth --project demo-keekot-thangal 'npm --prefix functions run test:emulator'
+      - run: flutter pub get --enforce-lockfile
+      - run: flutter analyze
+      - run: flutter test
+      - name: Read existing public Firebase configuration
+        run: |
+          python3 - <<'PY'
+          import pathlib, re
+          workflow = pathlib.Path('.github/workflows/deploy_pages.yml').read_text()
+          config = re.search(r'\{\s*"ENVIRONMENT": "production".*?\}', workflow, re.S).group(0)
+          pathlib.Path('config/production.json').write_text(config)
+          PY
+      - run: python3 tool/configure_web.py config/production.json
+      - run: flutter build web --release --base-href=/ --dart-define-from-file=config/production.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatgpt-site-release
+          path: build/web
+          retention-days: 7
+
+  deploy-address-backend:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check Firebase deployment configuration
+        env:
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$WIF_PROVIDER" ] || [ -z "$DEPLOY_SERVICE_ACCOUNT" ]; then
+            echo 'Firebase deployment identity is not configured. Address storage requires deployment of createBooking.'
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+      - run: npm ci --prefix functions
+      - run: node functions/node_modules/firebase-tools/lib/bin/firebase.js deploy --project keekot-thangal-booking --only functions:createBooking --non-interactive
