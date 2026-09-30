@@ -30,7 +30,8 @@ class FirebaseAdminRepository implements AdminRepository {
       final data = doc.data();
       if ((data['tokenStart'] == null || data['tokenEnd'] == null) &&
           slots.add(data['slotId'] as String)) {
-        await source.call('ensureBookingTokens', {'bookingId': doc.id});
+        final tokens = await source.ensureTokens(doc.id);
+        if (tokens == null) break;
       }
     }
     if (slots.isNotEmpty) {

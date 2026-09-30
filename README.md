@@ -136,3 +136,29 @@ Real Firebase projects/billing/access, web app config, App Check site key, VAPID
 - [Manage Firebase Functions](https://firebase.google.com/docs/functions/manage-functions)
 
 See `docs/design-review.md`, `docs/architecture.md` and `docs/validation.md` for the design decisions, data model, security, concurrency and exact delivery status.
+
+
+### Visitor token numbers
+
+Each date/time slot has its own sequence starting at 1. Tokens are assigned per
+visitor when confirmation commits, not when a temporary hold is created. Group
+bookings receive a consecutive range. Cancellation never reuses or renumbers
+issued tokens. The server-only `slotTokenCounters` collection is updated in the
+same Firestore transaction as the booking, so concurrent bookings cannot collide.
+
+Bookings made before this feature are assigned tokens in `createdAt` order
+(document ID breaks exact timestamp ties), including cancelled records, when a
+pass is opened, staff validate it, the daily report is exported, or the slot gets
+its next booking. Existing QR credentials remain unchanged. Until the backend is
+deployed, passes and exports remain available and say “Not assigned yet”.
+
+Deploy the backend before relying on token numbers in production:
+
+```sh
+npm ci --prefix functions
+node functions/node_modules/firebase-tools/lib/bin/firebase.js deploy --project keekot-thangal-booking --only functions:createBooking,functions:ensureBookingTokens,functions:validatePass
+```
+
+The Flutter pass, downloadable PDF, admin list, staff validation and daily
+Excel/PDF exports all display the assigned tokens. Tokens are only meaningful
+together with their visit date and slot.
