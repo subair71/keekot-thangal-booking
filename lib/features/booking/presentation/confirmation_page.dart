@@ -15,7 +15,8 @@ class ConfirmationPage extends ConsumerStatefulWidget {
 }
 
 class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
-  final name = TextEditingController(), form = GlobalKey<FormState>();
+  final name = TextEditingController(), address = TextEditingController();
+  final form = GlobalKey<FormState>();
   final elapsed = Stopwatch();
   SlotHold? hold;
   String? error;
@@ -81,7 +82,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
     try {
       final id = await ref
           .read(bookingRepositoryProvider)
-          .confirm(hold!.id, name.text.trim());
+          .confirm(hold!.id, name.text.trim(), address.text.trim());
       ref.read(draftProvider.notifier).clear();
       if (mounted) context.go('/book/success/$id');
     } catch (e) {
@@ -110,6 +111,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   @override
   void dispose() {
     name.dispose();
+    address.dispose();
     timer?.cancel();
     elapsed.stop();
     super.dispose();
@@ -214,6 +216,25 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                           : null,
                     ),
                     const SizedBox(height: 18),
+                    TextFormField(
+                      controller: address,
+                      enabled: !busy,
+                      minLines: 3,
+                      maxLines: 5,
+                      maxLength: 500,
+                      keyboardType: TextInputType.streetAddress,
+                      textCapitalization: TextCapitalization.sentences,
+                      autofillHints: const [AutofillHints.fullStreetAddress],
+                      decoration: const InputDecoration(
+                        labelText: 'Address',
+                        hintText: 'House / street, area, city and postal code',
+                        alignLabelWithHint: true,
+                        prefixIcon: Icon(Icons.home_outlined),
+                      ),
+                      validator: (value) => value == null || value.trim().length < 5
+                          ? 'Enter your address.' : null,
+                    ),
+                    const SizedBox(height: 18),
                     InfoLine(
                       Icons.verified_user_outlined,
                       'Mobile verified',
@@ -258,7 +279,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
           const PageHeading(
             'Confirm your visit',
             eyebrow: 'Step 2 of 2',
-            subtitle: 'Check your time and add your name to the pass.',
+            subtitle: 'Check your time and enter your name and address.',
           ),
           content,
         ],

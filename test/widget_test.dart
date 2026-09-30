@@ -121,6 +121,11 @@ void main() {
       await capturePage(tester, 'slots_$width');
       await pumpPage(tester, const ConfirmationPage());
       expect(find.text('Booking summary'), findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'Address'), findsOneWidget);
+      final form = tester.state<FormState>(find.byType(Form));
+      form.validate();
+      await tester.pump();
+      expect(find.text('Enter your address.'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'confirmation_$width');
       await tester.pumpWidget(const SizedBox());

@@ -24,8 +24,13 @@ test('Firestore transactions and rules',async t=>{
     const results=await Promise.allSettled(Array.from({length:12},(_,i)=>hold(i)));
     const successful=results.flatMap((r,i)=>r.status==='fulfilled'?[{h:r.value,a:actor(i)}]:[]);
     assert.equal(successful.length,3); const first=successful[0];owner=first.a;holdId=first.h.holdId;
-    const bookings=await Promise.all(successful.map(x=>service.createBooking(x.a,x.h.holdId,'Test Visitor')));bookingId=bookings[0].bookingId;
+    const bookings=await Promise.all(successful.map(x=>service.createBooking(x.a,x.h.holdId,'Test Visitor','  12 Test Street, Chavakkad  ')));bookingId=bookings[0].bookingId;
     const slot=await db.doc(`visitSlots/${day}_0700`).get();assert.equal(slot.data()!.occupancy,3);
+  });
+  await t.test('address is trimmed and stored with the booking',async()=>{
+    assert.equal((await db.doc(`bookings/${bookingId}`).get()).data()!.visitorAddress,'12 Test Street, Chavakkad');
+    await assert.rejects(()=>service.createBooking(owner,holdId,'Test Visitor','   '));
+    await assert.rejects(()=>service.createBooking(owner,holdId,'Test Visitor','x'.repeat(501)));
   });
   await t.test('confirmation retry returns same booking without another increment',async()=>{
     assert.equal((await service.createBooking(owner,holdId,'Test Visitor')).bookingId,bookingId);

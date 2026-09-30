@@ -65,8 +65,9 @@ export class BookingService {
       if(user.data()?.holdId===holdId)tx.delete(ur);
     }); return {released:true};
   }
-  async createBooking(actor: Actor, holdId: string, visitorName: string) {
+  async createBooking(actor: Actor, holdId: string, visitorName: string, visitorAddress?: string) {
     textValue(holdId,1,240,'hold ID'); visitorName=textValue(visitorName,2,100,'visitor name');
+    const address=visitorAddress === undefined ? '' : textValue(visitorAddress,5,500,'visitor address');
     const holdRef=this.db.doc(`slotHolds/${holdId}`), bookingRef=this.db.collection('bookings').doc();
     const qrToken=makeToken();
     return this.db.runTransaction(async tx=>{
@@ -85,7 +86,7 @@ export class BookingService {
       if(!holds[holdId]) throw new DomainError('failed-precondition','Your hold has expired.');
       delete holds[holdId]; requireCapacity(slot,holds,hold.visitorCount,now);
       const bookingReference=referenceFor(hold.visitDate);
-      const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,visitorName,phoneNumberMasked:maskPhone(actor.phone),
+      const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,visitorName,visitorAddress:address,phoneNumberMasked:maskPhone(actor.phone),
         visitDate:slot.visitDate,slotId:slot.slotId,startTime:slot.startTime,endTime:slot.endTime,startAt:slot.startAt,endAt:slot.endAt,
         timezone:c.timezone,visitorCount:hold.visitorCount,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
         reminderAt:slot.startAt-c.reminderMinutes*60_000,reminderQueued:false,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()};

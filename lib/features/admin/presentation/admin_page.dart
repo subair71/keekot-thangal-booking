@@ -207,6 +207,10 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                           '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel} · ${b.phoneMasked}',
                         ),
                         const SizedBox(height: 16),
+                        if (b.visitorAddress.isNotEmpty) ...[
+                          InfoLine(Icons.home_outlined, 'Address', b.visitorAddress),
+                          const SizedBox(height: 16),
+                        ],
                         if (b.status == 'confirmed')
                           Wrap(
                             spacing: 12,
