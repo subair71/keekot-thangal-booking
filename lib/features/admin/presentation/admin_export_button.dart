@@ -27,11 +27,11 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
       if (!mounted) return;
       await downloadExport(bytes, 'keekkott-bookings-$day.$format',
           format == 'xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/pdf');
-      if (mounted) showMessage(context, 'Report prepared for $day (India time).');
+      if (mounted) { showMessage(context, 'Report prepared for $day (India time).'); }
     } on TimeoutException {
-      if (mounted) showMessage(context, 'The report took too long to load. Please try again.');
+      if (mounted) { showMessage(context, 'The report took too long to load. Please try again.'); }
     } catch (e) {
-      if (mounted) showMessage(context, failureMessage(e));
+      if (mounted) { showMessage(context, failureMessage(e)); }
     } finally {
       if (mounted) setState(() => busy = false);
     }
