@@ -58,9 +58,9 @@ class _PassCardState extends ConsumerState<PassCard> {
             ],
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             b.visitors == 1 ? 'TOKEN NUMBER' : 'TOKEN NUMBERS',
-            style: TextStyle(fontSize: 12, letterSpacing: 2),
+            style: const TextStyle(fontSize: 12, letterSpacing: 2),
           ),
           const SizedBox(height: 8),
           SelectableText(
