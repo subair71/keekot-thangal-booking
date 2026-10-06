@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../errors/app_failure.dart';
+import 'keekkott_logo_data.dart';
 
 class Emblem extends StatelessWidget {
   const Emblem({super.key, this.size = 48});
