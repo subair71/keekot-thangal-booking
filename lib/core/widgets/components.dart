@@ -1,19 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../errors/app_failure.dart';
+import 'keekkott_logo_data.dart';
 
 class Emblem extends StatelessWidget {
   const Emblem({super.key, this.size = 48});
   final double size;
   @override
-  Widget build(BuildContext context) => SvgPicture.asset(
-    'assets/brand/emblem.svg',
-    width: size,
-    height: size,
-    semanticsLabel: 'Keekkott Thangal emblem',
+  Widget build(BuildContext context) => Semantics(
+    label: 'Keekkott Bungalow Thibbu Nabi Society, Chavakkad logo',
+    image: true,
+    child: Image.memory(
+      base64Decode(keekkottLogoBase64),
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      gaplessPlayback: true,
+    ),
   );
 }
 
