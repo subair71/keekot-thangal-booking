@@ -39,6 +39,15 @@ class HomePage extends ConsumerWidget {
                 MediaQuery.sizeOf(context).width < 600 ? 24 : 40,
               ),
               decoration: BoxDecoration(
+                image: const DecorationImage(
+                  image: AssetImage('assets/brand/bismillah-background.jpg'),
+                  fit: BoxFit.contain,
+                  opacity: 0.28,
+                  colorFilter: ColorFilter.mode(
+                    Color(0xFF245F50),
+                    BlendMode.modulate,
+                  ),
+                ),
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
