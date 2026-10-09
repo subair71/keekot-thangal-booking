@@ -22,8 +22,7 @@ abstract final class VisitClock {
     ).firstMatch(label.trim());
     if (match == null) return null;
     final hour =
-        int.parse(match[1]!) % 12 +
-        (match[3]!.toUpperCase() == 'PM' ? 12 : 0);
+        int.parse(match[1]!) % 12 + (match[3]!.toUpperCase() == 'PM' ? 12 : 0);
     return '${hour.toString().padLeft(2, '0')}:${match[2]}';
   }
 
