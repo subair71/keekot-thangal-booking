@@ -1,6 +1,7 @@
 import {Firestore, FieldValue, DocumentData} from 'firebase-admin/firestore';
 import {getMessaging} from 'firebase-admin/messaging';
 import {settingsFrom} from './domain.js';
+import {notificationLinks} from './notification_links.js';
 
 export async function queueNotice(db: Firestore, bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
@@ -32,9 +33,10 @@ export async function deliverNotice(db: Firestore, id: string) {
   try {
     const tokens=await db.collection(`users/${notice.userId}/devices`).orderBy('updatedAt','desc').limit(10).get();
     if(tokens.empty){await ref.update({delivery:'no-device'});return;}
+    const links=notificationLinks(process.env.APP_ORIGIN,notice.bookingId);
     const result=await getMessaging().sendEachForMulticast({tokens:tokens.docs.map(t=>t.data().token),
       notification:{title:notice.title,body:notice.body},data:{bookingId:notice.bookingId,notificationId:id},
-      webpush:{notification:{tag:id,icon:'/icons/Icon-192.png'},fcmOptions:{link:process.env.APP_ORIGIN?`${process.env.APP_ORIGIN}/booking/${notice.bookingId}`:undefined}}});
+      webpush:{notification:{tag:id,...(links?{icon:links.icon}:{})},...(links?{fcmOptions:{link:links.link}}:{})}});
     let retry=false;
     for(const [i,r] of result.responses.entries())if(!r.success){
       if(['messaging/registration-token-not-registered','messaging/invalid-registration-token'].includes(r.error?.code || ''))await tokens.docs[i].ref.delete(); else retry=true;
