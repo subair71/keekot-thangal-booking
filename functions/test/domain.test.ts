@@ -34,3 +34,21 @@ test('references and QR tokens are independent cryptographic values',()=>{
   const token=makeToken();assert.equal(token.length,43);assert.equal(tokenHash(token).length,64);assert.notEqual(token,makeToken());
   assert.match([...refs][0],/^KT-20300110-[A-F0-9]{12}$/);
 });
+
+test('12-minute configuration produces 60 complete contiguous slots',()=>{
+  const config=settingsFrom({...settings,slotDurationMinutes:12});
+  const slots=generateSlots('2030-01-10',config);
+  assert.equal(slots.length,60);
+  assert.equal(slots[0].startTime,'07:00');
+  assert.equal(slots.at(-1)!.endTime,'19:00');
+  slots.forEach((slot,index)=>{
+    assert.equal(slot.endAt-slot.startAt,12*60_000);
+    if(index>0) assert.equal(slot.startAt,slots[index-1].endAt);
+  });
+  assert.equal(new Set(slots.map(slot=>slot.slotId)).size,60);
+});
+test('slot duration rejects values outside 5 to 120 and fractional minutes',()=>{
+  for(const duration of [0,4,121,12.5]) {
+    assert.throws(()=>settingsFrom({...settings,slotDurationMinutes:duration}));
+  }
+});
