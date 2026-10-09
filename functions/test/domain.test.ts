@@ -47,8 +47,15 @@ test('12-minute configuration produces 60 complete contiguous slots',()=>{
   });
   assert.equal(new Set(slots.map(slot=>slot.slotId)).size,60);
 });
-test('slot duration rejects values outside 5 to 120 and fractional minutes',()=>{
-  for(const duration of [0,4,121,12.5]) {
+test('slot duration rejects values outside 10 to 120 and fractional minutes',()=>{
+  for(const duration of [0,5,9,121,12.5]) {
     assert.throws(()=>settingsFrom({...settings,slotDurationMinutes:duration}));
   }
+});
+
+test('10-minute minimum produces 72 slots over 7 AM to 7 PM',()=>{
+  const slots=generateSlots('2030-01-10',settingsFrom({...settings,slotDurationMinutes:10}));
+  assert.equal(slots.length,72);
+  assert.equal(slots[0].startTime,'07:00');
+  assert.equal(slots.at(-1)!.endTime,'19:00');
 });

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/bootstrap/providers.dart';
 import '../../../core/widgets/components.dart';
+import '../../../core/utils/visit_clock.dart';
 
 class AdminSettings extends ConsumerStatefulWidget {
   const AdminSettings({super.key});
@@ -19,9 +20,9 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
       reminders = true;
   final fields = <String, TextEditingController>{};
   static const definitions = {
-    'openingTime': ('Opening time (24h)', '07:00'),
-    'closingTime': ('Closing time (24h)', '19:00'),
-    'slotDurationMinutes': ('Slot duration in minutes', '30'),
+    'openingTime': ('Opening time', '7:00 AM'),
+    'closingTime': ('Closing time', '7:00 PM'),
+    'slotDurationMinutes': ('Slot duration in minutes (10–120)', '30'),
     'bookingWindowDays': ('Booking window in days', '7'),
     'maxVisitorsPerBooking': ('Maximum visitors per booking', ''),
     'defaultSlotCapacity': ('Default slot capacity', ''),
@@ -57,6 +58,10 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
         'reminderEnabled': reminders,
       };
       for (final e in fields.entries) {
+        if (e.key == 'openingTime' || e.key == 'closingTime') {
+          settings[e.key] = VisitClock.timeValue(e.value.text)!;
+          continue;
+        }
         settings[e.key] =
             [
               'openingTime',
@@ -84,7 +89,9 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
       loaded = true;
       final data = config.toMap();
       for (final e in fields.entries) {
-        e.value.text = '${data[e.key]}';
+        e.value.text = e.key == 'openingTime' || e.key == 'closingTime'
+            ? VisitClock.timeLabel('${data[e.key]}')
+            : '${data[e.key]}';
       }
       enabled = config.bookingEnabled;
       sameDay = config.allowSameDayBooking;
@@ -132,11 +139,17 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                               'openingTime',
                               'closingTime',
                             ].contains(e.key)) {
-                              return RegExp(
-                                    r'^([01]\d|2[0-3]):[0-5]\d$',
-                                  ).hasMatch(v)
+                              return VisitClock.timeValue(v) != null
                                   ? null
-                                  : 'Use HH:mm.';
+                                  : 'Use h:mm AM/PM, for example 7:00 PM.';
+                            }
+                            if (e.key == 'slotDurationMinutes') {
+                              final minutes = int.tryParse(v.trim());
+                              if (minutes == null ||
+                                  minutes < 10 ||
+                                  minutes > 120) {
+                                return 'Enter 10 to 120 whole minutes.';
+                              }
                             }
                             return int.tryParse(v) == null
                                 ? 'Enter a whole number.'

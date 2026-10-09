@@ -46,7 +46,7 @@ export function settingsFrom(value: unknown): BookingSettings {
   const c = value as BookingSettings;
   if (!c || c.timezone !== 'Asia/Kolkata') throw new DomainError('failed-precondition', 'Booking is awaiting administrator configuration.');
   const open = minutes(c.openingTime), close = minutes(c.closingTime);
-  integer(c.slotDurationMinutes, 5, 120, 'Slot duration');
+  integer(c.slotDurationMinutes, 10, 120, 'Slot duration');
   if (close <= open || (close-open) % c.slotDurationMinutes !== 0) throw new DomainError('invalid-argument', 'Hours must contain complete slots.');
   integer(c.bookingWindowDays, 1, 30, 'Booking window');
   integer(c.defaultSlotCapacity, 1, 500, 'Slot capacity');

@@ -5,6 +5,16 @@ import 'package:keekot_thangal/app/router/app_router.dart';
 import 'fixtures.dart';
 
 void main() {
+  test('visiting hours use AM/PM and convert safely for storage', () {
+    expect(VisitClock.timeLabel('07:00'), '7:00 AM');
+    expect(VisitClock.timeLabel('19:00'), '7:00 PM');
+    expect(VisitClock.timeValue('7:00 AM'), '07:00');
+    expect(VisitClock.timeValue('7:00 PM'), '19:00');
+    expect(VisitClock.timeValue('12:00 AM'), '00:00');
+    expect(VisitClock.timeValue('12:00 PM'), '12:00');
+    expect(VisitClock.timeValue('13:00 PM'), isNull);
+    expect(VisitClock.timeValue('7:60 AM'), isNull);
+  });
   test('exactly 24 non-overlapping half-hour slots within hours', () {
     final slots = const SlotGenerator().generate('2030-01-10', testConfig);
     expect(slots, hasLength(24));

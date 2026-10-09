@@ -11,7 +11,20 @@ abstract final class VisitClock {
     final parts = time.split(':');
     return DateFormat(
       'h:mm a',
+      'en',
     ).format(DateTime(2000, 1, 1, int.parse(parts[0]), int.parse(parts[1])));
+  }
+
+  static String? timeValue(String label) {
+    final match = RegExp(
+      r'^(0?[1-9]|1[0-2]):([0-5]\d)\s*(AM|PM)$',
+      caseSensitive: false,
+    ).firstMatch(label.trim());
+    if (match == null) return null;
+    final hour =
+        int.parse(match[1]!) % 12 +
+        (match[3]!.toUpperCase() == 'PM' ? 12 : 0);
+    return '${hour.toString().padLeft(2, '0')}:${match[2]}';
   }
 
   static int epoch(String day, String time) =>
