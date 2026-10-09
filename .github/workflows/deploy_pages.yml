@@ -24,6 +24,7 @@ jobs:
       - name: Setup Flutter SDK
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.47.4'
           channel: stable
           cache: true
 
@@ -66,6 +67,28 @@ jobs:
 
       - name: Run code generation
         run: dart run build_runner build
+
+      - name: Validate Flutter before publishing
+        run: |
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze
+          flutter test --coverage
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - run: npm ci --prefix functions
+      - run: npm test --prefix functions
+      - name: Validate transactions and rules before publishing
+        run: node functions/node_modules/firebase-tools/lib/bin/firebase.js emulators:exec --only firestore,auth --project demo-keekot-thangal 'npm --prefix functions run test:emulator'
 
       - name: Build Flutter Web for GitHub Pages
         run: flutter build web --release --base-href="/keekot-thangal-booking/" --dart-define-from-file=config/production.json
