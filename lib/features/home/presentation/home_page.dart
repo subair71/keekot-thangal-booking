@@ -1,5 +1,3 @@
-import 'media/video_gallery.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +8,7 @@ import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
+import 'media/video_gallery.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -185,8 +184,9 @@ class HomePage extends ConsumerWidget {
                 Text(
                   'Your next visit begins with a little planning.',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineLarge!.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 14),
                 const Text(
@@ -271,10 +271,12 @@ class _MaqamHero extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF082D25)
-                          .withValues(alpha: compact ? .93 : .96),
-                      const Color(0xFF082D25)
-                          .withValues(alpha: compact ? .72 : .16),
+                      const Color(
+                        0xFF082D25,
+                      ).withValues(alpha: compact ? .93 : .96),
+                      const Color(
+                        0xFF082D25,
+                      ).withValues(alpha: compact ? .72 : .16),
                     ],
                     stops: const [0, 1],
                   ),
