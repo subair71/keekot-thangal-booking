@@ -16,7 +16,8 @@ class InformationPage extends StatelessWidget {
         PageHeading(
           'Your guide to Keekkott Maqam',
           eyebrow: 'Visitor information',
-          subtitle: 'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
+          subtitle:
+              'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
         ),
         SurfaceCard(
           color: AppColors.cream,
