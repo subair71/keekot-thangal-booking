@@ -8,6 +8,7 @@ import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
+import 'media/video_gallery.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -127,6 +128,8 @@ class HomePage extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 72),
+          const VideoGallery(),
           const SizedBox(height: 72),
           const _SectionTitle(
             'A CONSIDERATE ZIYARAT',
