@@ -9,10 +9,16 @@ abstract final class VisitClock {
       DateFormat('EEE, d MMM yyyy').format(DateTime.parse(day));
   static String timeLabel(String time) {
     final parts = time.split(':');
-    return DateFormat(
-      'h:mm a',
-      'en',
-    ).format(DateTime(2000, 1, 1, int.parse(parts[0]), int.parse(parts[1])));
+    final value = DateTime(
+      2000,
+      1,
+      1,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+    final hour = value.hour % 12;
+    final minute = value.minute.toString().padLeft(2, '0');
+    return '${hour == 0 ? 12 : hour}:$minute ${value.hour < 12 ? 'AM' : 'PM'}';
   }
 
   static String? timeValue(String label) {
