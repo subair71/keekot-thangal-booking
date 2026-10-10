@@ -95,7 +95,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        find.text('A little planning.\nA peaceful visit.'),
+        find.text('A peaceful place.\nA heartfelt visit.'),
         findsOneWidget,
       );
       expect(
@@ -104,6 +104,19 @@ void main() {
       );
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_$width');
+      await tester.ensureVisible(find.text('Questions before you visit'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('How do I reserve a visit?'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('follow the steps to verify'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await capturePage(tester, 'home_details_$width');
+      await tester.ensureVisible(find.text('Plan my visit'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Plan my visit'));
+      await tester.pumpAndSettle();
+      expect(find.text('Select your visit'), findsOneWidget);
+      expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });
     testWidgets('slot selection and confirmation fit ${width}px', (

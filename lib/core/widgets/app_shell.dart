@@ -45,7 +45,7 @@ class AppShell extends ConsumerWidget {
           child: SafeArea(
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1344),
+                constraints: const BoxConstraints(maxWidth: 1400),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
@@ -77,7 +77,7 @@ class AppShell extends ConsumerWidget {
                                     ),
                                   ),
                                   const Text(
-                                    'Chavakkad, Kerala',
+                                    'MAQAM · CHAVAKKAD',
                                     style: TextStyle(
                                       fontSize: 12,
                                       height: 1.2,
