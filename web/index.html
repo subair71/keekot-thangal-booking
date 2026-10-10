@@ -30,6 +30,19 @@
         .catch(() => { /* Booking remains usable without push. */ });
     }
   </script>
+  <script>
+    // External entry links load the root document (HTTP 200) before selecting a
+    // Flutter route. GitHub Pages cannot serve nested SPA routes with HTTP 200.
+    (() => {
+      const url = new URL(window.location.href);
+      const route = url.searchParams.get('route');
+      if (!['book', 'my-bookings', 'information'].includes(route)) return;
+      const target = new URL(route, document.baseURI);
+      url.searchParams.delete('route');
+      target.search = url.searchParams.toString();
+      window.history.replaceState(null, '', target.pathname + target.search);
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
