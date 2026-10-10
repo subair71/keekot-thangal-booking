@@ -6,14 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#064E3B">
   <meta name="description" content="Plan your visit to Keekkott Thangal Maqam in Chavakkad, Kerala. Select a visit time and keep your digital entry pass ready.">
-  <meta property="og:title" content="Keekkott Thangal | Visit Booking">
-  <meta property="og:description" content="A little planning. A peaceful visit. Reserve a time for your visit in Chavakkad, Kerala.">
+  <meta property="og:title" content="Keekkott Thangal Maqam | Plan Your Ziyarat">
+  <meta property="og:description" content="A peaceful place. A heartfelt visit. Visitor guidance and online ziyarat booking for Keekkott Maqam, Chavakkad.">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="manifest" href="manifest.json">
-  <title>Keekkott Thangal | Visit Booking</title>
+  <title>Keekkott Thangal Maqam | Plan Your Ziyarat</title>
   <style>
     html,body{margin:0;background:#FDFBF7;color:#064E3B;height:100%}
     #loading{position:fixed;inset:0;display:grid;place-content:center;text-align:center;font:16px system-ui;gap:20px}
@@ -29,6 +29,19 @@
       navigator.serviceWorker.register('/firebase-messaging-sw.js', {scope:'/firebase-cloud-messaging-push-scope'})
         .catch(() => { /* Booking remains usable without push. */ });
     }
+  </script>
+  <script>
+    // External entry links load the root document (HTTP 200) before selecting a
+    // Flutter route. GitHub Pages cannot serve nested SPA routes with HTTP 200.
+    (() => {
+      const url = new URL(window.location.href);
+      const route = url.searchParams.get('route');
+      if (!['book', 'my-bookings', 'information'].includes(route)) return;
+      const target = new URL(route, document.baseURI);
+      url.searchParams.delete('route');
+      target.search = url.searchParams.toString();
+      window.history.replaceState(null, '', target.pathname + target.search);
+    })();
   </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>

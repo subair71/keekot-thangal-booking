@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const emerald = Color(0xFF123F35),
+  static const emerald = Color(0xFF103E32),
       secondary = Color(0xFF276854),
-      ivory = Color(0xFFF5F7F5);
+      ivory = Color(0xFFFAF8F2);
   static const white = Color(0xFFFFFFFF),
-      cream = Color(0xFFF3F0E8),
+      cream = Color(0xFFF0EBDF),
       outline = Color(0xFFDCE5DF);
   static const gold = Color(0xFF9A712E),
       mint = Color(0xFFEDF4EF),

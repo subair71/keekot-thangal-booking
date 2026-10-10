@@ -7,6 +7,9 @@ import 'fixtures.dart';
 
 void main() {
   test('visiting hours use AM/PM and convert safely for storage', () {
+    expect(VisitClock.timeLabel('00:00'), '12:00 AM');
+    expect(VisitClock.timeLabel('12:00'), '12:00 PM');
+    expect(VisitClock.timeLabel('07:05'), '7:05 AM');
     expect(VisitClock.timeLabel('07:00'), '7:00 AM');
     expect(VisitClock.timeLabel('19:00'), '7:00 PM');
     expect(VisitClock.timeValue('7:00 AM'), '07:00');

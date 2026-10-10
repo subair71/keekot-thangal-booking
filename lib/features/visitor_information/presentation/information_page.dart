@@ -14,10 +14,36 @@ class InformationPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PageHeading(
-          'A peaceful visit starts here',
+          'Your guide to Keekkott Maqam',
           eyebrow: 'Visitor information',
-          subtitle: 'A few things to know before you arrive.',
+          subtitle:
+              'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
         ),
+        SurfaceCard(
+          color: AppColors.cream,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Welcome to Keekkott Thangal Maqam',
+                style: TextStyle(
+                  fontFamily: 'Newsreader',
+                  fontSize: 28,
+                  color: AppColors.emerald,
+                ),
+              ),
+              SizedBox(height: 14),
+              Text(
+                'Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.',
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Before travelling, check your reservation, allow enough time for your journey and keep your digital pass accessible. If you are accompanying children or older family members, plan a comfortable journey together.',
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 28),
         TwoColumn(main: GuidelinesCard(), aside: LocationCard()),
         SizedBox(height: 28),
         SurfaceCard(
