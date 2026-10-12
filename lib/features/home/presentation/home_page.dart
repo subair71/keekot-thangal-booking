@@ -367,7 +367,7 @@ class _MaqamHero extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Concept illustration · not a photograph of the Maqam',
+                    'Oil painting inspired by the Keekkott Maqam photograph',
                     style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 11),
                   ),
                 ],
