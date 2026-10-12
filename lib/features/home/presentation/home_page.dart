@@ -28,26 +28,31 @@ class HomePage extends ConsumerWidget {
           AsyncPanel(
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
-            builder: (c) => _FeatureGrid(
-              children: [
-                InfoLine(Icons.schedule_outlined, 'Visiting hours', c.hours),
-                InfoLine(
-                  Icons.hourglass_bottom_outlined,
-                  'Time for your visit',
-                  '${c.slotDurationMinutes} minutes per slot',
+            builder:
+                (c) => _FeatureGrid(
+                  children: [
+                    InfoLine(
+                      Icons.schedule_outlined,
+                      'Visiting hours',
+                      c.hours,
+                    ),
+                    InfoLine(
+                      Icons.hourglass_bottom_outlined,
+                      'Time for your visit',
+                      '${c.slotDurationMinutes} minutes per slot',
+                    ),
+                    const InfoLine(
+                      Icons.location_on_outlined,
+                      'Find us',
+                      'Chavakkad, Kerala',
+                    ),
+                    const InfoLine(
+                      Icons.confirmation_number_outlined,
+                      'Easy entry',
+                      'Your booking. Your digital pass.',
+                    ),
+                  ],
                 ),
-                const InfoLine(
-                  Icons.location_on_outlined,
-                  'Find us',
-                  'Chavakkad, Kerala',
-                ),
-                const InfoLine(
-                  Icons.confirmation_number_outlined,
-                  'Easy entry',
-                  'Your booking. Your digital pass.',
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: 48),
           const _HomeFeaturedVideo(),
@@ -403,11 +408,12 @@ class _FeatureGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final columns = constraints.maxWidth < 550
-          ? 1
-          : constraints.maxWidth < 900
-          ? 2
-          : children.length;
+      final columns =
+          constraints.maxWidth < 550
+              ? 1
+              : constraints.maxWidth < 900
+              ? 2
+              : children.length;
       return Wrap(
         spacing: 24,
         runSpacing: 28,
@@ -540,9 +546,10 @@ class _LiveAvailability extends ConsumerWidget {
             value: ref.watch(availabilityProvider(day)),
             onRetry: () => ref.invalidate(availabilityProvider(day)),
             builder: (a) {
-              final available = a.slots
-                  .where((s) => s.status == SlotStatus.available)
-                  .toList();
+              final available =
+                  a.slots
+                      .where((s) => s.status == SlotStatus.available)
+                      .toList();
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -560,15 +567,16 @@ class _LiveAvailability extends ConsumerWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: available
-                        .take(4)
-                        .map(
-                          (s) => ActionChip(
-                            label: Text(VisitClock.timeLabel(s.startTime)),
-                            onPressed: () => context.go('/book'),
-                          ),
-                        )
-                        .toList(),
+                    children:
+                        available
+                            .take(4)
+                            .map(
+                              (s) => ActionChip(
+                                label: Text(VisitClock.timeLabel(s.startTime)),
+                                onPressed: () => context.go('/book'),
+                              ),
+                            )
+                            .toList(),
                   ),
                 ],
               );
@@ -629,11 +637,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
           const SizedBox(height: 8),
           const Text(
             'Experience the serene atmosphere and sacred surroundings of Keekkott Maqam in high definition.',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.muted,
-              height: 1.6,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.muted, height: 1.6),
           ),
           const SizedBox(height: 24),
           ClipRRect(
@@ -662,18 +666,11 @@ class _HomeFeaturedVideo extends StatelessWidget {
               const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.hd_outlined,
-                    size: 18,
-                    color: AppColors.emerald,
-                  ),
+                  Icon(Icons.hd_outlined, size: 18, color: AppColors.emerald),
                   SizedBox(width: 8),
                   Text(
                     'Autoplaying in high quality · Visual view',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.muted,
-                    ),
+                    style: TextStyle(fontSize: 13, color: AppColors.muted),
                   ),
                 ],
               ),

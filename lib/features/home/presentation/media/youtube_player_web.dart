@@ -14,21 +14,15 @@ Widget youtubePlayer(
     final params = <String>[
       if (autoplay) 'autoplay=1',
       if (mute || (!controls && autoplay)) 'mute=1',
-      if (!controls) ...[
-        'controls=0',
-        'disablekb=1',
-        'fs=0',
-      ],
-      if (loop) ...[
-        'loop=1',
-        'playlist=$id',
-      ],
+      if (!controls) ...['controls=0', 'disablekb=1', 'fs=0'],
+      if (loop) ...['loop=1', 'playlist=$id'],
       'rel=0',
       'modestbranding=1',
       'playsinline=1',
       'iv_load_policy=3',
     ];
-    frame.src = 'https://www.youtube-nocookie.com/embed/$id?${params.join('&')}';
+    frame.src =
+        'https://www.youtube-nocookie.com/embed/$id?${params.join('&')}';
     frame.title = 'Keekkott Bungalow video player';
     frame.allow =
         'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';

@@ -6,5 +6,4 @@ Widget youtubePlayer(
   bool controls = true,
   bool loop = false,
   bool mute = false,
-}) =>
-    const Center(child: Text('Use Watch on YouTube to play this video.'));
+}) => const Center(child: Text('Use Watch on YouTube to play this video.'));
