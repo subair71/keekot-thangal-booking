@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
@@ -9,6 +11,7 @@ import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
+import 'media/youtube_player.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -46,6 +49,8 @@ class HomePage extends ConsumerWidget {
               ],
             ),
           ),
+          const SizedBox(height: 48),
+          const _HomeFeaturedVideo(),
           const SizedBox(height: 72),
           TwoColumn(
             main: const Column(
@@ -579,6 +584,108 @@ class _LiveAvailability extends ConsumerWidget {
           const Text(
             'Availability updates every 20 seconds.',
             style: TextStyle(fontSize: 13, color: AppColors.muted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeFeaturedVideo extends StatelessWidget {
+  const _HomeFeaturedVideo();
+
+  static const _videoId = 'xrsTvpbTsO0';
+  static const _videoUrl = 'https://www.youtube.com/watch?v=$_videoId';
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final compact = width < 650;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cream,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppColors.outline),
+      ),
+      padding: EdgeInsets.all(compact ? 20 : 36),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'FEATURED · KEEKKOTT MAQAM',
+            style: TextStyle(
+              color: AppColors.emerald,
+              letterSpacing: 2,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം | കീക്കോട്ട് ബംഗ്ലാവ്',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Experience the serene atmosphere and sacred surroundings of Keekkott Maqam in high definition.',
+            style: TextStyle(
+              fontSize: 16,
+              color: AppColors.muted,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ColoredBox(
+                color: Colors.black,
+                child: youtubePlayer(
+                  _videoId,
+                  autoplay: true,
+                  controls: false,
+                  loop: true,
+                  mute: true,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 10,
+            children: [
+              const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.hd_outlined,
+                    size: 18,
+                    color: AppColors.emerald,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Autoplaying in high quality · Visual view',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ],
+              ),
+              TextButton.icon(
+                onPressed: () async {
+                  final uri = Uri.parse(_videoUrl);
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                },
+                icon: const Icon(Icons.open_in_new, size: 16),
+                label: const Text('Watch on YouTube with sound'),
+              ),
+            ],
           ),
         ],
       ),
