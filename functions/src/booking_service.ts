@@ -190,6 +190,33 @@ export class BookingService {
       return {updated:selected.length};
     });
   }
+  async adminSetDateHours(actor: Actor, input: {visitDate: string; openingTime?: string; closingTime?: string; reset?: boolean}) {
+    if(!actor.admin)throw new DomainError('permission-denied','Administrator access is required.');
+    validDate(input.visitDate);
+    return this.db.runTransaction(async tx=>{
+      const config=await tx.get(this.db.doc('settings/booking')), c=settingsFrom(config.data()), now=this.clock();
+      if(input.visitDate<dateKey(now) || input.visitDate>addDays(dateKey(now),30))
+        throw new DomainError('invalid-argument','Choose a date within 30 days.');
+      const dateHours=Object.fromEntries(Object.entries(c.dateHours || {}).filter(([day])=>day>=dateKey(now)));
+      if(input.reset===true)delete dateHours[input.visitDate];
+      else dateHours[input.visitDate]={openingTime:input.openingTime!,closingTime:input.closingTime!};
+      const next=generateSlots(input.visitDate,{...c,dateHours}), byId=new Map(next.map(s=>[s.slotId,s]));
+      const [slots,states]=await Promise.all([
+        tx.get(this.db.collection('visitSlots').where('visitDate','==',input.visitDate)),
+        tx.get(this.db.collection('slotState').where('visitDate','==',input.visitDate))]);
+      const holds=new Map(states.docs.map(d=>[d.id,activeHolds(d.data().holds || {},now)]));
+      const obsolete=slots.docs.filter(d=>{
+        const s=d.data() as Slot, replacement=byId.get(d.id);
+        return !replacement || replacement.endTime!==s.endTime;
+      });
+      for(const d of obsolete)if(d.data().occupancy>0 || Object.keys(holds.get(d.id) || {}).length)
+        throw new DomainError('failed-precondition','These hours affect confirmed visitors or active holds. Cancel affected bookings or wait for holds to expire first.');
+      for(const d of obsolete)tx.delete(d.ref);
+      tx.update(config.ref,{dateHours,updatedAt:FieldValue.serverTimestamp()});
+      tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'setDateHours',visitDate:input.visitDate,reset:input.reset===true,at:FieldValue.serverTimestamp()});
+      return {updated:true};
+    });
+  }
   async adminUpdateSettings(actor: Actor, input: BookingSettings) {
     if(!actor.admin)throw new DomainError('permission-denied','Administrator access is required.');
     const c=settingsFrom(input);
@@ -198,8 +225,10 @@ export class BookingService {
       const ref=this.db.doc('settings/booking'), prev=await tx.get(ref), p=prev.data();
       if(p && p.scheduleLockedUntil>=dateKey(this.clock()) && ['openingTime','closingTime','slotDurationMinutes','timezone'].some(k=>p[k]!==input[k as keyof BookingSettings]))
         throw new DomainError('failed-precondition',`Hours and duration are locked through ${p!.scheduleLockedUntil}. Change them after the existing schedule has elapsed.`);
+      const dateHours=Object.fromEntries(Object.entries(p?.dateHours || {}).filter(([day])=>day>=dateKey(this.clock())));
+      settingsFrom({...c,dateHours});
       const data=Object.fromEntries(keys.map(k=>[k,c[k]]));
-      tx.set(ref,{...data,environment:p?.environment || 'production',updatedAt:FieldValue.serverTimestamp()}, {merge:true});
+      tx.set(ref,{...data,dateHours,environment:p?.environment || 'production',updatedAt:FieldValue.serverTimestamp()}, {merge:true});
       tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'updateSettings',at:FieldValue.serverTimestamp()}); return {updated:true};
     });
   }

@@ -264,7 +264,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             InfoLine(
                               Icons.schedule,
                               'Visiting hours',
-                              config.hours,
+                              config.hoursForDate(day),
                             ),
                             const SizedBox(height: 22),
                             InfoLine(
@@ -293,9 +293,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   child: Text(
                                     '$visitors',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge,
                                   ),
                                 ),
                                 IconButton.filled(

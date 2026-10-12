@@ -49,6 +49,11 @@ class FirebaseAdminRepository implements AdminRepository {
   }
 
   @override
+  Future<void> setDateHours(Map<String, dynamic> change) async {
+    await source.call('adminSetDateHours', change);
+  }
+
+  @override
   Future<void> updateSettings(Map<String, dynamic> settings) async {
     await source.call('adminUpdateSettings', settings);
   }

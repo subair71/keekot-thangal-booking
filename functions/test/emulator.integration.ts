@@ -19,6 +19,23 @@ const hold=(i:number,slot=0,count=1)=>service.createHold(actor(i),{visitDate:day
 after(async()=>{await db.terminate();await deleteApp(app);});
 test('Firestore transactions and rules',async t=>{
   await db.doc('settings/booking').set(settings);
+  await t.test('date hours enforce availability, holds, reset and booking protection',async()=>{
+    const date='2030-01-16', admin={...actor(800),admin:true};
+    await assert.rejects(()=>service.adminSetDateHours(actor(801),{visitDate:date,openingTime:'08:00',closingTime:'17:00'}));
+    await service.adminSetDateHours(admin,{visitDate:date,openingTime:'08:00',closingTime:'17:00'});
+    const available=await service.availability(date);
+    assert.equal(available.slots.length,18);assert.equal(available.slots[0].startTime,'08:00');assert.equal(available.slots.at(-1)!.endTime,'17:00');
+    await assert.rejects(()=>service.createHold(actor(802),{visitDate:date,slotId:`${date}_0700`,visitorCount:1,requestId:'date-hours-invalid-request-802'}));
+    const h=await service.createHold(actor(803),{visitDate:date,slotId:`${date}_0800`,visitorCount:1,requestId:'date-hours-valid-request-803'});
+    await assert.rejects(()=>service.adminSetDateHours(admin,{visitDate:date,openingTime:'09:00',closingTime:'17:00'}));
+    const b=await service.createBooking(actor(803),h.holdId,'Date Hours Visitor');
+    await assert.rejects(()=>service.adminSetDateHours(admin,{visitDate:date,openingTime:'09:00',closingTime:'17:00'}));
+    await service.cancelBooking(admin,b.bookingId,'Testing schedule change');
+    await service.adminSetDateHours(admin,{visitDate:date,openingTime:'09:00',closingTime:'17:00'});
+    await service.adminSetDateHours(admin,{visitDate:date,reset:true});
+    assert.equal((await service.availability(date)).slots.length,24);
+    assert.equal((await service.availability(day)).slots.length,24);
+  });
   let bookingId='',owner=actor(0),holdId='';
   await t.test('12 simultaneous requests cannot exceed 3 places',async()=>{
     const results=await Promise.allSettled(Array.from({length:12},(_,i)=>hold(i)));

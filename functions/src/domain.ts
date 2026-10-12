@@ -10,6 +10,7 @@ export interface BookingSettings {
   reminderMinutes: number; bookingEnabled: boolean; environment: string;
   locationUrl: string; contactPhone: string; arrivalMinutes: number;
   scheduleLockedUntil?: string;
+  dateHours?: Record<string, {openingTime: string; closingTime: string}>;
 }
 export interface Slot {
   slotId: string; visitDate: string; startTime: string; endTime: string;
@@ -60,6 +61,12 @@ export function settingsFrom(value: unknown): BookingSettings {
     if (url.protocol !== 'https:') throw new DomainError('invalid-argument', 'Directions must use HTTPS.');
   }
   if (c.contactPhone && !/^\+[1-9]\d{6,14}$/.test(c.contactPhone)) throw new DomainError('invalid-argument', 'Use an international contact number.');
+  for (const [day, hours] of Object.entries(c.dateHours || {})) {
+    validDate(day);
+    const start = minutes(hours.openingTime), end = minutes(hours.closingTime);
+    if (end <= start || (end-start) % c.slotDurationMinutes !== 0)
+      throw new DomainError('invalid-argument', 'Date hours must contain complete slots. Restore date hours before changing slot duration.');
+  }
   return c;
 }
 export function validateDay(day: string, c: BookingSettings, now: number): void {
@@ -70,8 +77,13 @@ export function validateDay(day: string, c: BookingSettings, now: number): void 
   if (!c.bookingEnabled) throw new DomainError('failed-precondition', 'Bookings are currently paused.');
 }
 export function generateSlots(day: string, c: BookingSettings): Slot[] {
-  validDate(day); const end = minutes(c.closingTime), slots: Slot[] = [];
-  for (let m = minutes(c.openingTime); m + c.slotDurationMinutes <= end; m += c.slotDurationMinutes) {
+  validDate(day);
+  const hours = c.dateHours?.[day] || c;
+  const open = minutes(hours.openingTime), end = minutes(hours.closingTime);
+  if (end <= open || (end-open) % c.slotDurationMinutes !== 0)
+    throw new DomainError('invalid-argument', 'Hours must contain complete slots.');
+  const slots: Slot[] = [];
+  for (let m = open; m + c.slotDurationMinutes <= end; m += c.slotDurationMinutes) {
     const startTime = timeText(m), endTime = timeText(m + c.slotDurationMinutes);
     slots.push({slotId: `${day}_${startTime.replace(':', '')}`, visitDate: day, startTime, endTime,
       startAt: midnight(day) + m * 60_000, endAt: midnight(day) + (m+c.slotDurationMinutes)*60_000,

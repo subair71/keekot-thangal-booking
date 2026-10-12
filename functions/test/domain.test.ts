@@ -59,3 +59,17 @@ test('10-minute minimum produces 72 slots over 7 AM to 7 PM',()=>{
   assert.equal(slots[0].startTime,'07:00');
   assert.equal(slots.at(-1)!.endTime,'19:00');
 });
+
+test('date hours apply only to the chosen date and reset restores defaults',()=>{
+  const c={...settings,dateHours:{'2030-01-16':{openingTime:'08:00',closingTime:'17:00'}}};
+  const slots=generateSlots('2030-01-16',c);
+  assert.equal(slots.length,18);assert.equal(slots[0].startTime,'08:00');assert.equal(slots.at(-1)!.endTime,'17:00');
+  assert.equal(generateSlots('2030-01-17',c).length,24);
+  assert.equal(generateSlots('2030-01-16',{...c,dateHours:{}}).length,24);
+});
+test('date hours reject reversed, malformed and incomplete slot periods',()=>{
+  for(const hours of [{openingTime:'17:00',closingTime:'08:00'},{openingTime:'8 AM',closingTime:'17:00'},{openingTime:'08:00',closingTime:'17:01'}])
+    assert.throws(()=>generateSlots('2030-01-16',{...settings,dateHours:{'2030-01-16':hours}}));
+  const slots=generateSlots('2030-01-16',{...settings,slotDurationMinutes:12,dateHours:{'2030-01-16':{openingTime:'08:00',closingTime:'17:00'}}});
+  assert.equal(slots.length,45);assert.equal(slots.at(-1)!.endTime,'17:00');
+});

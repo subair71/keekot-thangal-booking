@@ -1,3 +1,5 @@
+import 'admin_date_hours.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -309,32 +311,38 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
             ),
           ),
         ),
-        aside: const SurfaceCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Before changing the schedule',
-                style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+        aside: Column(
+          children: [
+            AdminDateHours(config: config),
+            const SizedBox(height: 20),
+            const SurfaceCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Before changing the schedule',
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Add separate dates or a date range within the next 30 days. Select entire days, or choose multiple individual time slots.',
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Blocking prevents new confirmations. Existing confirmed bookings remain valid; cancel affected bookings separately if visits cannot take place.',
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Reopen a whole-day closure before reopening individual slots on that date. Capacity cannot be reduced below confirmed visitors and active holds.',
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Changes save in batches. If any fail, successful changes remain saved and you can retry only the failed changes.',
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              Text(
-                'Add separate dates or a date range within the next 30 days. Select entire days, or choose multiple individual time slots.',
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Blocking prevents new confirmations. Existing confirmed bookings remain valid; cancel affected bookings separately if visits cannot take place.',
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Reopen a whole-day closure before reopening individual slots on that date. Capacity cannot be reduced below confirmed visitors and active holds.',
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Changes save in batches. If any fail, successful changes remain saved and you can retry only the failed changes.',
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     },
