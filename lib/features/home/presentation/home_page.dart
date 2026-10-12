@@ -606,42 +606,81 @@ class _HomeFeaturedVideo extends StatelessWidget {
   static const _videoUrl = 'https://www.youtube.com/watch?v=$_videoId';
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final compact = width < 650;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cream,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.outline),
-      ),
-      padding: EdgeInsets.all(compact ? 20 : 36),
-      child: Column(
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact = constraints.maxWidth < 760;
+      final content = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'FEATURED · KEEKKOTT MAQAM',
+            'A GLIMPSE OF KEEKKOTT',
             style: TextStyle(
               color: AppColors.emerald,
-              letterSpacing: 2,
-              fontSize: 12,
+              letterSpacing: 1.8,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
-            'കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം | കീക്കോട്ട് ബംഗ്ലാവ്',
-            style: Theme.of(context).textTheme.headlineMedium,
+            'A quiet moment before your visit.',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           const Text(
-            'Experience the serene atmosphere and sacred surroundings of Keekkott Maqam in high definition.',
-            style: TextStyle(fontSize: 16, color: AppColors.muted, height: 1.6),
+            'കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം',
+            style: TextStyle(
+              color: AppColors.emerald,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
+          Text.rich(
+            const TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Discover Keekkott Maqam. ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  ),
+                ),
+                TextSpan(
+                  text: 'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
+                ),
+              ],
+            ),
+            style: const TextStyle(
+              color: AppColors.muted,
+              height: 1.65,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.',
+            style: TextStyle(
+              color: AppColors.muted,
+              height: 1.65,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: () => launchUrl(
+              Uri.parse(_videoUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+            icon: const Icon(Icons.open_in_new, size: 16),
+            label: const Text('Watch the full video with sound'),
+          ),
+        ],
+      );
+      final video = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: ColoredBox(
@@ -656,36 +695,43 @@ class _HomeFeaturedVideo extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 16,
-            runSpacing: 10,
-            children: [
-              const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.hd_outlined, size: 18, color: AppColors.emerald),
-                  SizedBox(width: 8),
-                  Text(
-                    'Autoplaying in high quality · Visual view',
-                    style: TextStyle(fontSize: 13, color: AppColors.muted),
-                  ),
-                ],
-              ),
-              TextButton.icon(
-                onPressed: () async {
-                  final uri = Uri.parse(_videoUrl);
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                },
-                icon: const Icon(Icons.open_in_new, size: 16),
-                label: const Text('Watch on YouTube with sound'),
-              ),
-            ],
+          const SizedBox(height: 8),
+          const Text(
+            'Keekkott Bungalow Online · Silent video preview',
+            style: TextStyle(fontSize: 11, color: AppColors.muted),
           ),
         ],
-      ),
-    );
-  }
+      );
+      return Container(
+        padding: EdgeInsets.all(compact ? 20 : 28),
+        decoration: BoxDecoration(
+          color: AppColors.cream,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: AppColors.outline),
+        ),
+        child: compact
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  content,
+                  const SizedBox(height: 18),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: video,
+                    ),
+                  ),
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: content),
+                  const SizedBox(width: 32),
+                  SizedBox(width: constraints.maxWidth * .38, child: video),
+                ],
+              ),
+      );
+    },
+  );
 }
