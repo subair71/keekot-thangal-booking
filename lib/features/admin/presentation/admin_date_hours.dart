@@ -30,7 +30,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
         child: child!,
       ),
     );
-    if (picked != null && mounted)
+    if (picked != null && mounted) {
       setState(() {
         if (opening) {
           start = picked;
@@ -38,6 +38,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
           end = picked;
         }
       });
+    }
   }
 
   Future<void> save(bool reset) async {
@@ -65,12 +66,13 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
       ref.invalidate(availabilityProvider(day));
       ref.invalidate(configurationProvider);
       ref.invalidate(adminDashboardProvider);
-      if (mounted)
+      if (mounted) {
         setState(
           () => message = reset
               ? 'Default hours restored for ${VisitClock.dayLabel(day)}.'
               : 'Hours saved for ${VisitClock.dayLabel(day)}.',
         );
+      }
     } catch (e) {
       if (mounted) setState(() => message = failureMessage(e));
     } finally {
@@ -107,7 +109,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
                       firstDate: today,
                       lastDate: today.add(const Duration(days: 30)),
                     );
-                    if (picked != null && mounted)
+                    if (picked != null && mounted) {
                       setState(() {
                         day = VisitClock.dayKey(picked);
                         message = null;
@@ -125,6 +127,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
                           );
                         }
                       });
+                    }
                   },
           ),
           Text(
