@@ -345,9 +345,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   child: Text(
                                     '$visitors',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleLarge,
                                   ),
                                 ),
                                 IconButton.filled(

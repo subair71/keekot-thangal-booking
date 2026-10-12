@@ -306,9 +306,9 @@ class EmptyState extends StatelessWidget {
   );
 }
 
-void showMessage(BuildContext context, String message) =>
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+void showMessage(BuildContext context, String message) => ScaffoldMessenger.of(
+  context,
+).showSnackBar(SnackBar(content: Text(message)));
 String failureMessage(Object e) => e is AppFailure
     ? e.message
     : 'We could not complete this request. Please try again.';
