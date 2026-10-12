@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ import 'package:keekot_thangal/features/my_bookings/presentation/pass_card.dart'
 import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
 
 import 'fixtures.dart';
+import 'package:keekot_thangal/core/widgets/keekkott_logo_data.dart';
 
 import 'package:keekot_thangal/core/utils/visit_clock.dart';
 
@@ -27,6 +29,22 @@ final captureKey = GlobalKey();
 
 Future<void> capturePage(WidgetTester tester, String name) async {
   if (!const bool.fromEnvironment('CAPTURE_QA')) return;
+  // Wait for image decoding before recording the rendered preview.
+  // Widget-test settling alone does not wait for asynchronous asset codecs.
+  await tester.runAsync(() async {
+    final context = captureKey.currentContext!;
+    await precacheImage(
+      const AssetImage('assets/brand/maqam-hero.png'),
+      context,
+    );
+    if (context.mounted) {
+      await precacheImage(
+        MemoryImage(base64Decode(keekkottLogoBase64)),
+        context,
+      );
+    }
+  });
+  await tester.pumpAndSettle();
   final boundary =
       captureKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
   await tester.runAsync(() async {
@@ -119,6 +137,12 @@ void main() {
       expect(find.textContaining('follow the steps to verify'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_details_$width');
+      await tester.ensureVisible(
+        find.text('All visit times are in India Standard Time.'),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await capturePage(tester, 'home_footer_$width');
       await tester.ensureVisible(find.text('Plan my visit'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Plan my visit'));
