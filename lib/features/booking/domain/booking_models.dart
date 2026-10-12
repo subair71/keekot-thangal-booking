@@ -16,7 +16,9 @@ class BookingConfiguration {
     this.locationUrl = '',
     this.contactPhone = '',
     this.environment = 'production',
+    this.dateHours = const {},
   });
+  final Map<String, dynamic> dateHours;
   final String openingTime, closingTime, locationUrl, contactPhone, environment;
   final int slotDurationMinutes,
       bookingWindowDays,
@@ -27,6 +29,7 @@ class BookingConfiguration {
   final bool allowSameDayBooking, bookingEnabled, reminderEnabled;
   factory BookingConfiguration.fromMap(Map<String, dynamic> m) =>
       BookingConfiguration(
+        dateHours: Map<String, dynamic>.from(m['dateHours'] as Map? ?? {}),
         openingTime: m['openingTime'] as String,
         closingTime: m['closingTime'] as String,
         slotDurationMinutes: (m['slotDurationMinutes'] as num).toInt(),
@@ -65,6 +68,13 @@ class BookingConfiguration {
       for (var i = allowSameDayBooking ? 0 : 1; i < bookingWindowDays; i++)
         VisitClock.dayKey(today.add(Duration(days: i))),
     ];
+  }
+
+  String hoursForDate(String day) {
+    final custom = dateHours[day] as Map?;
+    return custom == null
+        ? hours
+        : '${VisitClock.timeLabel(custom["openingTime"] as String)} – ${VisitClock.timeLabel(custom["closingTime"] as String)}';
   }
 
   String get hours =>
@@ -231,8 +241,11 @@ class SlotGenerator {
       throw ArgumentError('Slot duration must be positive.');
     }
     for (
-      var m = mins(c.openingTime);
-      m + c.slotDurationMinutes <= mins(c.closingTime);
+      var m = mins(
+        c.dateHours[day]?['openingTime'] as String? ?? c.openingTime,
+      );
+      m + c.slotDurationMinutes <=
+          mins(c.dateHours[day]?['closingTime'] as String? ?? c.closingTime);
       m += c.slotDurationMinutes
     ) {
       final start = time(m), end = time(m + c.slotDurationMinutes);

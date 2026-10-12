@@ -264,7 +264,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             InfoLine(
                               Icons.schedule,
                               'Visiting hours',
-                              config.hours,
+                              config.hoursForDate(day),
                             ),
                             const SizedBox(height: 22),
                             InfoLine(

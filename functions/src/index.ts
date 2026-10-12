@@ -45,6 +45,7 @@ export const ensureBookingTokens=callable(r=>service.ensureBookingTokens(actor(r
 export const cancelBooking=callable(r=>service.cancelBooking(actor(r),id(r.data?.bookingId),r.data?.reason));
 export const validatePass=callable(r=>service.validatePass(actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));
 export const adminUpdateSlot=callable(r=>service.adminUpdateSlots(actor(r,'admin'),r.data));
+export const adminSetDateHours=callable(r=>service.adminSetDateHours(actor(r,'admin'),r.data));
 export const adminUpdateSettings=callable(r=>service.adminUpdateSettings(actor(r,'admin'),r.data));
 export const adminSetBookingStatus=callable(async r=>{
   const a=actor(r,'admin'), bookingId=id(r.data?.bookingId), status=r.data?.status;
