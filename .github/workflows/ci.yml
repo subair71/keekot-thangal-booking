@@ -29,7 +29,14 @@ jobs:
       - run: dart run build_runner build
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze
-      - run: flutter test --coverage
+      - run: flutter test --coverage --dart-define=CAPTURE_QA=true
+      - name: Save responsive UI previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-ui-previews
+          path: build/qa
+          if-no-files-found: ignore
       - run: npm ci --prefix functions
       - run: npm test --prefix functions
       - name: Test transactions and Firestore rules

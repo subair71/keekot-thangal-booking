@@ -18,6 +18,7 @@ class BookingPage extends ConsumerStatefulWidget {
 class _BookingPageState extends ConsumerState<BookingPage> {
   String? date, selectedId;
   int visitors = 1;
+  String periodFilter = 'All times';
   @override
   Widget build(BuildContext context) => PageContainer(
     child: Column(
@@ -28,6 +29,8 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           eyebrow: 'A time for quiet reflection',
           subtitle: 'Choose a date, a time, and the number of visitors.',
         ),
+        const BookingProgress(current: 0),
+        const SizedBox(height: 24),
         AsyncPanel(
           value: ref.watch(configurationProvider),
           onRetry: () => ref.invalidate(configurationProvider),
@@ -50,13 +53,13 @@ class _BookingPageState extends ConsumerState<BookingPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 16,
                   children: [
-                    Expanded(
-                      child: Text(
-                        VisitClock.dayLabel(day),
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                    Text(
+                      VisitClock.dayLabel(day),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     TextButton.icon(
                       onPressed: () async {
@@ -95,7 +98,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                 ),
                 const SizedBox(height: 14),
                 SizedBox(
-                  height: 105,
+                  height: 125,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: dates.length,
@@ -191,17 +194,60 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             'Please arrive ${config.arrivalMinutes} minutes early and keep your pass ready.',
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final label in [
+                              'All times',
+                              'Morning',
+                              'Afternoon',
+                              'Evening',
+                            ])
+                              ChoiceChip(
+                                label: Text(label),
+                                selected: periodFilter == label,
+                                onSelected: (_) =>
+                                    setState(() => periodFilter = label),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        if (!availability.slots.any((s) => s.accepts(visitors)))
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'No available time for this group. Try another date or adjust the number of visitors.',
+                            ),
+                          ),
+                        if (periodFilter != 'All times' &&
+                            !availability.slots.any(
+                              (s) => periodFilter == 'Morning'
+                                  ? s.startTime.compareTo('12:00') < 0
+                                  : periodFilter == 'Afternoon'
+                                  ? s.startTime.compareTo('12:00') >= 0 &&
+                                        s.startTime.compareTo('16:00') < 0
+                                  : s.startTime.compareTo('16:00') >= 0,
+                            ))
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'No scheduled slots in this period. Choose All times or another date.',
+                            ),
+                          ),
                         for (final period in [
                           ('Morning', '00:00', '12:00'),
                           ('Afternoon', '12:00', '16:00'),
                           ('Evening', '16:00', '24:00'),
                         ]) ...[
-                          if (availability.slots.any(
-                            (s) =>
-                                s.startTime.compareTo(period.$2) >= 0 &&
-                                s.startTime.compareTo(period.$3) < 0,
-                          )) ...[
+                          if ((periodFilter == 'All times' ||
+                                  periodFilter == period.$1) &&
+                              availability.slots.any(
+                                (s) =>
+                                    s.startTime.compareTo(period.$2) >= 0 &&
+                                    s.startTime.compareTo(period.$3) < 0,
+                              )) ...[
                             Padding(
                               padding: const EdgeInsets.only(bottom: 14),
                               child: Text(
@@ -219,9 +265,14 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                           s.startTime.compareTo(period.$3) < 0,
                                     )
                                     .toList();
-                                final cols = constraints.maxWidth >= 640
-                                    ? 3
-                                    : 2;
+                                final scaledWidth =
+                                    210 *
+                                    MediaQuery.textScalerOf(context).scale(1);
+                                final cols =
+                                    ((constraints.maxWidth + 12) /
+                                            (scaledWidth + 12))
+                                        .floor()
+                                        .clamp(1, 3);
                                 return Wrap(
                                   spacing: 12,
                                   runSpacing: 12,
@@ -251,6 +302,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                       ],
                     );
                     return TwoColumn(
+                      asideFirstOnMobile: true,
                       main: main,
                       aside: SurfaceCard(
                         child: Column(
@@ -293,9 +345,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   child: Text(
                                     '$visitors',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge,
                                   ),
                                 ),
                                 IconButton.filled(

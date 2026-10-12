@@ -13,11 +13,15 @@ import 'package:keekot_thangal/features/authentication/presentation/auth_page.da
 import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
 import 'package:keekot_thangal/features/booking/presentation/confirmation_page.dart';
 import 'package:keekot_thangal/features/booking/presentation/slot_card.dart';
+import 'package:keekot_thangal/features/admin/presentation/admin_date_hours.dart';
+import 'package:keekot_thangal/features/booking/domain/booking_models.dart';
 import 'package:keekot_thangal/features/my_bookings/presentation/my_bookings_page.dart';
 import 'package:keekot_thangal/features/my_bookings/presentation/pass_card.dart';
 import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
 
 import 'fixtures.dart';
+
+import 'package:keekot_thangal/core/utils/visit_clock.dart';
 
 final captureKey = GlobalKey();
 
@@ -104,7 +108,11 @@ void main() {
       );
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_$width');
-      await tester.ensureVisible(find.text('Questions before you visit'));
+      await tester.ensureVisible(find.text('Videos').first);
+      await tester.tap(find.text('Videos').first);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.text('Questions before you visit').last);
       await tester.pumpAndSettle();
       await tester.tap(find.text('How do I reserve a visit?'));
       await tester.pumpAndSettle();
@@ -128,10 +136,13 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       await pumpPage(tester, const BookingPage());
       expect(find.byType(SlotCard), findsNWidgets(24));
+      await tester.ensureVisible(find.byType(SlotCard).first);
       await tester.tap(find.byType(SlotCard).first);
       await tester.pump();
       expect(find.text('Selected'), findsOneWidget);
       expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.text('Your visit'));
+      await tester.pumpAndSettle();
       await capturePage(tester, 'slots_$width');
       await pumpPage(tester, const ConfirmationPage());
       expect(find.text('Booking summary'), findsOneWidget);
@@ -145,6 +156,67 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+  testWidgets(
+    'period filters retain selection and visitor controls precede mobile slots',
+    (tester) async {
+      tester.view.physicalSize = const Size(375, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await pumpPage(tester, const BookingPage());
+      expect(
+        tester.getTopLeft(find.text('Number of visitors')).dy,
+        lessThan(tester.getTopLeft(find.byType(SlotCard).first).dy),
+      );
+      await tester.ensureVisible(find.byType(SlotCard).first);
+      await tester.tap(find.byType(SlotCard).first);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Afternoon'));
+      await tester.tap(find.widgetWithText(ChoiceChip, 'Afternoon'));
+      await tester.pumpAndSettle();
+      expect(find.byType(SlotCard), findsNWidgets(8));
+      await tester.tap(find.widgetWithText(ChoiceChip, 'All times'));
+      await tester.pumpAndSettle();
+      expect(find.text('Selected'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets('admin hours load saved values and default values after reset', (
+    tester,
+  ) async {
+    final today = VisitClock.today();
+    final custom = BookingConfiguration.fromMap({
+      ...testConfig.toMap(),
+      'dateHours': {
+        today: {'openingTime': '08:00', 'closingTime': '17:00'},
+      },
+    });
+    final key = GlobalKey();
+    await pumpPage(
+      tester,
+      SingleChildScrollView(
+        child: AdminDateHours(key: key, config: custom),
+      ),
+    );
+    expect(find.text('Start: 8:00 AM'), findsOneWidget);
+    expect(find.text('End: 5:00 PM'), findsOneWidget);
+    expect(find.textContaining('18 complete slots'), findsOneWidget);
+    await pumpPage(
+      tester,
+      SingleChildScrollView(
+        child: AdminDateHours(key: key, config: testConfig),
+      ),
+    );
+    expect(find.text('Start: 7:00 AM'), findsOneWidget);
+    expect(find.text('End: 7:00 PM'), findsOneWidget);
+    expect(find.textContaining('24 complete slots'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await capturePage(tester, 'admin_date_hours');
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets('OTP consent, send and code entry states', (tester) async {
     final auth = FakeAuth(user: null);
     await pumpPage(tester, const AuthPage(), auth: auth);
