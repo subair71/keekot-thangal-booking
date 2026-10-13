@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -58,7 +59,7 @@ class _PassCardState extends ConsumerState<PassCard> {
             ],
           ),
           const SizedBox(height: 20),
-          Text(
+          AppText(
             b.visitors == 1 ? 'TOKEN NUMBER' : 'TOKEN NUMBERS',
             style: const TextStyle(fontSize: 12, letterSpacing: 2),
           ),
@@ -72,8 +73,8 @@ class _PassCardState extends ConsumerState<PassCard> {
             ),
           ),
           const SizedBox(height: 8),
-          Text('Booking reference: ${b.reference}'),
-          const Text('Tokens are valid for this date and slot only.'),
+          AppText('Booking reference: ${b.reference}'),
+          const AppText('Tokens are valid for this date and slot only.'),
           const SizedBox(height: 24),
           const InfoLine(
             Icons.location_on_outlined,
@@ -120,7 +121,7 @@ class _PassCardState extends ConsumerState<PassCard> {
               ),
             ),
             const SizedBox(height: 14),
-            const Text(
+            const AppText(
               'Show this pass to entry staff',
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -145,10 +146,10 @@ class _PassCardState extends ConsumerState<PassCard> {
                       }
                     },
               icon: const Icon(Icons.download_outlined),
-              label: const Text('Download pass (PDF)'),
+              label: const AppText('Download pass (PDF)'),
             ),
           ] else
-            const Text(
+            const AppText(
               'This pass is no longer valid for entry.',
               textAlign: TextAlign.center,
             ),
@@ -158,7 +159,7 @@ class _PassCardState extends ConsumerState<PassCard> {
               onPressed: busy ? null : cancel,
               style: TextButton.styleFrom(foregroundColor: AppColors.error),
               icon: const Icon(Icons.cancel_outlined),
-              label: const Text('Cancel booking'),
+              label: const AppText('Cancel booking'),
             ),
           ],
         ],

@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,7 +25,7 @@ class InformationPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppText(
                 'Welcome to Keekkott Thangal Maqam',
                 style: TextStyle(
                   fontFamily: 'Newsreader',
@@ -33,11 +34,11 @@ class InformationPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 14),
-              Text(
+              AppText(
                 'Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.',
               ),
               SizedBox(height: 16),
-              Text(
+              AppText(
                 'Before travelling, check your reservation, allow enough time for your journey and keep your digital pass accessible. If you are accompanying children or older family members, plan a comfortable journey together.',
               ),
             ],
@@ -50,7 +51,7 @@ class InformationPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppText(
                 'Your information',
                 style: TextStyle(
                   fontSize: 19,
@@ -59,11 +60,11 @@ class InformationPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12),
-              Text(
+              AppText(
                 'Your name and verified mobile number support your booking. Your digital pass uses a private token. Keep it safe and only show it to entry staff. You can cancel an eligible booking from My Bookings.',
               ),
               SizedBox(height: 12),
-              Text(
+              AppText(
                 'Phone verification is provided by Google Firebase. Phone numbers are sent to Google for authentication and abuse prevention. Browser reminders are optional.',
               ),
             ],
@@ -83,7 +84,7 @@ class GuidelinesCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AppText(
             'Visiting etiquette',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
@@ -135,12 +136,12 @@ class LocationCard extends ConsumerWidget {
             color: AppColors.secondary,
           ),
           const SizedBox(height: 20),
-          Text(
+          AppText(
             'Keekkott Thangal Maqam',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 8),
-          const Text('Chavakkad, Kerala, India'),
+          const AppText('Chavakkad, Kerala, India'),
           const SizedBox(height: 24),
           if (config?.locationUrl.isNotEmpty == true)
             OutlinedButton.icon(
@@ -157,17 +158,19 @@ class LocationCard extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.directions_outlined),
-              label: const Text('Get directions'),
+              label: const AppText('Get directions'),
             )
           else
-            const Text('Detailed directions will appear here when available.'),
+            const AppText(
+              'Detailed directions will appear here when available.',
+            ),
           if (config?.contactPhone.isNotEmpty == true) ...[
             const SizedBox(height: 12),
             TextButton.icon(
               onPressed: () =>
                   launchUrl(Uri(scheme: 'tel', path: config.contactPhone)),
               icon: const Icon(Icons.call_outlined),
-              label: Text(config!.contactPhone),
+              label: AppText(config!.contactPhone),
             ),
           ],
         ],

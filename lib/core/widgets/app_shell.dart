@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -53,44 +54,52 @@ class AppShell extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      InkWell(
-                        onTap: () => context.go('/'),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Row(
-                            children: [
-                              Emblem(size: wide ? 48 : 34),
-                              const SizedBox(width: 10),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Keekkott Thangal',
-                                    style: TextStyle(
-                                      fontFamily: 'Newsreader',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: wide ? 26 : 19,
-                                      height: 1.2,
-                                      color: AppColors.emerald,
-                                    ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => context.go('/'),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: [
+                                Emblem(size: wide ? 48 : 34),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AppText(
+                                        'Keekkott Thangal',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontFamily: 'Newsreader',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: wide ? 26 : 19,
+                                          height: 1.2,
+                                          color: AppColors.emerald,
+                                        ),
+                                      ),
+                                      const AppText(
+                                        'MAQAM · CHAVAKKAD',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          height: 1.2,
+                                          color: AppColors.muted,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const Text(
-                                    'MAQAM · CHAVAKKAD',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      height: 1.2,
-                                      color: AppColors.muted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      const Spacer(),
                       if (wide) ...[
                         for (var i = 0; i < routes.length; i++)
                           Padding(
@@ -104,19 +113,31 @@ class AppShell extends ConsumerWidget {
                                       ? AppColors.mint
                                       : null,
                                 ),
-                                child: Text(labels[i]),
+                                child: AppText(
+                                  AppLanguage.of(context) == 'ml'
+                                      ? [
+                                          'ഹോം',
+                                          'ബുക്കിംഗ്',
+                                          'എന്റെ പാസ്',
+                                          'വിവരങ്ങൾ',
+                                        ][i]
+                                      : labels[i],
+                                ),
                               ),
                             ),
                           ),
                         const SizedBox(width: 8),
                       ],
                       IconButton(
-                        tooltip: 'Notifications',
+                        tooltip: tr(context, 'Notifications'),
                         onPressed: () => context.go('/notifications'),
                         icon: const Icon(Icons.notifications_none),
                       ),
                       PopupMenuButton<String>(
-                        tooltip: user == null ? 'Sign in' : 'Account',
+                        tooltip: tr(
+                          context,
+                          user == null ? 'Sign in' : 'Account',
+                        ),
                         icon: const Icon(Icons.account_circle_outlined),
                         onSelected: (value) async {
                           if (value == 'signout') {
@@ -144,7 +165,7 @@ class AppShell extends ConsumerWidget {
                           if (user == null)
                             const PopupMenuItem(
                               value: '/auth',
-                              child: Text('Sign in with mobile'),
+                              child: AppText('Sign in with mobile'),
                             ),
                           if (user != null)
                             PopupMenuItem(
@@ -154,17 +175,17 @@ class AppShell extends ConsumerWidget {
                           if (user?.admin == true)
                             const PopupMenuItem(
                               value: '/admin',
-                              child: Text('Administration'),
+                              child: AppText('Administration'),
                             ),
                           if (user?.gate == true && user?.admin != true)
                             const PopupMenuItem(
                               value: '/admin/gate',
-                              child: Text('Validate visitor pass'),
+                              child: AppText('Validate visitor pass'),
                             ),
                           if (user != null)
                             const PopupMenuItem(
                               value: 'signout',
-                              child: Text('Sign out'),
+                              child: AppText('Sign out'),
                             ),
                         ],
                       ),
@@ -186,7 +207,7 @@ class AppShell extends ConsumerWidget {
                 for (var i = 0; i < routes.length; i++)
                   NavigationDestination(
                     icon: Icon(icons[i]),
-                    label: ['Home', 'Book', 'Bookings', 'Info'][i],
+                    label: tr(context, ['Home', 'Book', 'Bookings', 'Info'][i]),
                   ),
               ],
             ),

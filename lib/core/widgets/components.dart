@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -80,8 +81,8 @@ class PageHeading extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (eyebrow != null) ...[
-          Text(
-            eyebrow!.toUpperCase(),
+          AppText(
+            tr(context, eyebrow!).toUpperCase(),
             style: const TextStyle(
               color: AppColors.secondary,
               fontSize: 12,
@@ -91,10 +92,10 @@ class PageHeading extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        Text(title, style: Theme.of(context).textTheme.headlineLarge),
+        AppText(title, style: Theme.of(context).textTheme.headlineLarge),
         if (subtitle != null) ...[
           const SizedBox(height: 8),
-          Text(subtitle!, style: Theme.of(context).textTheme.bodyLarge),
+          AppText(subtitle!, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ],
     ),
@@ -115,7 +116,7 @@ class BookingProgress extends StatelessWidget {
         'Confirm your details',
       ].indexed)
         Semantics(
-          label: 'Step ${index + 1} of 2: $label',
+          label: 'Step ${index + 1} of 2: ${tr(context, label)}',
           selected: current == index,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -123,8 +124,8 @@ class BookingProgress extends StatelessWidget {
               color: current == index ? AppColors.emerald : AppColors.mint,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
-              '${index < current ? '✓' : index + 1}  $label',
+            child: AppText(
+              '${index < current ? '✓' : index + 1}  ${tr(context, label)}',
               style: TextStyle(
                 color: current == index ? AppColors.white : AppColors.emerald,
                 fontWeight: FontWeight.w600,
@@ -156,7 +157,7 @@ class StatusBadge extends StatelessWidget {
           : AppColors.mint,
       borderRadius: BorderRadius.circular(20),
     ),
-    child: Text(
+    child: AppText(
       label,
       style: TextStyle(
         fontSize: 13,
@@ -188,9 +189,9 @@ class InfoLine extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            AppText(title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 4),
-            Text(detail, style: Theme.of(context).textTheme.bodyMedium),
+            AppText(detail, style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       ),
@@ -249,7 +250,7 @@ class AsyncPanel<T> extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Loading…'),
+            AppText('Loading…'),
           ],
         ),
       ),
@@ -264,7 +265,7 @@ class AsyncPanel<T> extends StatelessWidget {
           : OutlinedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try again'),
+              label: const AppText('Try again'),
             ),
     ),
   );
@@ -290,14 +291,14 @@ class EmptyState extends StatelessWidget {
         children: [
           Icon(icon, size: 38, color: AppColors.secondary),
           const SizedBox(height: 18),
-          Text(
+          AppText(
             title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           if (detail != null) ...[
             const SizedBox(height: 12),
-            Text(detail!, textAlign: TextAlign.center),
+            AppText(detail!, textAlign: TextAlign.center),
           ],
           if (action != null) ...[const SizedBox(height: 20), action!],
         ],
@@ -308,7 +309,7 @@ class EmptyState extends StatelessWidget {
 
 void showMessage(BuildContext context, String message) => ScaffoldMessenger.of(
   context,
-).showSnackBar(SnackBar(content: Text(message)));
+).showSnackBar(SnackBar(content: AppText(message)));
 String failureMessage(Object e) => e is AppFailure
     ? e.message
     : 'We could not complete this request. Please try again.';
@@ -321,16 +322,16 @@ Future<bool> confirmDialog(
     await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
+        title: AppText(title),
+        content: AppText(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Keep booking'),
+            child: const AppText('Keep booking'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(confirmLabel),
+            child: AppText(confirmLabel),
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,7 +58,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 16,
                   children: [
-                    Text(
+                    AppText(
                       VisitClock.dayLabel(day),
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
@@ -92,7 +93,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                         }
                       },
                       icon: const Icon(Icons.calendar_month_outlined),
-                      label: const Text('Calendar'),
+                      label: const AppText('Calendar'),
                     ),
                   ],
                 ),
@@ -131,23 +132,23 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
+                                AppText(
                                   d == VisitClock.today()
                                       ? 'Today'
-                                      : DateFormat('EEE').format(dt),
+                                      : DateFormat('EEE', 'en').format(dt),
                                   style: const TextStyle(fontSize: 12),
                                 ),
-                                Text(
+                                AppText(
                                   '${dt.day}',
                                   style: const TextStyle(
                                     fontFamily: 'Newsreader',
                                     fontSize: 30,
                                   ),
                                 ),
-                                Text(
+                                AppText(
                                   closed.contains(d)
                                       ? 'Closed'
-                                      : DateFormat('MMM').format(dt),
+                                      : DateFormat('MMM', 'en').format(dt),
                                   style: const TextStyle(fontSize: 12),
                                 ),
                               ],
@@ -206,7 +207,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               'Evening',
                             ])
                               ChoiceChip(
-                                label: Text(label),
+                                label: AppText(label),
                                 selected: periodFilter == label,
                                 onSelected: (_) =>
                                     setState(() => periodFilter = label),
@@ -217,7 +218,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                         if (!availability.slots.any((s) => s.accepts(visitors)))
                           const Padding(
                             padding: EdgeInsets.only(bottom: 20),
-                            child: Text(
+                            child: AppText(
                               'No available time for this group. Try another date or adjust the number of visitors.',
                             ),
                           ),
@@ -232,7 +233,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             ))
                           const Padding(
                             padding: EdgeInsets.only(bottom: 20),
-                            child: Text(
+                            child: AppText(
                               'No scheduled slots in this period. Choose All times or another date.',
                             ),
                           ),
@@ -250,7 +251,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               )) ...[
                             Padding(
                               padding: const EdgeInsets.only(bottom: 14),
-                              child: Text(
+                              child: AppText(
                                 period.$1,
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
@@ -308,7 +309,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Text(
+                            AppText(
                               'Your visit',
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
@@ -327,7 +328,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             const SizedBox(height: 24),
                             const Divider(),
                             const SizedBox(height: 16),
-                            const Text(
+                            const AppText(
                               'Number of visitors',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
@@ -335,14 +336,14 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             Row(
                               children: [
                                 IconButton.filledTonal(
-                                  tooltip: 'Remove one visitor',
+                                  tooltip: tr(context, 'Remove one visitor'),
                                   onPressed: visitors <= 1
                                       ? null
                                       : () => setState(() => visitors--),
                                   icon: const Icon(Icons.remove),
                                 ),
                                 Expanded(
-                                  child: Text(
+                                  child: AppText(
                                     '$visitors',
                                     textAlign: TextAlign.center,
                                     style: Theme.of(
@@ -351,7 +352,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   ),
                                 ),
                                 IconButton.filled(
-                                  tooltip: 'Add one visitor',
+                                  tooltip: tr(context, 'Add one visitor'),
                                   onPressed:
                                       visitors >=
                                               config.maxVisitorsPerBooking ||
@@ -364,11 +365,11 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            Text(
+                            AppText(
                               'Up to ${config.maxVisitorsPerBooking} visitors per booking.',
                             ),
                             const SizedBox(height: 24),
-                            Text(
+                            AppText(
                               selected == null
                                   ? 'Select an available time to continue.'
                                   : '${VisitClock.dayLabel(day)}\n${selected.label}',
@@ -389,10 +390,10 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                       context.go('/book/confirmation');
                                     },
                               icon: const Icon(Icons.check_circle_outline),
-                              label: const Text('Continue'),
+                              label: const AppText('Continue'),
                             ),
                             const SizedBox(height: 14),
-                            const Text(
+                            const AppText(
                               'After mobile verification, your places are held for 5 minutes while you confirm.',
                               style: TextStyle(fontSize: 13, height: 1.6),
                             ),

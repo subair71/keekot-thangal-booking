@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,22 +57,22 @@ class _HomePageState extends ConsumerState<HomePage> {
                 TextButton.icon(
                   onPressed: () => context.go('/book'),
                   icon: const Icon(Icons.calendar_month_outlined),
-                  label: const Text('Book a visit'),
+                  label: const AppText('Book a visit'),
                 ),
                 TextButton.icon(
                   onPressed: () => reveal(guideKey),
                   icon: const Icon(Icons.menu_book_outlined),
-                  label: const Text('Visitor guide'),
+                  label: const AppText('Visitor guide'),
                 ),
                 TextButton.icon(
                   onPressed: () => reveal(videosKey),
                   icon: const Icon(Icons.play_circle_outline),
-                  label: const Text('Videos'),
+                  label: const AppText('Videos'),
                 ),
                 TextButton.icon(
                   onPressed: () => reveal(questionsKey),
                   icon: const Icon(Icons.help_outline),
-                  label: const Text('Questions before you visit'),
+                  label: const AppText('Questions before you visit'),
                 ),
               ],
             ),
@@ -125,7 +126,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   'A place for remembrance.\nA moment for yourself.',
                 ),
                 SizedBox(height: 20),
-                Text(
+                AppText(
                   'Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
                   style: TextStyle(
                     fontSize: 18,
@@ -134,7 +135,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 ),
                 SizedBox(height: 18),
-                Text(
+                AppText(
                   'This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.',
                 ),
                 SizedBox(height: 28),
@@ -218,7 +219,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   'Make room for a meaningful visit.',
                 ),
                 SizedBox(height: 18),
-                Text(
+                AppText(
                   'Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
                 ),
                 SizedBox(height: 24),
@@ -255,7 +256,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   size: 32,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                AppText(
                   'Your next visit begins with a little planning.',
                   textAlign: TextAlign.center,
                   style: Theme.of(
@@ -263,7 +264,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ).textTheme.headlineLarge!.copyWith(color: Colors.white),
                 ),
                 const SizedBox(height: 14),
-                const Text(
+                const AppText(
                   'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Color(0xFFD9E6DF)),
@@ -276,7 +277,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                   onPressed: () => context.go('/book'),
                   icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Plan my visit'),
+                  label: const AppText('Plan my visit'),
                 ),
               ],
             ),
@@ -286,12 +287,12 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: 24),
           const Emblem(size: 64),
           const SizedBox(height: 12),
-          Text(
+          AppText(
             'Keekkott Thangal Maqam',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          const Text(
+          const AppText(
             'Ziyarat & visitor booking · Chavakkad, Kerala',
             textAlign: TextAlign.center,
           ),
@@ -302,21 +303,21 @@ class _HomePageState extends ConsumerState<HomePage> {
             children: [
               TextButton(
                 onPressed: () => context.go('/information'),
-                child: const Text('Visitor information'),
+                child: const AppText('Visitor information'),
               ),
               TextButton(
                 onPressed: () => context.go('/my-bookings'),
-                child: const Text('My bookings'),
+                child: const AppText('My bookings'),
               ),
             ],
           ),
           TextButton.icon(
             onPressed: () => reveal(videosKey),
             icon: const Icon(Icons.play_circle_outline),
-            label: const Text('Videos'),
+            label: const AppText('Videos'),
           ),
           const SizedBox(height: 8),
-          const Text(
+          const AppText(
             'All visit times are in India Standard Time.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12),
@@ -379,7 +380,7 @@ class _MaqamHero extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: const Text(
+                    child: const AppText(
                       'KEEKKOTT THANGAL MAQAM',
                       style: TextStyle(
                         color: AppColors.mintStrong,
@@ -392,7 +393,7 @@ class _MaqamHero extends StatelessWidget {
                   SizedBox(height: compact ? 36 : 56),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 650),
-                    child: Text(
+                    child: AppText(
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
                         fontFamily: 'Newsreader',
@@ -405,7 +406,7 @@ class _MaqamHero extends StatelessWidget {
                   const SizedBox(height: 24),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
-                    child: const Text(
+                    child: const AppText(
                       'Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Maqam, Chavakkad.',
                       style: TextStyle(
                         color: Color(0xFFE7EEE7),
@@ -426,7 +427,7 @@ class _MaqamHero extends StatelessWidget {
                           foregroundColor: AppColors.emerald,
                         ),
                         icon: const Icon(Icons.calendar_month_outlined),
-                        label: const Text('Book a visit'),
+                        label: const AppText('Book a visit'),
                       ),
                       OutlinedButton(
                         onPressed: () => context.go('/information'),
@@ -434,14 +435,14 @@ class _MaqamHero extends StatelessWidget {
                           foregroundColor: Colors.white,
                           side: const BorderSide(color: Color(0xFFB7C9BE)),
                         ),
-                        child: const Text('Visitor guide'),
+                        child: const AppText('Visitor guide'),
                       ),
                     ],
                   ),
                   SizedBox(height: compact ? 36 : 58),
                   const Divider(color: AppColors.secondary),
                   const SizedBox(height: 16),
-                  const Text(
+                  const AppText(
                     'CHAVAKKAD  /  KERALA  /  INDIA',
                     style: TextStyle(
                       color: AppColors.mintStrong,
@@ -450,7 +451,7 @@ class _MaqamHero extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  const AppText(
                     'Oil painting inspired by the Keekkott Maqam photograph',
                     style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 11),
                   ),
@@ -471,7 +472,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
+      AppText(
         eyebrow,
         style: const TextStyle(
           color: AppColors.gold,
@@ -481,7 +482,7 @@ class _SectionTitle extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 14),
-      Text(title, style: Theme.of(context).textTheme.headlineLarge),
+      AppText(title, style: Theme.of(context).textTheme.headlineLarge),
     ],
   );
 }
@@ -519,7 +520,7 @@ class _VisitStep extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(
+      AppText(
         number,
         style: const TextStyle(
           fontFamily: 'Newsreader',
@@ -528,9 +529,9 @@ class _VisitStep extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 14),
-      Text(title, style: Theme.of(context).textTheme.titleLarge),
+      AppText(title, style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: 10),
-      Text(description),
+      AppText(description),
     ],
   );
 }
@@ -542,7 +543,7 @@ class _VisitQuestions extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           'Questions before you visit',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
@@ -572,7 +573,7 @@ class _VisitQuestions extends StatelessWidget {
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
             childrenPadding: const EdgeInsets.only(bottom: 20),
-            title: Text(
+            title: AppText(
               item.$1,
               style: const TextStyle(
                 fontSize: 15,
@@ -581,7 +582,7 @@ class _VisitQuestions extends StatelessWidget {
               ),
             ),
             children: [
-              Align(alignment: Alignment.centerLeft, child: Text(item.$2)),
+              Align(alignment: Alignment.centerLeft, child: AppText(item.$2)),
             ],
           ),
       ],
@@ -622,7 +623,7 @@ class _LiveAvailability extends ConsumerWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       'Plan your visit',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
@@ -631,7 +632,7 @@ class _LiveAvailability extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              Text(
+              AppText(
                 '${VisitClock.dayLabel(day)} · ${config.hoursForDate(day)}',
                 style: const TextStyle(color: AppColors.muted),
               ),
@@ -646,14 +647,14 @@ class _LiveAvailability extends ConsumerWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
+                      AppText(
                         '${available.length} available time slots',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 10),
-                      if (a.closed) Text(a.reason),
+                      if (a.closed) AppText(a.reason),
                       if (available.isEmpty && !a.closed)
-                        const Text(
+                        const AppText(
                           'Choose another date to find an available time.',
                         ),
                       Wrap(
@@ -664,7 +665,9 @@ class _LiveAvailability extends ConsumerWidget {
                             .map(
                               (s) => Chip(
                                 visualDensity: VisualDensity.compact,
-                                label: Text(VisitClock.timeLabel(s.startTime)),
+                                label: AppText(
+                                  VisitClock.timeLabel(s.startTime),
+                                ),
                               ),
                             )
                             .toList(),
@@ -677,10 +680,10 @@ class _LiveAvailability extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: () => context.go('/book'),
                 icon: const Icon(Icons.calendar_month_outlined),
-                label: const Text('Choose a time'),
+                label: const AppText('Choose a time'),
               ),
               const SizedBox(height: 8),
-              const Text(
+              const AppText(
                 'Availability updates every 20 seconds.',
                 style: TextStyle(fontSize: 12, color: AppColors.muted),
               ),
@@ -705,7 +708,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
       final content = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          const AppText(
             'A GLIMPSE OF KEEKKOTT',
             style: TextStyle(
               color: AppColors.emerald,
@@ -715,12 +718,12 @@ class _HomeFeaturedVideo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
+          AppText(
             'A quiet moment before your visit.',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
-          const Text(
+          const AppText(
             'കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം',
             style: TextStyle(
               color: AppColors.emerald,
@@ -728,7 +731,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text.rich(
+          AppText.rich(
             const TextSpan(
               children: [
                 TextSpan(
@@ -751,7 +754,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          const AppText(
             'Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.',
             style: TextStyle(
               color: AppColors.muted,
@@ -766,7 +769,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
               mode: LaunchMode.externalApplication,
             ),
             icon: const Icon(Icons.open_in_new, size: 16),
-            label: const Text('Watch the full video with sound'),
+            label: const AppText('Watch the full video with sound'),
           ),
         ],
       );
@@ -790,7 +793,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          const AppText(
             'Keekkott Bungalow Online · Silent video preview',
             style: TextStyle(fontSize: 11, color: AppColors.muted),
           ),

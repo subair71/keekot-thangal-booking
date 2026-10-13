@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -134,7 +135,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
             title: error ?? 'Select a visit time first',
             action: FilledButton(
               onPressed: () => context.go('/book'),
-              child: const Text('Choose a time'),
+              child: const AppText('Choose a time'),
             ),
           )
         : TwoColumn(
@@ -145,7 +146,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
+                        child: AppText(
                           'Booking summary',
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
@@ -185,7 +186,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 16),
-                  const Text(
+                  const AppText(
                     'Keep your pass ready when you arrive. Please dress respectfully and silence your phone during your visit.',
                   ),
                 ],
@@ -197,7 +198,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
+                    AppText(
                       'Visitor details',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
@@ -208,13 +209,13 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       maxLength: 100,
                       textCapitalization: TextCapitalization.words,
                       autofillHints: const [AutofillHints.name],
-                      decoration: const InputDecoration(
-                        labelText: 'Full name',
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'Full name'),
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (value) =>
                           value == null || value.trim().length < 2
-                          ? 'Enter your full name.'
+                          ? tr(context, 'Enter your full name.')
                           : null,
                     ),
                     const SizedBox(height: 18),
@@ -227,15 +228,18 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       keyboardType: TextInputType.streetAddress,
                       textCapitalization: TextCapitalization.sentences,
                       autofillHints: const [AutofillHints.fullStreetAddress],
-                      decoration: const InputDecoration(
-                        labelText: 'Address',
-                        hintText: 'House / street, area, city and postal code',
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'Address'),
+                        hintText: tr(
+                          context,
+                          'House / street, area, city and postal code',
+                        ),
                         alignLabelWithHint: true,
                         prefixIcon: Icon(Icons.home_outlined),
                       ),
                       validator: (value) =>
                           value == null || value.trim().length < 5
-                          ? 'Enter your address.'
+                          ? tr(context, 'Enter your address.')
                           : null,
                     ),
                     const SizedBox(height: 18),
@@ -248,7 +252,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                     if (error != null) ...[
                       Semantics(
                         liveRegion: true,
-                        child: Text(
+                        child: AppText(
                           error!,
                           style: const TextStyle(color: AppColors.error),
                         ),
@@ -256,7 +260,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       const SizedBox(height: 20),
                     ],
                     if (remaining == 0) ...[
-                      const Text(
+                      const AppText(
                         'Your hold has ended. Please select your time again.',
                       ),
                       const SizedBox(height: 20),
@@ -264,12 +268,12 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                     FilledButton.icon(
                       onPressed: busy || remaining == 0 ? null : submit,
                       icon: const Icon(Icons.lock_outline),
-                      label: Text(busy ? 'Confirming…' : 'Confirm booking'),
+                      label: AppText(busy ? 'Confirming…' : 'Confirm booking'),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: busy ? null : change,
-                      child: const Text('Change date or time'),
+                      child: const AppText('Change date or time'),
                     ),
                   ],
                 ),

@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,7 +38,7 @@ class NotificationsPage extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text(
+                              AppText(
                                 n.title,
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
@@ -57,7 +58,7 @@ class NotificationsPage extends ConsumerWidget {
                                     context.go('/booking/${n.bookingId}');
                                   }
                                 },
-                                child: const Text('View booking'),
+                                child: const AppText('View booking'),
                               ),
                             ],
                           ),
@@ -84,14 +85,14 @@ class _NotificationOptInState extends ConsumerState<NotificationOptIn> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
+        AppText(
           enabled
               ? 'Browser reminders enabled'
               : 'A gentle reminder before your visit',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
-        const Text(
+        const AppText(
           'Get your booking updates on this device. This is optional.',
         ),
         const SizedBox(height: 16),
@@ -122,7 +123,7 @@ class _NotificationOptInState extends ConsumerState<NotificationOptIn> {
                   }
                 },
           icon: const Icon(Icons.notifications_active_outlined),
-          label: Text(
+          label: AppText(
             busy
                 ? 'Enabling…'
                 : enabled
