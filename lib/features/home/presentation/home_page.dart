@@ -39,318 +39,290 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final config = ref.watch(configurationProvider);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final pinned =
-            constraints.maxWidth >= 1180 &&
-            MediaQuery.textScalerOf(context).scale(16) <= 24;
-        final availability = AsyncPanel(
-          value: config,
-          onRetry: () => ref.invalidate(configurationProvider),
-          builder: (c) => _LiveAvailability(c),
-        );
-        final page = PageContainer(
-          width: pinned ? 1020 : 1400,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const _MaqamHero(),
-              if (!pinned) ...[const SizedBox(height: 20), availability],
-              const SizedBox(height: 20),
-              SurfaceCard(
-                padding: 12,
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 4,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () => context.go('/book'),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: const Text('Book a visit'),
-                    ),
-                    TextButton.icon(
-                      onPressed: () => reveal(guideKey),
-                      icon: const Icon(Icons.menu_book_outlined),
-                      label: const Text('Visitor guide'),
-                    ),
-                    TextButton.icon(
-                      onPressed: () => reveal(videosKey),
-                      icon: const Icon(Icons.play_circle_outline),
-                      label: const Text('Videos'),
-                    ),
-                    TextButton.icon(
-                      onPressed: () => reveal(questionsKey),
-                      icon: const Icon(Icons.help_outline),
-                      label: const Text('Questions before you visit'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              AsyncPanel(
-                value: config,
-                onRetry: () => ref.invalidate(configurationProvider),
-                builder: (c) => SurfaceCard(
-                  child: _FeatureGrid(
-                    children: [
-                      InfoLine(
-                        Icons.schedule_outlined,
-                        'Visiting hours',
-                        c.hoursForDate(VisitClock.today()),
-                      ),
-                      InfoLine(
-                        Icons.hourglass_bottom_outlined,
-                        'Time for your visit',
-                        '${c.slotDurationMinutes} minutes per slot',
-                      ),
-                      const InfoLine(
-                        Icons.location_on_outlined,
-                        'Find us',
-                        'Chavakkad, Kerala',
-                      ),
-                      const InfoLine(
-                        Icons.confirmation_number_outlined,
-                        'Easy entry',
-                        'Your booking. Your digital pass.',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 48),
-              const _HomeFeaturedVideo(),
-              const SizedBox(height: 72),
-              TwoColumn(
-                main: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SectionTitle(
-                      'WELCOME TO KEEKKOTT',
-                      'A place for remembrance.\nA moment for yourself.',
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
-                      style: TextStyle(
-                        fontSize: 18,
-                        height: 1.8,
-                        color: AppColors.ink,
-                      ),
-                    ),
-                    SizedBox(height: 18),
-                    Text(
-                      'This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.',
-                    ),
-                    SizedBox(height: 28),
-                    _FeatureGrid(
-                      children: [
-                        InfoLine(
-                          Icons.auto_awesome_outlined,
-                          'Remembrance & dua',
-                          'Set aside the rush of the day for a thoughtful visit.',
-                        ),
-                        InfoLine(
-                          Icons.people_outline,
-                          'Care for one another',
-                          'Give fellow visitors the space and quiet they need.',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                aside: const LocationCard(),
-              ),
-              const SizedBox(height: 72),
-              Container(
-                padding: const EdgeInsets.all(28),
-                decoration: BoxDecoration(
-                  color: AppColors.cream,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SectionTitle(
-                      'YOUR VISIT, SIMPLIFIED',
-                      'Arrive prepared. Be fully present.',
-                    ),
-                    SizedBox(height: 30),
-                    _FeatureGrid(
-                      children: [
-                        _VisitStep(
-                          '01',
-                          'Choose your time',
-                          'Select an available date and time that works for you. Check the latest schedule before making travel plans.',
-                        ),
-                        _VisitStep(
-                          '02',
-                          'Confirm your details',
-                          'Verify your mobile number and add the visitor details requested to complete your reservation.',
-                        ),
-                        _VisitStep(
-                          '03',
-                          'Keep your pass ready',
-                          'Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 72),
-              KeyedSubtree(key: videosKey, child: const VideoGallery()),
-              const SizedBox(height: 72),
-              const _SectionTitle(
-                'A CONSIDERATE ZIYARAT',
-                'Small gestures. A peaceful atmosphere.',
-              ),
-              const SizedBox(height: 24),
-              KeyedSubtree(
-                key: guideKey,
-                child: const TwoColumn(
-                  main: GuidelinesCard(),
-                  aside: LocationCard(),
-                ),
-              ),
-              const SizedBox(height: 72),
-              TwoColumn(
-                main: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _SectionTitle(
-                      'BEFORE YOU SET OUT',
-                      'Make room for a meaningful visit.',
-                    ),
-                    SizedBox(height: 18),
-                    Text(
-                      'Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
-                    ),
-                    SizedBox(height: 24),
-                    InfoLine(
-                      Icons.family_restroom_outlined,
-                      'Visiting with family',
-                      'Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.',
-                    ),
-                    SizedBox(height: 24),
-                    InfoLine(
-                      Icons.photo_camera_outlined,
-                      'Photography & privacy',
-                      'Ask staff before taking photographs. Respect other visitors and any restrictions within the Maqam.',
-                    ),
-                  ],
-                ),
-                aside: KeyedSubtree(
-                  key: questionsKey,
-                  child: const _VisitQuestions(),
-                ),
-              ),
-              const SizedBox(height: 64),
-              Container(
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: AppColors.emerald,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.spa_outlined,
-                      color: AppColors.mintStrong,
-                      size: 32,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Your next visit begins with a little planning.',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineLarge!.copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFFD9E6DF)),
-                    ),
-                    const SizedBox(height: 24),
-                    FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.mintStrong,
-                        foregroundColor: AppColors.emerald,
-                      ),
-                      onPressed: () => context.go('/book'),
-                      icon: const Icon(Icons.arrow_forward),
-                      label: const Text('Plan my visit'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 44),
-              const Divider(),
-              const SizedBox(height: 24),
-              const Emblem(size: 64),
-              const SizedBox(height: 12),
-              Text(
-                'Keekkott Thangal Maqam',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const Text(
-                'Ziyarat & visitor booking · Chavakkad, Kerala',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 16,
-                children: [
-                  TextButton(
-                    onPressed: () => context.go('/information'),
-                    child: const Text('Visitor information'),
-                  ),
-                  TextButton(
-                    onPressed: () => context.go('/my-bookings'),
-                    child: const Text('My bookings'),
-                  ),
-                ],
-              ),
-              TextButton.icon(
-                onPressed: () => reveal(videosKey),
-                icon: const Icon(Icons.play_circle_outline),
-                label: const Text('Videos'),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'All visit times are in India Standard Time.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-        );
-        if (!pinned) return page;
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1400),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return PageContainer(
+      width: 1400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const _MaqamHero(),
+          const SizedBox(height: 20),
+          SurfaceCard(
+            padding: 12,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 4,
               children: [
-                Expanded(child: page),
-                SizedBox(
-                  width: 380,
-                  child: SingleChildScrollView(
-                    key: const ValueKey('pinned-hero-availability'),
-                    padding: const EdgeInsets.fromLTRB(0, 36, 32, 36),
-                    child: availability,
-                  ),
+                TextButton.icon(
+                  onPressed: () => context.go('/book'),
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  label: const Text('Book a visit'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(guideKey),
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Visitor guide'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(videosKey),
+                  icon: const Icon(Icons.play_circle_outline),
+                  label: const Text('Videos'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(questionsKey),
+                  icon: const Icon(Icons.help_outline),
+                  label: const Text('Questions before you visit'),
                 ),
               ],
             ),
           ),
-        );
-      },
+          const SizedBox(height: 24),
+          AsyncPanel(
+            value: config,
+            onRetry: () => ref.invalidate(configurationProvider),
+            builder: (c) => SurfaceCard(
+              child: _FeatureGrid(
+                children: [
+                  InfoLine(
+                    Icons.schedule_outlined,
+                    'Visiting hours',
+                    c.hoursForDate(VisitClock.today()),
+                  ),
+                  InfoLine(
+                    Icons.hourglass_bottom_outlined,
+                    'Time for your visit',
+                    '${c.slotDurationMinutes} minutes per slot',
+                  ),
+                  const InfoLine(
+                    Icons.location_on_outlined,
+                    'Find us',
+                    'Chavakkad, Kerala',
+                  ),
+                  const InfoLine(
+                    Icons.confirmation_number_outlined,
+                    'Easy entry',
+                    'Your booking. Your digital pass.',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 28),
+          AsyncPanel(
+            value: config,
+            onRetry: () => ref.invalidate(configurationProvider),
+            builder: (c) => _LiveAvailability(c),
+          ),
+          const SizedBox(height: 48),
+          const _HomeFeaturedVideo(),
+          const SizedBox(height: 72),
+          TwoColumn(
+            main: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionTitle(
+                  'WELCOME TO KEEKKOTT',
+                  'A place for remembrance.\nA moment for yourself.',
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    height: 1.8,
+                    color: AppColors.ink,
+                  ),
+                ),
+                SizedBox(height: 18),
+                Text(
+                  'This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.',
+                ),
+                SizedBox(height: 28),
+                _FeatureGrid(
+                  children: [
+                    InfoLine(
+                      Icons.auto_awesome_outlined,
+                      'Remembrance & dua',
+                      'Set aside the rush of the day for a thoughtful visit.',
+                    ),
+                    InfoLine(
+                      Icons.people_outline,
+                      'Care for one another',
+                      'Give fellow visitors the space and quiet they need.',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            aside: const LocationCard(),
+          ),
+          const SizedBox(height: 72),
+          Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: AppColors.cream,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionTitle(
+                  'YOUR VISIT, SIMPLIFIED',
+                  'Arrive prepared. Be fully present.',
+                ),
+                SizedBox(height: 30),
+                _FeatureGrid(
+                  children: [
+                    _VisitStep(
+                      '01',
+                      'Choose your time',
+                      'Select an available date and time that works for you. Check the latest schedule before making travel plans.',
+                    ),
+                    _VisitStep(
+                      '02',
+                      'Confirm your details',
+                      'Verify your mobile number and add the visitor details requested to complete your reservation.',
+                    ),
+                    _VisitStep(
+                      '03',
+                      'Keep your pass ready',
+                      'Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.',
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 72),
+          KeyedSubtree(key: videosKey, child: const VideoGallery()),
+          const SizedBox(height: 72),
+          const _SectionTitle(
+            'A CONSIDERATE ZIYARAT',
+            'Small gestures. A peaceful atmosphere.',
+          ),
+          const SizedBox(height: 24),
+          KeyedSubtree(
+            key: guideKey,
+            child: const TwoColumn(
+              main: GuidelinesCard(),
+              aside: LocationCard(),
+            ),
+          ),
+          const SizedBox(height: 72),
+          TwoColumn(
+            main: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionTitle(
+                  'BEFORE YOU SET OUT',
+                  'Make room for a meaningful visit.',
+                ),
+                SizedBox(height: 18),
+                Text(
+                  'Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
+                ),
+                SizedBox(height: 24),
+                InfoLine(
+                  Icons.family_restroom_outlined,
+                  'Visiting with family',
+                  'Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.',
+                ),
+                SizedBox(height: 24),
+                InfoLine(
+                  Icons.photo_camera_outlined,
+                  'Photography & privacy',
+                  'Ask staff before taking photographs. Respect other visitors and any restrictions within the Maqam.',
+                ),
+              ],
+            ),
+            aside: KeyedSubtree(
+              key: questionsKey,
+              child: const _VisitQuestions(),
+            ),
+          ),
+          const SizedBox(height: 64),
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: AppColors.emerald,
+              borderRadius: BorderRadius.circular(28),
+            ),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.spa_outlined,
+                  color: AppColors.mintStrong,
+                  size: 32,
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Your next visit begins with a little planning.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineLarge!.copyWith(color: Colors.white),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xFFD9E6DF)),
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.mintStrong,
+                    foregroundColor: AppColors.emerald,
+                  ),
+                  onPressed: () => context.go('/book'),
+                  icon: const Icon(Icons.arrow_forward),
+                  label: const Text('Plan my visit'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 44),
+          const Divider(),
+          const SizedBox(height: 24),
+          const Emblem(size: 64),
+          const SizedBox(height: 12),
+          Text(
+            'Keekkott Thangal Maqam',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const Text(
+            'Ziyarat & visitor booking · Chavakkad, Kerala',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            children: [
+              TextButton(
+                onPressed: () => context.go('/information'),
+                child: const Text('Visitor information'),
+              ),
+              TextButton(
+                onPressed: () => context.go('/my-bookings'),
+                child: const Text('My bookings'),
+              ),
+            ],
+          ),
+          TextButton.icon(
+            onPressed: () => reveal(videosKey),
+            icon: const Icon(Icons.play_circle_outline),
+            label: const Text('Videos'),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'All visit times are in India Standard Time.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -638,18 +610,18 @@ class _LiveAvailability extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            spacing: 10,
-            runSpacing: 8,
-            crossAxisAlignment: WrapCrossAlignment.center,
+          Row(
             children: [
               const Icon(
                 Icons.event_available_outlined,
                 color: AppColors.secondary,
               ),
-              Text(
-                'Plan your visit',
-                style: Theme.of(context).textTheme.titleLarge,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Plan your visit',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
               const StatusBadge('Availability'),
             ],
