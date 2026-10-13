@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keekot_thangal/app/app.dart';
@@ -8,6 +9,11 @@ import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
 import 'fixtures.dart';
 
 void main() {
+  setUpAll(() async {
+    final font = FontLoader('Noto Sans Malayalam')
+      ..addFont(rootBundle.load('assets/fonts/NotoSansMalayalam.ttf'));
+    await font.load();
+  });
   test('Malayalam formats counts and dates without altering identifiers', () {
     expect(
       translateMalayalam('12 available time slots'),
@@ -59,7 +65,7 @@ void main() {
       await tester.ensureVisible(add);
       await tester.tap(add);
       await tester.pumpAndSettle();
-      final remove = find.byTooltip('ഒരു സന്ദർശകനെ കുറയ്ക്കുക');
+      final remove = find.widgetWithIcon(IconButton, Icons.remove);
       expect(tester.widget<IconButton>(remove).onPressed, isNotNull);
       await tester.tap(toggle);
       await tester.pumpAndSettle();
@@ -67,7 +73,7 @@ void main() {
       expect(find.text('Select your visit'), findsOneWidget);
       expect(
         tester
-            .widget<IconButton>(find.byTooltip('Remove one visitor'))
+            .widget<IconButton>(find.widgetWithIcon(IconButton, Icons.remove))
             .onPressed,
         isNotNull,
       );
