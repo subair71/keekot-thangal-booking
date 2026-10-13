@@ -82,7 +82,7 @@ class PageHeading extends StatelessWidget {
       children: [
         if (eyebrow != null) ...[
           AppText(
-            eyebrow!.toUpperCase(),
+            tr(context, eyebrow!).toUpperCase(),
             style: const TextStyle(
               color: AppColors.secondary,
               fontSize: 12,
