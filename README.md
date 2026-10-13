@@ -2,7 +2,7 @@
 
 A native Flutter Web application for visits to Keekot Thangal Maqam, Chavakkad, Kerala. It implements phone verification, configurable slots, five-minute holds, atomic booking and cancellation, private QR/PDF passes, notifications and staff administration. The supplied mobile design was inspected and rebuilt for responsive web layouts.
 
-**Status:** source and local validation are provided. A production Firebase project, actual venue settings and deployment credentials must be supplied before opening the service. See `docs/validation.md` for the exact checks completed in this delivery and `docs/architecture.md` for implementation details.
+**Status:** the October 6 main commit was validated and published to GitHub Pages. Live Firebase booking operations remain unverified. See `docs/production-readiness.md` for the current audit and launch checklist. See `docs/validation.md` for the exact checks completed in this delivery and `docs/architecture.md` for implementation details.
 
 ## Prerequisites
 
@@ -49,7 +49,7 @@ Open `http://127.0.0.1:5000`. Reseed after emulator restarts unless you intentio
 
 1. Create separate staging and production projects. Register a web app in each. Create Firestore in Native mode in the chosen region; Functions are configured for `asia-south1`. If changing Functions region, update `functions/src/index.ts` and `FUNCTIONS_REGION` together.
 2. Enable Firebase Phone Authentication, permitted SMS regions (India for this deployment), quotas, and authorized domains. Include the actual `PROJECT_ID.web.app`, custom domain and staging domain. Add localhost only for local testing if needed. FlutterFire's `signInWithPhoneNumber` handles web reCAPTCHA. Use Firebase Console test phone numbers on staging to avoid sending real SMS during automated testing.
-3. Register Firebase App Check for the web app with reCAPTCHA v3. Add the same authorized domains and its public site key to `APP_CHECK_SITE_KEY`. Production callable functions enforce App Check. Verify staging tokens before enforcing additional Firestore App Check restrictions in the Firebase Console.
+3. Register Firebase App Check for the web app with reCAPTCHA v3. Add the same authorized domains and its public site key to `APP_CHECK_SITE_KEY`. Callable App Check enforcement is opt-in: set `ENFORCE_APP_CHECK=true` in `functions/.env.PROJECT_ID` and redeploy all callable functions after verifying staging tokens. Without this flag, callable functions do not enforce App Check. Verify staging tokens before enforcing additional Firestore App Check restrictions in the Firebase Console.
 4. Under Project Settings → Cloud Messaging, generate a Web Push certificate/VAPID public key. Enable the FCM Registration API if your project requires it. Set `VAPID_KEY`. HTTPS is required for browser push.
 5. Copy `config/staging.example.json` to `config/staging.json` and `config/production.example.json` to `config/production.json`. Fill the web app values from Firebase Console (or FlutterFire CLI output) plus VAPID/App Check keys. These are public web SDK values, not service-account credentials. The files are ignored to avoid accidentally deploying another environment.
 6. `python3 tool/configure_web.py config/production.json` creates matching public worker configuration in `web/firebase-config.js`. Run this for the same environment as `--dart-define-from-file`. The build helper does this automatically.
