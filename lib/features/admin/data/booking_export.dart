@@ -22,16 +22,46 @@ class BookingExport {
     'Token numbers',
   ];
 
-  static List<List<String>> rows(String day, List<VisitBooking> bookings) {
-    final selected = bookings.where((b) => b.visitDate == day).toList()
-      ..sort((a, b) {
-        final time = a.startAt.compareTo(b.startAt);
-        if (time != 0) return time;
-        final token = (a.tokenStart ?? 2147483647).compareTo(
-          b.tokenStart ?? 2147483647,
-        );
-        return token == 0 ? a.reference.compareTo(b.reference) : token;
-      });
+  static void validatePeriod(int startMinute, int endMinute) {
+    if (startMinute < 0 || endMinute > 1440 || startMinute >= endMinute) {
+      throw ArgumentError('End time must be after start time within one day.');
+    }
+  }
+
+  static String minuteValue(int minute) =>
+      '${(minute ~/ 60).toString().padLeft(2, '0')}:${(minute % 60).toString().padLeft(2, '0')}';
+
+  static String filePeriod(int startMinute, int endMinute) =>
+      startMinute == 0 && endMinute == 1440
+      ? 'all-day'
+      : '${minuteValue(startMinute).replaceAll(':', '')}-${minuteValue(endMinute).replaceAll(':', '')}';
+
+  static String periodLabel(int startMinute, int endMinute) =>
+      startMinute == 0 && endMinute == 1440
+      ? 'All day'
+      : '${VisitClock.timeLabel(minuteValue(startMinute))} to ${endMinute == 1440 ? 'midnight' : VisitClock.timeLabel(minuteValue(endMinute))} (booking start time; end exclusive)';
+
+  static List<List<String>> rows(
+    String day,
+    List<VisitBooking> bookings, {
+    int startMinute = 0,
+    int endMinute = 1440,
+  }) {
+    validatePeriod(startMinute, endMinute);
+    final selected =
+        bookings.where((b) {
+          if (b.visitDate != day) return false;
+          final parts = b.startTime.split(':');
+          final minute = int.parse(parts[0]) * 60 + int.parse(parts[1]);
+          return minute >= startMinute && minute < endMinute;
+        }).toList()..sort((a, b) {
+          final time = a.startAt.compareTo(b.startAt);
+          if (time != 0) return time;
+          final token = (a.tokenStart ?? 2147483647).compareTo(
+            b.tokenStart ?? 2147483647,
+          );
+          return token == 0 ? a.reference.compareTo(b.reference) : token;
+        });
     return selected
         .map(
           (b) => [
@@ -57,8 +87,16 @@ class BookingExport {
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&apos;');
 
-  static Uint8List excel(String day, List<VisitBooking> bookings) {
-    final data = [headers, ...rows(day, bookings)];
+  static Uint8List excel(
+    String day,
+    List<VisitBooking> bookings, {
+    int startMinute = 0,
+    int endMinute = 1440,
+  }) {
+    final data = [
+      headers,
+      ...rows(day, bookings, startMinute: startMinute, endMinute: endMinute),
+    ];
     final sheet = StringBuffer(
       '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/><col min="5" max="6" width="24" customWidth="1"/><col min="7" max="9" width="16" customWidth="1"/></cols><sheetData>''',
@@ -78,6 +116,11 @@ class BookingExport {
       }
       sheet.write('</row>');
     }
+    final summary =
+        '$day | ${periodLabel(startMinute, endMinute)} | India Standard Time | ${data.length - 1} bookings | All statuses';
+    sheet.write(
+      '<row r="${data.length + 2}"><c r="A${data.length + 2}" t="inlineStr"><is><t>${xml(summary)}</t></is></c></row>',
+    );
     sheet.write(
       '</sheetData><autoFilter ref="A1:I${data.length}"/></worksheet>',
     );
@@ -102,8 +145,18 @@ class BookingExport {
     return Uint8List.fromList(ZipEncoder().encode(archive));
   }
 
-  static Future<Uint8List> pdf(String day, List<VisitBooking> bookings) async {
-    final data = rows(day, bookings);
+  static Future<Uint8List> pdf(
+    String day,
+    List<VisitBooking> bookings, {
+    int startMinute = 0,
+    int endMinute = 1440,
+  }) async {
+    final data = rows(
+      day,
+      bookings,
+      startMinute: startMinute,
+      endMinute: endMinute,
+    );
     final font = pw.Font.ttf(
       await rootBundle.load('assets/fonts/PlusJakartaSans.ttf'),
     );
@@ -127,6 +180,7 @@ class BookingExport {
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
+              pw.Text(periodLabel(startMinute, endMinute)),
               pw.Text(
                 '${VisitClock.dayLabel(day)} | India Standard Time | ${data.length} bookings | All statuses',
               ),
@@ -142,7 +196,7 @@ class BookingExport {
         ),
         build: (_) => [
           if (data.isEmpty)
-            pw.Text('No bookings for this date.')
+            pw.Text('No bookings for the selected date and time frame.')
           else
             pw.TableHelper.fromTextArray(
               headers: headers,
