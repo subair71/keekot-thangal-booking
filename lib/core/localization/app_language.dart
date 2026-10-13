@@ -120,8 +120,9 @@ String translateMalayalam(String text) {
           (m) => months[m[0]]!,
         );
   }
-  if (text.contains('\n'))
+  if (text.contains('\n')) {
     return text.split('\n').map(translateMalayalam).join('\n');
+  }
   if (RegExp(r'^\d{1,2}:\d{2} (AM|PM)').hasMatch(text)) {
     return text.replaceAllMapped(
       RegExp(r'(\d+) visitors?\b'),
@@ -182,7 +183,7 @@ class AppText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (span != null)
+    if (span != null) {
       return Text.rich(
         translatedSpan(context, span!),
         style: localizedStyle(context, style),
@@ -195,6 +196,7 @@ class AppText extends StatelessWidget {
             : tr(context, semanticsLabel!),
         textDirection: textDirection,
       );
+    }
     return Text(
       tr(context, data!),
       style: localizedStyle(context, style),
