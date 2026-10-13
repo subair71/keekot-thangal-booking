@@ -606,82 +606,87 @@ class _LiveAvailability extends ConsumerWidget {
       (d) => !closed.contains(d),
       orElse: () => dates.first,
     );
-    return SurfaceCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: SurfaceCard(
+          padding: 16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.event_available_outlined,
-                color: AppColors.secondary,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.event_available_outlined,
+                    color: AppColors.secondary,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Plan your visit',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  const StatusBadge('Availability'),
+                ],
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Plan your visit',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+              const SizedBox(height: 10),
+              Text(
+                '${VisitClock.dayLabel(day)} · ${config.hoursForDate(day)}',
+                style: const TextStyle(color: AppColors.muted),
               ),
-              const StatusBadge('Availability'),
+              const SizedBox(height: 10),
+              AsyncPanel(
+                value: ref.watch(availabilityProvider(day)),
+                onRetry: () => ref.invalidate(availabilityProvider(day)),
+                builder: (a) {
+                  final available = (a.closed ? <VisitSlot>[] : a.slots)
+                      .where((s) => s.status == SlotStatus.available)
+                      .toList();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '${available.length} available time slots',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 10),
+                      if (a.closed) Text(a.reason),
+                      if (available.isEmpty && !a.closed)
+                        const Text(
+                          'Choose another date to find an available time.',
+                        ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: available
+                            .take(3)
+                            .map(
+                              (s) => Chip(
+                                visualDensity: VisualDensity.compact,
+                                label: Text(VisitClock.timeLabel(s.startTime)),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () => context.go('/book'),
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: const Text('Choose a time'),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Availability updates every 20 seconds.',
+                style: TextStyle(fontSize: 12, color: AppColors.muted),
+              ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(VisitClock.dayLabel(day)),
-          Text(
-            config.hoursForDate(day),
-            style: const TextStyle(color: AppColors.muted),
-          ),
-          const SizedBox(height: 20),
-          AsyncPanel(
-            value: ref.watch(availabilityProvider(day)),
-            onRetry: () => ref.invalidate(availabilityProvider(day)),
-            builder: (a) {
-              final available = (a.closed ? <VisitSlot>[] : a.slots)
-                  .where((s) => s.status == SlotStatus.available)
-                  .toList();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    '${available.length}',
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
-                  const Text('available time slots'),
-                  const SizedBox(height: 20),
-                  if (a.closed) Text(a.reason),
-                  if (available.isEmpty && !a.closed)
-                    const Text(
-                      'Choose another date to find an available time.',
-                    ),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: available
-                        .take(4)
-                        .map(
-                          (s) => Chip(
-                            label: Text(VisitClock.timeLabel(s.startTime)),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(height: 22),
-          FilledButton.icon(
-            onPressed: () => context.go('/book'),
-            icon: const Icon(Icons.calendar_month_outlined),
-            label: const Text('Choose a time'),
-          ),
-          const SizedBox(height: 14),
-          const Text(
-            'Availability updates every 20 seconds.',
-            style: TextStyle(fontSize: 13, color: AppColors.muted),
-          ),
-        ],
+        ),
       ),
     );
   }
