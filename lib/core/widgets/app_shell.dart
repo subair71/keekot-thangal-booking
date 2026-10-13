@@ -54,44 +54,52 @@ class AppShell extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      InkWell(
-                        onTap: () => context.go('/'),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Row(
-                            children: [
-                              Emblem(size: wide ? 48 : 34),
-                              const SizedBox(width: 10),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AppText(
-                                    'Keekkott Thangal',
-                                    style: TextStyle(
-                                      fontFamily: 'Newsreader',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: wide ? 26 : 19,
-                                      height: 1.2,
-                                      color: AppColors.emerald,
-                                    ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () => context.go('/'),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: [
+                                Emblem(size: wide ? 48 : 34),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AppText(
+                                        'Keekkott Thangal',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontFamily: 'Newsreader',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: wide ? 26 : 19,
+                                          height: 1.2,
+                                          color: AppColors.emerald,
+                                        ),
+                                      ),
+                                      const AppText(
+                                        'MAQAM · CHAVAKKAD',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          height: 1.2,
+                                          color: AppColors.muted,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const AppText(
-                                    'MAQAM · CHAVAKKAD',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      height: 1.2,
-                                      color: AppColors.muted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      const Spacer(),
                       if (wide) ...[
                         for (var i = 0; i < routes.length; i++)
                           Padding(
@@ -105,7 +113,16 @@ class AppShell extends ConsumerWidget {
                                       ? AppColors.mint
                                       : null,
                                 ),
-                                child: AppText(labels[i]),
+                                child: AppText(
+                                  AppLanguage.of(context) == 'ml'
+                                      ? [
+                                          'ഹോം',
+                                          'ബുക്കിംഗ്',
+                                          'എന്റെ പാസ്',
+                                          'വിവരങ്ങൾ',
+                                        ][i]
+                                      : labels[i],
+                                ),
                               ),
                             ),
                           ),
