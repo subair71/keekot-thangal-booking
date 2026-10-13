@@ -1,10 +1,25 @@
 import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
-import {Firestore, FieldValue, Timestamp} from 'firebase-admin/firestore';
+import {Firestore, FieldValue, Timestamp, Transaction} from 'firebase-admin/firestore';
 import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
 
 export interface Actor {uid: string; phone: string; admin?: boolean; gate?: boolean}
 export class BookingService {
   constructor(readonly db: Firestore, readonly clock = () => Date.now()) {}
+  private async dailyBookings(tx: Transaction, actor: Actor, day: string) {
+    // Identity comes from the verified authentication token, never request data.
+    const phone = actor.phone.trim();
+    if (!/^\+[1-9]\d{7,14}$/.test(phone)) throw new DomainError('failed-precondition', 'A verified phone number is required.');
+    const ref = this.db.doc(`phoneDailyBookings/${tokenHash(phone)}_${day}`);
+    const saved = await tx.get(ref);
+    let count = saved.data()?.count as number | undefined;
+    if (count === undefined) {
+      // Include bookings made before this limit was introduced, including cancellations.
+      const previous = await tx.get(this.db.collection('bookings').where('userId', '==', actor.uid));
+      count = previous.docs.filter(d => d.data().visitDate === day).length;
+    }
+    if (!actor.admin && count >= 2) throw new DomainError('failed-precondition', 'You can make a maximum of 2 bookings per phone number per visit date. Cancelled bookings also count toward this limit.');
+    return {ref, count};
+  }
   async availability(day: string) {
     validDate(day); const now = this.clock();
     const c = settingsFrom((await this.db.doc('settings/booking').get()).data());
@@ -33,6 +48,7 @@ export class BookingService {
       }
       if (existing.exists) throw new DomainError('failed-precondition', 'This hold has expired. Select your slot again.');
       if (uidHold.exists && uidHold.data()!.expiresAt > now) throw new DomainError('failed-precondition', 'You already have a held slot. Continue or release it first.');
+      await this.dailyBookings(tx, actor, input.visitDate);
       const base = generateSlots(input.visitDate, c).find(s => s.slotId === input.slotId);
       if (!base) throw new DomainError('invalid-argument', 'Choose a valid slot.');
       const slotRef = this.db.doc(`visitSlots/${base.slotId}`), stateRef = this.db.doc(`slotState/${base.slotId}`);
@@ -86,6 +102,7 @@ export class BookingService {
       const slot=s.data() as Slot, holds=activeHolds(state.data()?.holds || {},now);
       if(!holds[holdId]) throw new DomainError('failed-precondition','Your hold has expired.');
       delete holds[holdId]; requireCapacity(slot,holds,hold.visitorCount,now);
+      const daily=await this.dailyBookings(tx,actor,slot.visitDate);
       const sequence=await readTokenSequence(this.db,tx,slot.slotId);
       const tokenStart=sequence.nextToken, tokenEnd=tokenStart+hold.visitorCount-1;
       const bookingReference=referenceFor(hold.visitDate);
@@ -95,6 +112,7 @@ export class BookingService {
         reminderAt:slot.startAt-c.reminderMinutes*60_000,reminderQueued:false,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()};
       writeLegacyTokens(tx,sequence.assignments);
       tx.set(sequence.counter,{nextToken:tokenEnd+1});
+      tx.set(daily.ref,{count:daily.count+1,visitDate:slot.visitDate,updatedAt:FieldValue.serverTimestamp()});
       tx.create(bookingRef,booking);
       tx.create(this.db.doc(`passTokens/${tokenHash(qrToken)}`),{bookingId:bookingRef.id});
       tx.update(slotRef,{occupancy:slot.occupancy+hold.visitorCount});
