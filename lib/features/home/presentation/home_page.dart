@@ -45,7 +45,33 @@ class _HomePageState extends ConsumerState<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _MaqamHero(),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final availability = AsyncPanel(
+                value: config,
+                onRetry: () => ref.invalidate(configurationProvider),
+                builder: (c) => _LiveAvailability(c),
+              );
+              if (constraints.maxWidth < 1050) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const _MaqamHero(),
+                    const SizedBox(height: 20),
+                    availability,
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Expanded(child: _MaqamHero()),
+                  const SizedBox(width: 24),
+                  SizedBox(width: 380, child: availability),
+                ],
+              );
+            },
+          ),
           const SizedBox(height: 20),
           SurfaceCard(
             padding: 12,
@@ -107,12 +133,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 28),
-          AsyncPanel(
-            value: config,
-            onRetry: () => ref.invalidate(configurationProvider),
-            builder: (c) => _LiveAvailability(c),
           ),
           const SizedBox(height: 48),
           const _HomeFeaturedVideo(),
@@ -364,7 +384,7 @@ class _MaqamHero extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(compact ? 26 : 60),
+              padding: EdgeInsets.all(compact ? 26 : 36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -390,14 +410,14 @@ class _MaqamHero extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: compact ? 36 : 56),
+                  const SizedBox(height: 28),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 650),
                     child: AppText(
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
                         fontFamily: 'Newsreader',
-                        fontSize: compact ? 44 : 72,
+                        fontSize: compact ? 44 : 52,
                         height: 1.05,
                         color: Colors.white,
                       ),
@@ -439,7 +459,7 @@ class _MaqamHero extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: compact ? 36 : 58),
+                  const SizedBox(height: 28),
                   const Divider(color: AppColors.secondary),
                   const SizedBox(height: 16),
                   const AppText(
