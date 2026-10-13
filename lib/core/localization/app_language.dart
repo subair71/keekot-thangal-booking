@@ -1,0 +1,252 @@
+import 'package:flutter/material.dart';
+import 'malayalam.dart';
+import 'language_storage.dart';
+
+class LanguageRoot extends StatefulWidget {
+  const LanguageRoot({super.key, required this.child});
+  final Widget child;
+  @override
+  State<LanguageRoot> createState() => _LanguageRootState();
+}
+
+class _LanguageRootState extends State<LanguageRoot> {
+  late final language = ValueNotifier<String>(
+    readLanguage() == 'ml' ? 'ml' : 'en',
+  );
+  @override
+  void dispose() {
+    language.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      AppLanguage(notifier: language, child: widget.child);
+}
+
+class AppLanguage extends InheritedNotifier<ValueNotifier<String>> {
+  const AppLanguage({super.key, required super.notifier, required super.child});
+  static String of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<AppLanguage>()
+          ?.notifier
+          ?.value ??
+      'en';
+  static void select(BuildContext context, String value) {
+    context.getInheritedWidgetOfExactType<AppLanguage>()?.notifier?.value =
+        value;
+    saveLanguage(value);
+  }
+}
+
+String tr(BuildContext context, String text) =>
+    AppLanguage.of(context) == 'ml' ? translateMalayalam(text) : text;
+
+String translateMalayalam(String text) {
+  final direct = malayalam[text];
+  if (direct != null) return direct;
+  final patterns = <(RegExp, String Function(RegExpMatch))>[
+    (
+      RegExp(r'^(\d+) available time slots$'),
+      (m) => '${m[1]} സമയങ്ങൾ ലഭ്യമാണ്',
+    ),
+    (
+      RegExp(r'^(\d+) minutes per slot$'),
+      (m) => 'ഓരോ സ്ലോട്ടിനും ${m[1]} മിനിറ്റ്',
+    ),
+    (RegExp(r'^(\d+) places left$'), (m) => '${m[1]} സ്ഥലങ്ങൾ ബാക്കി'),
+    (RegExp(r'^(\d+) visitors?$'), (m) => '${m[1]} സന്ദർശകർ'),
+    (
+      RegExp(r'^Up to (\d+) visitors per booking\.$'),
+      (m) => 'ഒരു ബുക്കിംഗിൽ പരമാവധി ${m[1]} സന്ദർശകർ.',
+    ),
+    (
+      RegExp(r'^Please arrive (\d+) minutes early and keep your pass ready\.$'),
+      (m) => '${m[1]} മിനിറ്റ് നേരത്തെ എത്തി പാസ് തയ്യാറാക്കി വയ്ക്കുക.',
+    ),
+    (
+      RegExp(r'^Please arrive (\d+) minutes before your visit\.$'),
+      (m) => 'സന്ദർശനത്തിന് ${m[1]} മിനിറ്റ് മുമ്പ് എത്തുക.',
+    ),
+    (
+      RegExp(r'^Request a new code in (\d+)s$'),
+      (m) => '${m[1]} സെക്കൻഡിന് ശേഷം പുതിയ കോഡ് ആവശ്യപ്പെടാം',
+    ),
+    (RegExp(r'^Held (\d+:\d+)$'), (m) => 'മാറ്റിവച്ച സമയം ${m[1]}'),
+    (
+      RegExp(r'^(\d+) minutes · India time$'),
+      (m) => '${m[1]} മിനിറ്റ് · ഇന്ത്യൻ സമയം',
+    ),
+    (RegExp(r'^Booking reference: (.+)$'), (m) => 'ബുക്കിംഗ് റഫറൻസ്: ${m[1]}'),
+  ];
+  for (final (pattern, format) in patterns) {
+    final match = pattern.firstMatch(text);
+    if (match != null) return format(match);
+  }
+  // Only recognize date/time display values, never change stored date keys.
+  const weekdays = {
+    'Mon': 'തിങ്കൾ',
+    'Tue': 'ചൊവ്വ',
+    'Wed': 'ബുധൻ',
+    'Thu': 'വ്യാഴം',
+    'Fri': 'വെള്ളി',
+    'Sat': 'ശനി',
+    'Sun': 'ഞായർ',
+  };
+  const months = {
+    'Jan': 'ജനുവരി',
+    'Feb': 'ഫെബ്രുവരി',
+    'Mar': 'മാർച്ച്',
+    'Apr': 'ഏപ്രിൽ',
+    'May': 'മേയ്',
+    'Jun': 'ജൂൺ',
+    'Jul': 'ജൂലൈ',
+    'Aug': 'ഓഗസ്റ്റ്',
+    'Sep': 'സെപ്റ്റംബർ',
+    'Oct': 'ഒക്ടോബർ',
+    'Nov': 'നവംബർ',
+    'Dec': 'ഡിസംബർ',
+  };
+  if (RegExp(
+    r'^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d+ [A-Z][a-z]{2} \d{4}',
+  ).hasMatch(text)) {
+    return text
+        .replaceAllMapped(
+          RegExp(r'\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b'),
+          (m) => weekdays[m[0]]!,
+        )
+        .replaceAllMapped(
+          RegExp(r'\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b'),
+          (m) => months[m[0]]!,
+        );
+  }
+  if (text.contains('\n'))
+    return text.split('\n').map(translateMalayalam).join('\n');
+  if (RegExp(r'^\d{1,2}:\d{2} (AM|PM)').hasMatch(text)) {
+    return text.replaceAllMapped(
+      RegExp(r'(\d+) visitors?\b'),
+      (m) => '${m[1]} സന്ദർശകർ',
+    );
+  }
+  return text;
+}
+
+class AppText extends StatelessWidget {
+  const AppText(
+    this.data, {
+    super.key,
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.softWrap,
+    this.semanticsLabel,
+    this.textDirection,
+  }) : span = null;
+  const AppText.rich(
+    this.span, {
+    super.key,
+    this.style,
+    this.textAlign,
+    this.maxLines,
+    this.overflow,
+    this.softWrap,
+    this.semanticsLabel,
+    this.textDirection,
+  }) : data = null;
+  final String? data, semanticsLabel;
+  final InlineSpan? span;
+  final TextStyle? style;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
+  final bool? softWrap;
+  final TextDirection? textDirection;
+  TextStyle? localizedStyle(BuildContext context, TextStyle? value) =>
+      AppLanguage.of(context) == 'ml'
+      ? (value ?? const TextStyle()).copyWith(
+          fontFamily: 'Noto Sans Malayalam',
+          letterSpacing: 0,
+          height: 1.5,
+        )
+      : value;
+  InlineSpan translatedSpan(BuildContext context, InlineSpan value) {
+    if (value is! TextSpan) return value;
+    return TextSpan(
+      text: value.text == null ? null : tr(context, value.text!),
+      style: localizedStyle(context, value.style),
+      recognizer: value.recognizer,
+      children: value.children?.map((v) => translatedSpan(context, v)).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (span != null)
+      return Text.rich(
+        translatedSpan(context, span!),
+        style: localizedStyle(context, style),
+        textAlign: textAlign,
+        maxLines: maxLines,
+        overflow: overflow,
+        softWrap: softWrap,
+        semanticsLabel: semanticsLabel == null
+            ? null
+            : tr(context, semanticsLabel!),
+        textDirection: textDirection,
+      );
+    return Text(
+      tr(context, data!),
+      style: localizedStyle(context, style),
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      softWrap: softWrap,
+      semanticsLabel: semanticsLabel == null
+          ? null
+          : tr(context, semanticsLabel!),
+      textDirection: textDirection,
+    );
+  }
+}
+
+class LanguageToggleBar extends StatelessWidget {
+  const LanguageToggleBar({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final ml = AppLanguage.of(context) == 'ml';
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const Icon(Icons.language, size: 18),
+              const SizedBox(width: 8),
+              const Text('English', style: TextStyle(fontSize: 13)),
+              Semantics(
+                label: 'മലയാളം / English',
+                child: Switch(
+                  key: const ValueKey('language-toggle'),
+                  value: ml,
+                  onChanged: (value) =>
+                      AppLanguage.select(context, value ? 'ml' : 'en'),
+                ),
+              ),
+              const Text(
+                'മലയാളം',
+                style: TextStyle(
+                  fontFamily: 'Noto Sans Malayalam',
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

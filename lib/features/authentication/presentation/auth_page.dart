@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -94,9 +95,12 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     enabled: !sent && !busy,
                     keyboardType: TextInputType.phone,
                     autofillHints: const [AutofillHints.telephoneNumber],
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile number',
-                      helperText: 'Include country code, for example +91',
+                    decoration: InputDecoration(
+                      labelText: tr(context, 'Mobile number'),
+                      helperText: tr(
+                        context,
+                        'Include country code, for example +91',
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -108,11 +112,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       onChanged: busy
                           ? null
                           : (v) => setState(() => consent = v ?? false),
-                      title: const Text(
+                      title: const AppText(
                         'Send me a verification SMS',
                         style: TextStyle(fontSize: 15),
                       ),
-                      subtitle: const Text(
+                      subtitle: const AppText(
                         'Google processes your number for verification and abuse prevention.',
                         style: TextStyle(fontSize: 13),
                       ),
@@ -131,15 +135,15 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => busy ? null : submit(),
                       style: const TextStyle(fontSize: 26, letterSpacing: 10),
-                      decoration: const InputDecoration(
-                        labelText: 'SMS verification code',
-                        hintText: '000000',
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'SMS verification code'),
+                        hintText: tr(context, '000000'),
                       ),
                     ),
                     const SizedBox(height: 20),
                   ],
                   if (busy && !sent) ...[
-                    const Text(
+                    const AppText(
                       'Waiting for phone verification. Complete the security '
                       'check if it appears. This can take up to 90 seconds.',
                     ),
@@ -148,7 +152,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   if (error != null) ...[
                     Semantics(
                       liveRegion: true,
-                      child: Text(
+                      child: AppText(
                         error!,
                         style: const TextStyle(color: AppColors.error),
                       ),
@@ -163,7 +167,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : Text(
+                        : AppText(
                             sent
                                 ? 'Verify and continue'
                                 : 'Send verification code',
@@ -179,7 +183,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                                 code.clear();
                               });
                             },
-                      child: Text(
+                      child: AppText(
                         seconds > 0
                             ? 'Request a new code in ${seconds}s'
                             : 'Change number or send a new code',
@@ -190,7 +194,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          const AppText(
             'Your number stays with your account. It is never included in the QR code.',
             textAlign: TextAlign.center,
           ),

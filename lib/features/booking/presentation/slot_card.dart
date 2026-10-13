@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_theme.dart';
@@ -40,7 +41,7 @@ class SlotCard extends StatelessWidget {
             SlotStatus.past => 'Time passed',
           };
     return Semantics(
-      label: '${slot.label}. $label',
+      label: '${slot.label}. ${tr(context, label)}',
       button: true,
       selected: selected,
       enabled: enabled,
@@ -63,7 +64,7 @@ class SlotCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                AppText(
                   slot.label,
                   style: TextStyle(
                     fontSize: 14,
@@ -76,7 +77,7 @@ class SlotCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         label,
                         style: TextStyle(
                           fontSize: 14,

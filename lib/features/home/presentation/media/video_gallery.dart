@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ Future<void> _openYouTube(BuildContext context, String url) async {
   if (!opened && context.mounted) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Unable to open YouTube. Please try again.'),
+        content: AppText('Unable to open YouTube. Please try again.'),
       ),
     );
   }
@@ -36,7 +37,7 @@ class VideoGallery extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        const AppText(
           'KEEKKOTT BUNGALOW ONLINE',
           style: TextStyle(
             color: AppColors.emerald,
@@ -46,19 +47,19 @@ class VideoGallery extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Text(
+        AppText(
           'Moments of faith.\nStories that bring us together.',
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 14),
-        const Text(
+        const AppText(
           'Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.',
         ),
         const SizedBox(height: 18),
         OutlinedButton.icon(
           onPressed: () => _openYouTube(context, _channel),
           icon: const Icon(Icons.smart_display_outlined),
-          label: const Text('Explore our YouTube channel'),
+          label: const AppText('Explore our YouTube channel'),
         ),
         const SizedBox(height: 32),
         _heading(
@@ -124,13 +125,13 @@ class VideoGallery extends StatelessWidget {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: Theme.of(context).textTheme.headlineSmall),
-          Text(subtitle, style: const TextStyle(color: AppColors.ink)),
+          AppText(title, style: Theme.of(context).textTheme.headlineSmall),
+          AppText(subtitle, style: const TextStyle(color: AppColors.ink)),
         ],
       ),
       TextButton.icon(
         onPressed: () => _openYouTube(context, '$_channel/$tab'),
-        label: Text('All $title'),
+        label: AppText('All $title'),
         icon: const Icon(Icons.arrow_outward, size: 17),
       ),
     ],
@@ -158,14 +159,14 @@ class _VideoCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
+                        child: AppText(
                           video.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Close video',
+                        tooltip: tr(context, 'Close video'),
                         onPressed: () => Navigator.pop(context),
                         icon: const Icon(Icons.close),
                       ),
@@ -192,7 +193,7 @@ class _VideoCard extends StatelessWidget {
                       'https://www.youtube.com/watch?v=${video.id}',
                     ),
                     icon: const Icon(Icons.open_in_new),
-                    label: const Text('Watch on YouTube'),
+                    label: const AppText('Watch on YouTube'),
                   ),
                 ],
               ),
@@ -260,7 +261,7 @@ class _VideoCard extends StatelessWidget {
                   const Positioned(
                     left: 12,
                     bottom: 12,
-                    child: Text(
+                    child: AppText(
                       'SHORTS',
                       style: TextStyle(
                         color: Colors.white,
@@ -275,7 +276,7 @@ class _VideoCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(14),
-            child: Text(
+            child: AppText(
               video.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

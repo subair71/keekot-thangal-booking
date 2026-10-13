@@ -1,3 +1,5 @@
+import '../core/localization/app_language.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/config/app_config.dart';
@@ -20,45 +22,64 @@ class KeekotApp extends ConsumerWidget {
         }
       });
     }
-    return MaterialApp.router(
-      scaffoldMessengerKey: _messenger,
-      title: 'Keekkott Thangal | Visit Booking',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      routerConfig: ref.watch(routerProvider),
-      builder: (context, child) {
-        final config = ref.watch(appConfigProvider);
-        if (config.environment == 'production') return child!;
-        return Column(
-          children: [
-            Material(
-              color: AppColors.gold,
-              child: SafeArea(
-                bottom: false,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
-                    ),
-                    child: Text(
-                      '${config.environment.toUpperCase()} · Test bookings only',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+    return LanguageRoot(
+      child: Builder(
+        builder: (context) => MaterialApp.router(
+          locale: Locale(AppLanguage.of(context)),
+          supportedLocales: const [Locale('en'), Locale('ml')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          scaffoldMessengerKey: _messenger,
+          title: 'Keekkott Thangal | Visit Booking',
+          debugShowCheckedModeBanner: false,
+          theme: AppLanguage.of(context) == 'ml'
+              ? buildTheme().copyWith(
+                  textTheme: buildTheme().textTheme.apply(
+                    fontFamily: 'Noto Sans Malayalam',
+                  ),
+                )
+              : buildTheme(),
+          routerConfig: ref.watch(routerProvider),
+          builder: (context, child) {
+            final config = ref.watch(appConfigProvider);
+            final content = Column(
+              children: [
+                const LanguageToggleBar(),
+                Expanded(child: child!),
+              ],
+            );
+            if (config.environment == 'production') return content;
+            return Column(
+              children: [
+                Material(
+                  color: AppColors.gold,
+                  child: SafeArea(
+                    bottom: false,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        child: Text(
+                          '${config.environment.toUpperCase()} · Test bookings only',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Expanded(child: child!),
-          ],
-        );
-      },
+                Expanded(child: content),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

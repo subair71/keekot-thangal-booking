@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -66,7 +67,7 @@ class AppShell extends ConsumerWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  AppText(
                                     'Keekkott Thangal',
                                     style: TextStyle(
                                       fontFamily: 'Newsreader',
@@ -76,7 +77,7 @@ class AppShell extends ConsumerWidget {
                                       color: AppColors.emerald,
                                     ),
                                   ),
-                                  const Text(
+                                  const AppText(
                                     'MAQAM · CHAVAKKAD',
                                     style: TextStyle(
                                       fontSize: 12,
@@ -104,19 +105,22 @@ class AppShell extends ConsumerWidget {
                                       ? AppColors.mint
                                       : null,
                                 ),
-                                child: Text(labels[i]),
+                                child: AppText(labels[i]),
                               ),
                             ),
                           ),
                         const SizedBox(width: 8),
                       ],
                       IconButton(
-                        tooltip: 'Notifications',
+                        tooltip: tr(context, 'Notifications'),
                         onPressed: () => context.go('/notifications'),
                         icon: const Icon(Icons.notifications_none),
                       ),
                       PopupMenuButton<String>(
-                        tooltip: user == null ? 'Sign in' : 'Account',
+                        tooltip: tr(
+                          context,
+                          user == null ? 'Sign in' : 'Account',
+                        ),
                         icon: const Icon(Icons.account_circle_outlined),
                         onSelected: (value) async {
                           if (value == 'signout') {
@@ -144,7 +148,7 @@ class AppShell extends ConsumerWidget {
                           if (user == null)
                             const PopupMenuItem(
                               value: '/auth',
-                              child: Text('Sign in with mobile'),
+                              child: AppText('Sign in with mobile'),
                             ),
                           if (user != null)
                             PopupMenuItem(
@@ -154,17 +158,17 @@ class AppShell extends ConsumerWidget {
                           if (user?.admin == true)
                             const PopupMenuItem(
                               value: '/admin',
-                              child: Text('Administration'),
+                              child: AppText('Administration'),
                             ),
                           if (user?.gate == true && user?.admin != true)
                             const PopupMenuItem(
                               value: '/admin/gate',
-                              child: Text('Validate visitor pass'),
+                              child: AppText('Validate visitor pass'),
                             ),
                           if (user != null)
                             const PopupMenuItem(
                               value: 'signout',
-                              child: Text('Sign out'),
+                              child: AppText('Sign out'),
                             ),
                         ],
                       ),
@@ -186,7 +190,7 @@ class AppShell extends ConsumerWidget {
                 for (var i = 0; i < routes.length; i++)
                   NavigationDestination(
                     icon: Icon(icons[i]),
-                    label: ['Home', 'Book', 'Bookings', 'Info'][i],
+                    label: tr(context, ['Home', 'Book', 'Bookings', 'Info'][i]),
                   ),
               ],
             ),

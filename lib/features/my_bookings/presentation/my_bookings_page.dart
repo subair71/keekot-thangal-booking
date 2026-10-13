@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,8 +31,8 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
         ),
         SegmentedButton<bool>(
           segments: const [
-            ButtonSegment(value: false, label: Text('Upcoming')),
-            ButtonSegment(value: true, label: Text('Past bookings')),
+            ButtonSegment(value: false, label: AppText('Upcoming')),
+            ButtonSegment(value: true, label: AppText('Past bookings')),
           ],
           selected: {past},
           onSelectionChanged: (s) => setState(() => past = s.first),
@@ -50,7 +51,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
                 detail: 'Your visits will appear here.',
                 action: FilledButton(
                   onPressed: () => context.go('/book'),
-                  child: const Text('Book a visit'),
+                  child: const AppText('Book a visit'),
                 ),
               );
             }
@@ -68,7 +69,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
                             spacing: 12,
                             runSpacing: 12,
                             children: [
-                              Text(
+                              AppText(
                                 b.reference,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
@@ -82,17 +83,17 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
                             ],
                           ),
                           const SizedBox(height: 14),
-                          Text(
+                          AppText(
                             VisitClock.dayLabel(b.visitDate),
                             style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           const SizedBox(height: 8),
-                          Text('${b.timeLabel} · ${b.visitors} visitors'),
+                          AppText('${b.timeLabel} · ${b.visitors} visitors'),
                           const SizedBox(height: 18),
                           OutlinedButton.icon(
                             onPressed: () => context.go('/pass/${b.id}'),
                             icon: const Icon(Icons.qr_code),
-                            label: Text(
+                            label: AppText(
                               b.upcoming ? 'View pass' : 'View booking',
                             ),
                           ),
@@ -136,7 +137,7 @@ class PassPage extends ConsumerWidget {
         const SizedBox(height: 18),
         TextButton(
           onPressed: () => context.go('/my-bookings'),
-          child: const Text('View all my bookings'),
+          child: const AppText('View all my bookings'),
         ),
       ],
     ),
