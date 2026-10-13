@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/bootstrap/providers.dart';
+import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
 import '../../booking/domain/booking_models.dart';
@@ -19,6 +20,33 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
   TimeOfDay end = const TimeOfDay(hour: 17, minute: 0);
   bool busy = false;
   String? message;
+  @override
+  void initState() {
+    super.initState();
+    loadHours();
+  }
+
+  @override
+  void didUpdateWidget(covariant AdminDateHours oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.config.hoursForDate(day) != widget.config.hoursForDate(day)) {
+      loadHours();
+    }
+  }
+
+  void loadHours() {
+    final saved = widget.config.dateHours[day] as Map?;
+    TimeOfDay parse(String value) {
+      final parts = value.split(':');
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    }
+
+    start = parse(
+      saved?['openingTime'] as String? ?? widget.config.openingTime,
+    );
+    end = parse(saved?['closingTime'] as String? ?? widget.config.closingTime);
+  }
+
   String value(TimeOfDay t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   Future<void> pickTime(bool opening) async {
@@ -83,6 +111,10 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
   @override
   Widget build(BuildContext context) {
     final hours = widget.config.dateHours[day] as Map?;
+    final minutes =
+        (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
+    final complete =
+        minutes > 0 && minutes % widget.config.slotDurationMinutes == 0;
     return SurfaceCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -113,19 +145,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
                       setState(() {
                         day = VisitClock.dayKey(picked);
                         message = null;
-                        final saved = widget.config.dateHours[day] as Map?;
-                        if (saved != null) {
-                          final a = (saved['openingTime'] as String).split(':');
-                          final b = (saved['closingTime'] as String).split(':');
-                          start = TimeOfDay(
-                            hour: int.parse(a[0]),
-                            minute: int.parse(a[1]),
-                          );
-                          end = TimeOfDay(
-                            hour: int.parse(b[0]),
-                            minute: int.parse(b[1]),
-                          );
-                        }
+                        loadHours();
                       });
                     }
                   },
@@ -145,8 +165,21 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
             child: Text('End: ${VisitClock.timeLabel(value(end))}'),
           ),
           const SizedBox(height: 12),
+          SurfaceCard(
+            color: complete ? AppColors.mint : AppColors.rose,
+            padding: 16,
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                complete
+                    ? 'Proposed hours: ${VisitClock.timeLabel(value(start))} – ${VisitClock.timeLabel(value(end))} · ${minutes ~/ widget.config.slotDurationMinutes} complete slots, ${widget.config.slotDurationMinutes} minutes each. Availability still depends on closures and capacity.'
+                    : 'Choose an end time after the start time with complete ${widget.config.slotDurationMinutes}-minute slots.',
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           FilledButton(
-            onPressed: busy ? null : () => save(false),
+            onPressed: busy || !complete ? null : () => save(false),
             child: Text(busy ? 'Saving…' : 'Save date hours'),
           ),
           TextButton(

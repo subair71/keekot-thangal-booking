@@ -101,6 +101,41 @@ class PageHeading extends StatelessWidget {
   );
 }
 
+class BookingProgress extends StatelessWidget {
+  const BookingProgress({super.key, required this.current});
+  final int current;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    spacing: 12,
+    runSpacing: 12,
+    children: [
+      for (final (index, label) in [
+        'Choose your time',
+        'Confirm your details',
+      ].indexed)
+        Semantics(
+          label: 'Step ${index + 1} of 2: $label',
+          selected: current == index,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: current == index ? AppColors.emerald : AppColors.mint,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              '${index < current ? '✓' : index + 1}  $label',
+              style: TextStyle(
+                color: current == index ? AppColors.white : AppColors.emerald,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+
 class StatusBadge extends StatelessWidget {
   const StatusBadge(
     this.label, {
@@ -169,9 +204,11 @@ class TwoColumn extends StatelessWidget {
     required this.main,
     required this.aside,
     this.breakpoint = 1000,
+    this.asideFirstOnMobile = false,
   });
   final Widget main, aside;
   final double breakpoint;
+  final bool asideFirstOnMobile;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, size) => size.maxWidth >= breakpoint
@@ -185,7 +222,9 @@ class TwoColumn extends StatelessWidget {
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [main, const SizedBox(height: 24), aside],
+            children: asideFirstOnMobile
+                ? [aside, const SizedBox(height: 24), main]
+                : [main, const SizedBox(height: 24), aside],
           ),
   );
 }

@@ -95,14 +95,17 @@ class AppShell extends ConsumerWidget {
                         for (var i = 0; i < routes.length; i++)
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
-                            child: TextButton(
-                              onPressed: () => context.go(routes[i]),
-                              style: TextButton.styleFrom(
-                                backgroundColor: selected == i
-                                    ? AppColors.mint
-                                    : null,
+                            child: Semantics(
+                              selected: selected == i,
+                              child: TextButton(
+                                onPressed: () => context.go(routes[i]),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: selected == i
+                                      ? AppColors.mint
+                                      : null,
+                                ),
+                                child: Text(labels[i]),
                               ),
-                              child: Text(labels[i]),
                             ),
                           ),
                         const SizedBox(width: 8),

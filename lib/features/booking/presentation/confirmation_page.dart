@@ -285,6 +285,8 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
             eyebrow: 'Step 2 of 2',
             subtitle: 'Check your time and enter your name and address.',
           ),
+          const BookingProgress(current: 1),
+          const SizedBox(height: 24),
           content,
         ],
       ),

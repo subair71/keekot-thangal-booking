@@ -13,10 +13,31 @@ import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
 import 'media/youtube_player.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final videosKey = GlobalKey(),
+      guideKey = GlobalKey(),
+      questionsKey = GlobalKey();
+
+  void reveal(GlobalKey key) {
+    final target = key.currentContext;
+    if (target == null) return;
+    Scrollable.ensureVisible(
+      target,
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : const Duration(milliseconds: 350),
+      alignment: 0.05,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final config = ref.watch(configurationProvider);
     return PageContainer(
       width: 1400,
@@ -24,30 +45,73 @@ class HomePage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const _MaqamHero(),
+          const SizedBox(height: 20),
+          SurfaceCard(
+            padding: 12,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 4,
+              children: [
+                TextButton.icon(
+                  onPressed: () => context.go('/book'),
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  label: const Text('Book a visit'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(guideKey),
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Visitor guide'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(videosKey),
+                  icon: const Icon(Icons.play_circle_outline),
+                  label: const Text('Videos'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(questionsKey),
+                  icon: const Icon(Icons.help_outline),
+                  label: const Text('Questions before you visit'),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 24),
           AsyncPanel(
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
-            builder: (c) => _FeatureGrid(
-              children: [
-                InfoLine(Icons.schedule_outlined, 'Visiting hours', c.hours),
-                InfoLine(
-                  Icons.hourglass_bottom_outlined,
-                  'Time for your visit',
-                  '${c.slotDurationMinutes} minutes per slot',
-                ),
-                const InfoLine(
-                  Icons.location_on_outlined,
-                  'Find us',
-                  'Chavakkad, Kerala',
-                ),
-                const InfoLine(
-                  Icons.confirmation_number_outlined,
-                  'Easy entry',
-                  'Your booking. Your digital pass.',
-                ),
-              ],
+            builder: (c) => SurfaceCard(
+              child: _FeatureGrid(
+                children: [
+                  InfoLine(
+                    Icons.schedule_outlined,
+                    'Visiting hours',
+                    c.hoursForDate(VisitClock.today()),
+                  ),
+                  InfoLine(
+                    Icons.hourglass_bottom_outlined,
+                    'Time for your visit',
+                    '${c.slotDurationMinutes} minutes per slot',
+                  ),
+                  const InfoLine(
+                    Icons.location_on_outlined,
+                    'Find us',
+                    'Chavakkad, Kerala',
+                  ),
+                  const InfoLine(
+                    Icons.confirmation_number_outlined,
+                    'Easy entry',
+                    'Your booking. Your digital pass.',
+                  ),
+                ],
+              ),
             ),
+          ),
+          const SizedBox(height: 28),
+          AsyncPanel(
+            value: config,
+            onRetry: () => ref.invalidate(configurationProvider),
+            builder: (c) => _LiveAvailability(c),
           ),
           const SizedBox(height: 48),
           const _HomeFeaturedVideo(),
@@ -90,11 +154,7 @@ class HomePage extends ConsumerWidget {
                 ),
               ],
             ),
-            aside: AsyncPanel(
-              value: config,
-              onRetry: () => ref.invalidate(configurationProvider),
-              builder: (c) => _LiveAvailability(c),
-            ),
+            aside: const LocationCard(),
           ),
           const SizedBox(height: 72),
           Container(
@@ -134,17 +194,23 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 72),
-          const VideoGallery(),
+          KeyedSubtree(key: videosKey, child: const VideoGallery()),
           const SizedBox(height: 72),
           const _SectionTitle(
             'A CONSIDERATE ZIYARAT',
             'Small gestures. A peaceful atmosphere.',
           ),
           const SizedBox(height: 24),
-          const TwoColumn(main: GuidelinesCard(), aside: LocationCard()),
+          KeyedSubtree(
+            key: guideKey,
+            child: const TwoColumn(
+              main: GuidelinesCard(),
+              aside: LocationCard(),
+            ),
+          ),
           const SizedBox(height: 72),
-          const TwoColumn(
-            main: Column(
+          TwoColumn(
+            main: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _SectionTitle(
@@ -169,7 +235,10 @@ class HomePage extends ConsumerWidget {
                 ),
               ],
             ),
-            aside: _VisitQuestions(),
+            aside: KeyedSubtree(
+              key: questionsKey,
+              child: const _VisitQuestions(),
+            ),
           ),
           const SizedBox(height: 64),
           Container(
@@ -241,6 +310,11 @@ class HomePage extends ConsumerWidget {
               ),
             ],
           ),
+          TextButton.icon(
+            onPressed: () => reveal(videosKey),
+            icon: const Icon(Icons.play_circle_outline),
+            label: const Text('Videos'),
+          ),
           const SizedBox(height: 8),
           const Text(
             'All visit times are in India Standard Time.',
@@ -293,13 +367,26 @@ class _MaqamHero extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'KEEKKOTT THANGAL MAQAM',
-                    style: TextStyle(
-                      color: AppColors.mintStrong,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.emerald.withValues(alpha: .7),
+                      border: Border.all(
+                        color: AppColors.mintStrong.withValues(alpha: .3),
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const Text(
+                      'KEEKKOTT THANGAL MAQAM',
+                      style: TextStyle(
+                        color: AppColors.mintStrong,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
                   SizedBox(height: compact ? 36 : 56),
@@ -352,6 +439,8 @@ class _MaqamHero extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: compact ? 36 : 58),
+                  const Divider(color: AppColors.secondary),
+                  const SizedBox(height: 16),
                   const Text(
                     'CHAVAKKAD  /  KERALA  /  INDIA',
                     style: TextStyle(
@@ -512,7 +601,11 @@ class _LiveAvailability extends ConsumerWidget {
         detail: 'Please check again soon.',
       );
     }
-    final day = dates.first;
+    final closed = ref.watch(closedDaysProvider).asData?.value ?? <String>{};
+    final day = dates.firstWhere(
+      (d) => !closed.contains(d),
+      orElse: () => dates.first,
+    );
     return SurfaceCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -530,17 +623,21 @@ class _LiveAvailability extends ConsumerWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ),
-              const StatusBadge('Live'),
+              const StatusBadge('Availability'),
             ],
           ),
           const SizedBox(height: 16),
           Text(VisitClock.dayLabel(day)),
+          Text(
+            config.hoursForDate(day),
+            style: const TextStyle(color: AppColors.muted),
+          ),
           const SizedBox(height: 20),
           AsyncPanel(
             value: ref.watch(availabilityProvider(day)),
             onRetry: () => ref.invalidate(availabilityProvider(day)),
             builder: (a) {
-              final available = a.slots
+              final available = (a.closed ? <VisitSlot>[] : a.slots)
                   .where((s) => s.status == SlotStatus.available)
                   .toList();
               return Column(
@@ -563,9 +660,8 @@ class _LiveAvailability extends ConsumerWidget {
                     children: available
                         .take(4)
                         .map(
-                          (s) => ActionChip(
+                          (s) => Chip(
                             label: Text(VisitClock.timeLabel(s.startTime)),
-                            onPressed: () => context.go('/book'),
                           ),
                         )
                         .toList(),
