@@ -14,7 +14,7 @@ const projectId='demo-keekot-thangal', app=initializeApp({projectId}), db=getFir
 let now=Date.parse('2030-01-10T00:00:00Z'); const service=new BookingService(db,()=>now), day='2030-01-10';
 const settings:BookingSettings={timezone:'Asia/Kolkata',openingTime:'07:00',closingTime:'19:00',slotDurationMinutes:30,bookingWindowDays:7,allowSameDayBooking:true,
   maxVisitorsPerBooking:3,defaultSlotCapacity:3,bookingEnabled:true,reminderEnabled:true,reminderMinutes:60,arrivalMinutes:10,environment:'development',locationUrl:'',contactPhone:''};
-const actor=(i:number)=>({uid:`test-${i}`,phone:'+919999999999'});
+const actor=(i:number)=>({uid:`test-${i}`,phone:`+9199${String(i).padStart(8,'0')}`});
 const hold=(i:number,slot=0,count=1)=>service.createHold(actor(i),{visitDate:day,slotId:generateSlots(day,settings)[slot].slotId,visitorCount:count,requestId:`request-${String(i).padStart(24,'0')}-${slot}`});
 after(async()=>{await db.terminate();await deleteApp(app);});
 test('Firestore transactions and rules',async t=>{
@@ -35,6 +35,31 @@ test('Firestore transactions and rules',async t=>{
     await service.adminSetDateHours(admin,{visitDate:date,reset:true});
     assert.equal((await service.availability(date)).slots.length,24);
     assert.equal((await service.availability(day)).slots.length,24);
+  });
+  await t.test('daily phone limit is atomic across accounts and slots; admins bypass it',async()=>{
+    const date='2030-01-15', phone='+919876543210';
+    const actors=[901,902,903].map(i=>({...actor(i),phone}));
+    const holds=await Promise.all(actors.map((a,i)=>service.createHold(a,{visitDate:date,slotId:`${date}_${['0700','0730','0800'][i]}`,visitorCount:1,requestId:`phone-limit-request-${a.uid}`})));
+    const results=await Promise.allSettled(actors.map((a,i)=>service.createBooking(a,holds[i].holdId,'Limit Visitor')));
+    assert.equal(results.filter(r=>r.status==='fulfilled').length,2);
+    assert.equal(results.filter(r=>r.status==='rejected').length,1);
+    const winner=results.findIndex(r=>r.status==='fulfilled');
+    const result=results[winner];assert.equal(result.status,'fulfilled');
+    if(result.status!=='fulfilled')throw new Error('Missing booking');
+    assert.equal((await service.createBooking(actors[winner],holds[winner].holdId,'Retry Visitor')).bookingId,result.value.bookingId);
+    await service.cancelBooking(actors[winner],result.value.bookingId,'Changed plans');
+    await assert.rejects(()=>service.createHold({...actor(904),phone},{visitDate:date,slotId:`${date}_0830`,visitorCount:1,requestId:'phone-limit-fourth-request'}),/maximum of 2/);
+    const failed=results.findIndex(r=>r.status==='rejected');
+    await service.createBooking({...actors[failed],admin:true},holds[failed].holdId,'Admin Visitor');
+    const admin={...actor(905),phone,admin:true};
+    const extra=await service.createHold(admin,{visitDate:date,slotId:`${date}_0900`,visitorCount:1,requestId:'phone-limit-admin-extra-request'});
+    await service.createBooking(admin,extra.holdId,'Admin Extra');
+    const nextDate='2030-01-14';
+    const next=await service.createHold(actors[0],{visitDate:nextDate,slotId:`${nextDate}_0700`,visitorCount:1,requestId:'phone-limit-other-date-request'});
+    await service.createBooking(actors[0],next.holdId,'Other Date Visitor');
+    const legacy=actor(906);
+    for(let i=0;i<2;i++)await db.doc(`bookings/limit-legacy-${i}`).set({userId:legacy.uid,visitDate:date,status:'confirmed'});
+    await assert.rejects(()=>service.createHold(legacy,{visitDate:date,slotId:`${date}_0930`,visitorCount:1,requestId:'phone-limit-legacy-request'}),/maximum of 2/);
   });
   let bookingId='',owner=actor(0),holdId='';
   await t.test('12 simultaneous requests cannot exceed 3 places',async()=>{
@@ -130,6 +155,8 @@ test('Firestore transactions and rules',async t=>{
       await assertFails(setDoc(doc(admin,'visitSlots','anything'),{capacity:99}));
       await assertFails(setDoc(doc(own,'users',owner.uid),{admin:true}));
       await assertFails(setDoc(doc(own,'slotTokenCounters',`${day}_0700`),{nextToken:1}));
+      await assertFails(setDoc(doc(own,'phoneDailyBookings','fake'),{count:0}));
+      await assertFails(getDoc(doc(own,'phoneDailyBookings','fake')));
       await assertFails(getDoc(doc(own,'slotTokenCounters',`${day}_0700`)));
       await assertFails(getDoc(doc(own,'slotState',`${day}_0700`)));await assertFails(setDoc(doc(own,'users',owner.uid,'devices','fake'),{token:'fake'}));
       await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(),'settings','booking')));
