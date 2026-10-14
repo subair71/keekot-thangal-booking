@@ -8,7 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
-import '../../../core/widgets/booking_share_button.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
@@ -87,7 +86,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   icon: const Icon(Icons.calendar_month_outlined),
                   label: const AppText('Book a visit'),
                 ),
-                const BookingShareButton(),
                 TextButton.icon(
                   onPressed: () => reveal(guideKey),
                   icon: const Icon(Icons.menu_book_outlined),
