@@ -1,5 +1,11 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Share booking link': 'സന്ദർശന ലിങ്ക് പങ്കിടുക',
+  'Copy message': 'സന്ദേശം പകർത്തുക',
+  'Message copied': 'സന്ദേശം പകർത്തി',
+  'Select the message to copy it.': 'പകർത്താൻ സന്ദേശം തിരഞ്ഞെടുക്കുക.',
+  'Please copy the message instead.': 'ദയവായി സന്ദേശം പകർത്തുക.',
+
   'Duration': 'ദൈർഘ്യം',
   'Unavailable': 'ലഭ്യമല്ല',
   'Visitor': 'സന്ദർശകൻ',
