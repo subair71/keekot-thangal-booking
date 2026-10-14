@@ -9,6 +9,7 @@ import '../../../core/utils/visit_clock.dart';
 import 'admin_settings_page.dart';
 import 'admin_slots_page.dart';
 import 'admin_export_button.dart';
+import 'pass_scanner_dialog.dart';
 
 class AdminPage extends ConsumerWidget {
   const AdminPage({super.key, this.section = 'dashboard'});
@@ -36,7 +37,7 @@ class AdminPage extends ConsumerWidget {
                   ('bookings', 'Bookings'),
                   ('slots', 'Slots & closures'),
                   ('settings', 'Settings'),
-                  ('gate', 'Validate pass'),
+                  ('gate', 'Scan visitor pass'),
                 ])
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
@@ -310,16 +311,41 @@ class _GateValidationState extends ConsumerState<GateValidation> {
     super.dispose();
   }
 
+  Future<void> scanPass() async {
+    final scanned = await showDialog<String>(
+      context: context,
+      builder: (_) => const PassScannerDialog(),
+    );
+    if (!mounted || scanned == null) return;
+    token.text = scanned;
+    await validate(true);
+  }
+
   Future<void> validate(bool checkIn) async {
+    if (busy) return;
+    final scanned = token.text.trim();
+    if (!RegExp(r'^[A-Za-z0-9_-]{43}$').hasMatch(scanned)) {
+      setState(() {
+        result = null;
+        error = 'This is not a valid visitor pass QR code.';
+      });
+      return;
+    }
     setState(() {
+      result = null;
       busy = true;
       error = null;
     });
     try {
       final response = await ref
           .read(adminRepositoryProvider)
-          .validatePass(token.text.trim(), checkIn);
-      if (mounted) setState(() => result = response);
+          .validatePass(scanned, checkIn);
+      if (mounted) {
+        setState(() => result = response);
+        if (response['valid'] == true && response['status'] == 'completed') {
+          ref.invalidate(adminDashboardProvider);
+        }
+      }
     } catch (e) {
       if (mounted) setState(() => error = failureMessage(e));
     } finally {
@@ -337,20 +363,27 @@ class _GateValidationState extends ConsumerState<GateValidation> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Validate a visitor pass',
+              'Scan and confirm visit',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
             const Text(
-              'Use a QR scanner that enters text, or paste the scanned token. Check-in is allowed during the configured arrival window and visit time.',
+              'Scan the QR code on the visitor pass. A valid pass automatically confirms attendance during the allowed arrival and visit time.',
             ),
             const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: busy ? null : scanPass,
+              icon: const Icon(Icons.qr_code_scanner),
+              label: const Text('Scan visitor pass'),
+            ),
+            const SizedBox(height: 20),
             TextField(
+              enabled: !busy,
               controller: token,
               onChanged: (_) => setState(() => result = null),
-              onSubmitted: (_) => busy ? null : validate(false),
+              onSubmitted: (_) => busy ? null : validate(true),
               decoration: const InputDecoration(
-                labelText: 'Scanned QR token',
+                labelText: 'Or paste the pass QR token',
                 prefixIcon: Icon(Icons.qr_code_scanner),
               ),
             ),
@@ -364,13 +397,18 @@ class _GateValidationState extends ConsumerState<GateValidation> {
                   child: const Text('Check pass'),
                 ),
                 FilledButton(
-                  onPressed: busy || result?['valid'] != true
+                  onPressed: busy || result?['status'] == 'completed'
                       ? null
                       : () => validate(true),
-                  child: const Text('Admit and mark attended'),
+                  child: const Text('Verify and confirm visit'),
                 ),
               ],
             ),
+            if (busy)
+              const Padding(
+                padding: EdgeInsets.only(top: 20),
+                child: LinearProgressIndicator(),
+              ),
             if (error != null) ...[
               const SizedBox(height: 20),
               Text(error!, style: const TextStyle(color: AppColors.error)),
@@ -380,12 +418,21 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               StatusBadge(
                 result!['valid'] == true
                     ? (result!['status'] == 'completed'
-                          ? 'Checked in'
+                          ? 'Visit confirmed'
                           : 'Valid for entry')
                     : 'Not valid for entry',
                 danger: result!['valid'] != true,
               ),
               const SizedBox(height: 12),
+              if (result!['valid'] != true)
+                Text(switch (result!['reason'] ?? result!['status']) {
+                  'already_used' || 'completed' =>
+                    'This pass has already been used. Do not admit again.',
+                  'cancelled' => 'This booking has been cancelled.',
+                  'too_early' => 'This pass is not yet valid. Check the scheduled visit time.',
+                  'expired' => 'The visit time for this pass has expired.',
+                  _ => 'This pass is not valid for entry. Check the booking and visit time.',
+                }),
               if (result!['bookingReference'] != null)
                 Text(
                   '${result!['bookingReference']}\n${result!['visitDate']} · ${result!['timeSlot']}\n${result!['visitorCount']} visitors · ${result!['status']}\nTokens: ${result!['tokenStart'] ?? 'Not assigned'}${result!['tokenEnd'] != null && result!['tokenEnd'] != result!['tokenStart'] ? '–${result!['tokenEnd']}' : ''}',
