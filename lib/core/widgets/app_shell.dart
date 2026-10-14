@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../app/bootstrap/providers.dart';
 import '../../app/theme/app_theme.dart';
 import 'components.dart';
-import 'booking_share_button.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.child});
@@ -129,7 +128,6 @@ class AppShell extends ConsumerWidget {
                           ),
                         const SizedBox(width: 8),
                       ],
-                      const BookingShareButton(compact: true),
                       IconButton(
                         tooltip: tr(context, 'Notifications'),
                         onPressed: () => context.go('/notifications'),
