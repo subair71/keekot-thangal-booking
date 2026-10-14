@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,8 +56,13 @@ final availabilityProvider = StreamProvider.autoDispose
       final repository = ref.watch(bookingRepositoryProvider);
       final controller = StreamController<Availability>();
       var disposed = false, refreshing = false;
+      bool isActive() {
+        final state = WidgetsBinding.instance.lifecycleState;
+        return state == null || state == AppLifecycleState.resumed;
+      }
+
       Future<void> refresh() async {
-        if (disposed || refreshing) return;
+        if (disposed || refreshing || !isActive()) return;
         refreshing = true;
         try {
           final availability = await repository.availability(day);
@@ -71,15 +77,23 @@ final availabilityProvider = StreamProvider.autoDispose
       final timer = Timer.periodic(const Duration(seconds: 20), (_) {
         unawaited(refresh());
       });
+      // Browser visibility changes and mobile backgrounding should not keep
+      // issuing Cloud Function requests. Refresh immediately on return.
+      final lifecycle = AppLifecycleListener(
+        onResume: () => unawaited(refresh()),
+      );
       ref.onDispose(() {
         disposed = true;
+        lifecycle.dispose();
         timer.cancel();
         unawaited(controller.close());
       });
       unawaited(refresh());
       return controller.stream;
     });
-final myBookingsProvider = StreamProvider<List<VisitBooking>>((ref) {
+final myBookingsProvider = StreamProvider.autoDispose<List<VisitBooking>>((
+  ref,
+) {
   final user = ref.watch(authProvider).asData?.value;
   return user == null
       ? Stream.value([])

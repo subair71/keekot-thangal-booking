@@ -1,12 +1,10 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../errors/app_failure.dart';
-import 'keekkott_logo_data.dart';
 
 class Emblem extends StatelessWidget {
   const Emblem({super.key, this.size = 48});
@@ -15,8 +13,8 @@ class Emblem extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     label: 'Keekkott Bungalow Thibbu Nabi Society, Chavakkad logo',
     image: true,
-    child: Image.memory(
-      base64Decode(keekkottLogoBase64),
+    child: Image.asset(
+      'assets/brand/official-logo.png',
       width: size,
       height: size,
       fit: BoxFit.contain,

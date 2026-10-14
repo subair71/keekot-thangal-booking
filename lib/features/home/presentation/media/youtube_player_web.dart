@@ -23,6 +23,7 @@ Widget youtubePlayer(
     ];
     frame.src =
         'https://www.youtube-nocookie.com/embed/$id?${params.join('&')}';
+    frame.loading = 'lazy';
     frame.title = 'Keekkott Bungalow video player';
     frame.allow =
         'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';

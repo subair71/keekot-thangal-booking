@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../app/bootstrap/providers.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
-import '../data/booking_export.dart';
+import '../data/booking_export.dart' deferred as booking_export;
 import '../data/export_download.dart';
 
 class AdminExportButton extends ConsumerStatefulWidget {
@@ -70,14 +72,15 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
           .read(adminRepositoryProvider)
           .exportBookingsForDate(day)
           .timeout(const Duration(seconds: 30));
+      await booking_export.loadLibrary();
       final bytes = format == 'xlsx'
-          ? BookingExport.excel(
+          ? booking_export.BookingExport.excel(
               day,
               bookings,
               startMinute: from,
               endMinute: until,
             )
-          : await BookingExport.pdf(
+          : await booking_export.BookingExport.pdf(
               day,
               bookings,
               startMinute: from,
@@ -86,7 +89,7 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
       if (!mounted) return;
       await downloadExport(
         bytes,
-        'keekkott-bookings-$day-${BookingExport.filePeriod(from, until)}.$format',
+        'keekkott-bookings-$day-${booking_export.BookingExport.filePeriod(from, until)}.$format',
         format == 'xlsx'
             ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             : 'application/pdf',
