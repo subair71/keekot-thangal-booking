@@ -1,5 +1,5 @@
 /* Background push only. Flutter assets are not cached by this service worker. */
-importScripts('/firebase-config.js');
+importScripts('firebase-config.js');
 if (!self.KEEKOT_USE_EMULATORS) {
   importScripts('https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js');
   importScripts('https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging-compat.js');

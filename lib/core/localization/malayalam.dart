@@ -1,5 +1,13 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Booking notifications enabled': 'ബുക്കിംഗ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കി',
+  'Get your booking confirmation': 'ബുക്കിംഗ് സ്ഥിരീകരണ അറിയിപ്പ് നേടുക',
+  'Enable notifications': 'അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക',
+  'Enable notifications before confirming your booking to receive an alert on this device. Updates also appear in Notifications.':
+      'ഈ ഉപകരണത്തിൽ അറിയിപ്പ് ലഭിക്കാൻ ബുക്കിംഗ് സ്ഥിരീകരിക്കുന്നതിന് മുമ്പ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക. വിവരങ്ങൾ അറിയിപ്പുകൾ എന്ന വിഭാഗത്തിലും ലഭിക്കും.',
+  'On iPhone, add this app to your Home Screen and open it there to enable notifications.':
+      'ഐഫോണിൽ അറിയിപ്പുകൾ ലഭിക്കാൻ ഈ ആപ്പ് ഹോം സ്ക്രീനിൽ ചേർത്ത് അവിടെ നിന്ന് തുറക്കുക.',
+
   'Share the invitation with family and friends.':
       'കുടുംബാംഗങ്ങളുമായും സുഹൃത്തുക്കളുമായും സന്ദർശന ക്ഷണം പങ്കിടുക.',
   'Plan your ziyarat': 'സിയാറത്ത് ആസൂത്രണം ചെയ്യുക',

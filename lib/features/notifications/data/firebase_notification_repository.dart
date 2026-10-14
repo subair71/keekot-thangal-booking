@@ -8,6 +8,7 @@ import '../../../core/errors/app_failure.dart';
 import '../../../core/services/firebase_errors.dart';
 import '../../booking/data/firebase_booking_repository.dart';
 import '../domain/notification_repository.dart';
+import 'push_worker_path.dart';
 
 class FirebaseNotificationRepository implements NotificationRepository {
   FirebaseNotificationRepository(this.source, this.auth, this.config) {
@@ -48,9 +49,17 @@ class FirebaseNotificationRepository implements NotificationRepository {
     _registering = true;
     try {
       final messaging = FirebaseMessaging.instance;
-      final token = await messaging.getToken(vapidKey: config.vapidKey);
+      final token = await messaging.getToken(
+        vapidKey: config.vapidKey,
+        serviceWorkerScriptPath: pushWorkerPath,
+      );
       if (_disposed || auth.currentUser?.uid != uid) return;
-      if (token != null) await source.call('registerDevice', {'token': token});
+      if (token == null) {
+        throw const AppFailure(
+          'Could not enable notifications. Please try again.',
+        );
+      }
+      await source.call('registerDevice', {'token': token});
       await _refresh?.cancel();
       if (_disposed || auth.currentUser?.uid != uid) return;
       _refresh = messaging.onTokenRefresh.listen((token) {
@@ -125,6 +134,7 @@ class FirebaseNotificationRepository implements NotificationRepository {
     if (settings.authorizationStatus != AuthorizationStatus.authorized) return;
     final token = await FirebaseMessaging.instance.getToken(
       vapidKey: config.vapidKey,
+      serviceWorkerScriptPath: pushWorkerPath,
     );
     try {
       if (token != null && auth.currentUser != null) {

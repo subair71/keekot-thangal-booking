@@ -2,11 +2,21 @@ import {Firestore, FieldValue, DocumentData} from 'firebase-admin/firestore';
 import {getMessaging} from 'firebase-admin/messaging';
 import {settingsFrom} from './domain.js';
 
-export async function queueNotice(db: Firestore, bookingId: string, kind: string, b: DocumentData) {
+export function noticeData(bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
   const time=new Intl.DateTimeFormat('en-IN',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const date=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const body=kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekot Thangal visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
+  return {userId:b.userId,bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()};
+}
+
+export function pushWebOptions(id: string, bookingId: string, appUrl = process.env.APP_ORIGIN || 'https://subair71.github.io/keekot-thangal-booking/') {
+  const base=new URL(appUrl.endsWith('/')?appUrl:appUrl+'/');
+  const link=new URL(base);link.searchParams.set('route','booking');link.searchParams.set('bookingId',bookingId);
+  return {notification:{tag:id,icon:new URL('icons/keekkott-logo-192.png',base).href},fcmOptions:{link:link.href}};
+}
+
+export async function queueNotice(db: Firestore, bookingId: string, kind: string, _b: DocumentData) {
   const ref=db.doc(`notifications/${bookingId}_${kind}`);
   await db.runTransaction(async tx=>{
     const [existing,booking]=await tx.getAll(ref,db.doc(`bookings/${bookingId}`));
@@ -14,7 +24,7 @@ export async function queueNotice(db: Firestore, bookingId: string, kind: string
     const current=booking.data()!;
     if(kind==='cancelled'?current.status!=='cancelled':current.status!=='confirmed')return;
     if(kind==='reminder' && current.startAt<=Date.now())return;
-    tx.create(ref,{userId:b.userId,bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()});
+    tx.create(ref,noticeData(bookingId,kind,current));
   });
 }
 export async function deliverNotice(db: Firestore, id: string) {
@@ -34,7 +44,7 @@ export async function deliverNotice(db: Firestore, id: string) {
     if(tokens.empty){await ref.update({delivery:'no-device'});return;}
     const result=await getMessaging().sendEachForMulticast({tokens:tokens.docs.map(t=>t.data().token),
       notification:{title:notice.title,body:notice.body},data:{bookingId:notice.bookingId,notificationId:id},
-      webpush:{notification:{tag:id,icon:'/icons/Icon-192.png'},fcmOptions:{link:process.env.APP_ORIGIN?`${process.env.APP_ORIGIN}/booking/${notice.bookingId}`:undefined}}});
+      webpush:pushWebOptions(id,notice.bookingId)});
     let retry=false;
     for(const [i,r] of result.responses.entries())if(!r.success){
       if(['messaging/registration-token-not-registered','messaging/invalid-registration-token'].includes(r.error?.code || ''))await tokens.docs[i].ref.delete(); else retry=true;

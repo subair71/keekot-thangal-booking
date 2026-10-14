@@ -87,13 +87,17 @@ class _NotificationOptInState extends ConsumerState<NotificationOptIn> {
       children: [
         AppText(
           enabled
-              ? 'Browser reminders enabled'
-              : 'A gentle reminder before your visit',
+              ? 'Booking notifications enabled'
+              : 'Get your booking confirmation',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
         const AppText(
-          'Get your booking updates on this device. This is optional.',
+          'Enable notifications before confirming your booking to receive an alert on this device. Updates also appear in Notifications.',
+        ),
+        const SizedBox(height: 8),
+        const AppText(
+          'On iPhone, add this app to your Home Screen and open it there to enable notifications.',
         ),
         const SizedBox(height: 16),
         OutlinedButton.icon(
@@ -128,7 +132,7 @@ class _NotificationOptInState extends ConsumerState<NotificationOptIn> {
                 ? 'Enabling…'
                 : enabled
                 ? 'Enabled'
-                : 'Enable reminders',
+                : 'Enable notifications',
           ),
         ),
       ],

@@ -7,7 +7,7 @@ import {initializeTestEnvironment,assertFails,assertSucceeds} from '@firebase/ru
 import {doc,getDoc,setDoc,collection,query,where,getDocs} from 'firebase/firestore';
 import {BookingService} from '../src/booking_service.js';
 import {BookingSettings, generateSlots} from '../src/domain.js';
-import {queueNotice} from '../src/notifications.js';
+import {queueNotice,deliverNotice} from '../src/notifications.js';
 
 if(!process.env.FIRESTORE_EMULATOR_HOST)throw new Error('Integration tests require a Firestore emulator.');
 const projectId='demo-keekot-thangal', app=initializeApp({projectId}), db=getFirestore(app);
@@ -79,6 +79,10 @@ test('Firestore transactions and rules',async t=>{
   });
   await t.test('confirmation retry returns same booking without another increment',async()=>{
     assert.equal((await service.createBooking(owner,holdId,'Test Visitor')).bookingId,bookingId);
+    const notice=(await db.doc(`notifications/${bookingId}_confirmed`).get()).data()!;
+    assert.equal(notice.userId,owner.uid);assert.equal(notice.delivery,'pending');
+    await queueNotice(db,bookingId,'confirmed',(await db.doc(`bookings/${bookingId}`).get()).data()!);
+    assert.equal((await db.collection('notifications').where('bookingId','==',bookingId).where('kind','==','confirmed').get()).size,1);
     assert.equal((await db.doc(`visitSlots/${day}_0700`).get()).data()!.occupancy,3);
     assert.equal((await db.doc(`slotTokenCounters/${day}_0700`).get()).data()!.nextToken,4);
   });
@@ -122,7 +126,12 @@ test('Firestore transactions and rules',async t=>{
   await t.test('a delayed confirmation event cannot notify a cancelled booking',async()=>{
     const stale=(await db.doc(`bookings/${bookingId}`).get()).data()!;
     await queueNotice(db,bookingId,'confirmed',{...stale,status:'confirmed'});
-    assert.equal((await db.doc(`notifications/${bookingId}_confirmed`).get()).exists,false);
+    const notice=await db.doc(`notifications/${bookingId}_confirmed`).get();
+    assert.equal(notice.exists,true); // Created atomically with the original booking.
+    await queueNotice(db,bookingId,'confirmed',stale);
+    assert.equal((await db.doc(`notifications/${bookingId}_confirmed`).get()).data()!.createdAt.toMillis(),notice.data()!.createdAt.toMillis());
+    await deliverNotice(db,`${bookingId}_confirmed`);
+    assert.equal((await db.doc(`notifications/${bookingId}_confirmed`).get()).data()!.delivery,'superseded');
     await queueNotice(db,bookingId,'cancelled',stale);
     assert.equal((await db.doc(`notifications/${bookingId}_cancelled`).get()).exists,true);
   });

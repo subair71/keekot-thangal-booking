@@ -1,3 +1,4 @@
+import {noticeData} from './notifications.js';
 import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
 import {Firestore, FieldValue, Timestamp, Transaction} from 'firebase-admin/firestore';
 import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
@@ -114,6 +115,7 @@ export class BookingService {
       tx.set(sequence.counter,{nextToken:tokenEnd+1});
       tx.set(daily.ref,{count:daily.count+1,visitDate:slot.visitDate,updatedAt:FieldValue.serverTimestamp()});
       tx.create(bookingRef,booking);
+      tx.create(this.db.doc(`notifications/${bookingRef.id}_confirmed`),noticeData(bookingRef.id,'confirmed',booking));
       tx.create(this.db.doc(`passTokens/${tokenHash(qrToken)}`),{bookingId:bookingRef.id});
       tx.update(slotRef,{occupancy:slot.occupancy+hold.visitorCount});
       tx.set(stateRef,{visitDate:slot.visitDate,holds});
