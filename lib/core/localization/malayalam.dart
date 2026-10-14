@@ -1,5 +1,14 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Share the invitation with family and friends.':
+      'കുടുംബാംഗങ്ങളുമായും സുഹൃത്തുക്കളുമായും സന്ദർശന ക്ഷണം പങ്കിടുക.',
+  'Plan your ziyarat': 'സിയാറത്ത് ആസൂത്രണം ചെയ്യുക',
+  'Before your visit': 'സന്ദർശനത്തിന് മുമ്പ്',
+  'Keep your booking details ready and review the visitor guidance before travelling.':
+      'യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് വിവരങ്ങൾ തയ്യാറാക്കി വയ്ക്കുകയും സന്ദർശക നിർദേശങ്ങൾ വായിക്കുകയും ചെയ്യുക.',
+  'A considerate visit. A peaceful atmosphere.':
+      'പരസ്പര ബഹുമാനത്തോടെ ഒരു സന്ദർശനം. ശാന്തമായ അന്തരീക്ഷം.',
+
   'Share booking link': 'സന്ദർശന ലിങ്ക് പങ്കിടുക',
   'Copy message': 'സന്ദേശം പകർത്തുക',
   'Message copied': 'സന്ദേശം പകർത്തി',

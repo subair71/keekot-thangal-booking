@@ -13,6 +13,7 @@ import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
+import 'home_footer.dart';
 import 'media/youtube_player.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -264,86 +265,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           const SizedBox(height: 64),
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: AppColors.emerald,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: Column(
-              children: [
-                const Icon(
-                  Icons.spa_outlined,
-                  color: AppColors.mintStrong,
-                  size: 32,
-                ),
-                const SizedBox(height: 20),
-                AppText(
-                  'Your next visit begins with a little planning.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineLarge!.copyWith(color: Colors.white),
-                ),
-                const SizedBox(height: 14),
-                const AppText(
-                  'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xFFD9E6DF)),
-                ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.mintStrong,
-                    foregroundColor: AppColors.emerald,
-                  ),
-                  onPressed: () => context.go('/book'),
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const AppText('Plan my visit'),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 44),
-          const Divider(),
-          const SizedBox(height: 24),
-          const Emblem(size: 64),
-          const SizedBox(height: 12),
-          AppText(
-            'Keekkott Thangal Maqam',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const AppText(
-            'Ziyarat & visitor booking · Chavakkad, Kerala',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 16,
-            children: [
-              TextButton(
-                onPressed: () => context.go('/information'),
-                child: const AppText('Visitor information'),
-              ),
-              TextButton(
-                onPressed: () => context.go('/my-bookings'),
-                child: const AppText('My bookings'),
-              ),
-            ],
-          ),
-          TextButton.icon(
-            onPressed: () => reveal(videosKey),
-            icon: const Icon(Icons.play_circle_outline),
-            label: const AppText('Videos'),
-          ),
-          const SizedBox(height: 8),
-          const AppText(
-            'All visit times are in India Standard Time.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12),
-          ),
+          HomeFooter(onVideos: () => reveal(videosKey)),
         ],
       ),
     );
