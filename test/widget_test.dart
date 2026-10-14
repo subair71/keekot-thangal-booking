@@ -84,8 +84,8 @@ Future<void> pumpPage(
 void main() {
   setUpAll(() async {
     for (final font in {
-      'Newsreader': 'Newsreader.ttf',
-      'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Manrope': 'Manrope.ttf',
+      'DM Sans': 'DMSans.ttf',
     }.entries) {
       final loader = FontLoader(font.key)
         ..addFont(rootBundle.load('assets/fonts/${font.value}'));

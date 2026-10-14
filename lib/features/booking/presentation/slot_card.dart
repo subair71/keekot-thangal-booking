@@ -48,7 +48,7 @@ class SlotCard extends StatelessWidget {
       child: Material(
         color: color,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(10),
           side: BorderSide(
             color: selected ? AppColors.gold : AppColors.outline,
             width: selected ? 2 : 1,

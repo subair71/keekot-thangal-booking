@@ -15,7 +15,7 @@ class HomeFooter extends StatelessWidget {
     clipBehavior: Clip.antiAlias,
     decoration: BoxDecoration(
       color: AppColors.emerald,
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: BorderRadius.circular(12),
       border: Border.all(color: AppColors.outline),
     ),
     child: Column(
@@ -71,16 +71,15 @@ class HomeFooter extends StatelessWidget {
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: AppColors.ivory,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Emblem(size: 58),
                 ),
                 const SizedBox(height: 18),
                 AppText(
                   'Keekkott Thangal Maqam',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineMedium!.copyWith(color: AppColors.ivory),
+                  style: Theme.of(context).textTheme.headlineMedium!
+                      .copyWith(color: AppColors.ivory),
                 ),
                 const SizedBox(height: 8),
                 const AppText(

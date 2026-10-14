@@ -42,6 +42,12 @@ flutter:
   assets:
     - assets/brand/
   fonts:
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope.ttf
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans.ttf
     - family: Newsreader
       fonts:
         - asset: assets/fonts/Newsreader.ttf

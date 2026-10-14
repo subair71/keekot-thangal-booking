@@ -35,7 +35,7 @@ class PageContainer extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.sizeOf(context).width < 600 ? 18 : 32,
-            vertical: 36,
+            vertical: 28,
           ),
           child: child,
         ),
@@ -57,11 +57,11 @@ class SurfaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: color,
-    elevation: 1,
+    elevation: 0,
     shadowColor: AppColors.emerald.withValues(alpha: .08),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(24),
-      side: BorderSide(color: AppColors.outline.withValues(alpha: .7)),
+      borderRadius: BorderRadius.circular(10),
+      side: BorderSide(color: AppColors.outline),
     ),
     clipBehavior: Clip.antiAlias,
     child: Padding(padding: EdgeInsets.all(padding), child: child),
@@ -120,7 +120,7 @@ class BookingProgress extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: current == index ? AppColors.emerald : AppColors.mint,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: AppText(
               '${index < current ? '✓' : index + 1}  ${tr(context, label)}',
@@ -153,7 +153,7 @@ class StatusBadge extends StatelessWidget {
           : neutral
           ? AppColors.cream
           : AppColors.mint,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(8),
     ),
     child: AppText(
       label,
@@ -305,9 +305,9 @@ class EmptyState extends StatelessWidget {
   );
 }
 
-void showMessage(BuildContext context, String message) => ScaffoldMessenger.of(
-  context,
-).showSnackBar(SnackBar(content: AppText(message)));
+void showMessage(BuildContext context, String message) =>
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: AppText(message)));
 String failureMessage(Object e) => e is AppFailure
     ? e.message
     : 'We could not complete this request. Please try again.';

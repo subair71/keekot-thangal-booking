@@ -17,8 +17,7 @@ class InformationPage extends StatelessWidget {
         PageHeading(
           'Your guide to Keekkott Maqam',
           eyebrow: 'Visitor information',
-          subtitle:
-              'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
+          subtitle: 'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
         ),
         SurfaceCard(
           color: AppColors.cream,
@@ -28,7 +27,7 @@ class InformationPage extends StatelessWidget {
               AppText(
                 'Welcome to Keekkott Thangal Maqam',
                 style: TextStyle(
-                  fontFamily: 'Newsreader',
+                  fontFamily: 'Manrope',
                   fontSize: 28,
                   color: AppColors.emerald,
                 ),

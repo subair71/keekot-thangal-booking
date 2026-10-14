@@ -1,4 +1,5 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class VideoGallery extends StatelessWidget {
     padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 20 : 36),
     decoration: BoxDecoration(
       color: AppColors.cream,
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: BorderRadius.circular(12),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +208,7 @@ class _VideoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: Colors.white,
-    borderRadius: BorderRadius.circular(18),
+    borderRadius: BorderRadius.circular(10),
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: () => _play(context),

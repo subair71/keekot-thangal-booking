@@ -37,7 +37,7 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 96 : 76),
+        preferredSize: Size.fromHeight(wide ? 84 : 76),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -75,9 +75,9 @@ class AppShell extends ConsumerWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          fontFamily: 'Newsreader',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: wide ? 26 : 19,
+                                          fontFamily: 'Manrope',
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: wide ? 23 : 18,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
@@ -109,6 +109,9 @@ class AppShell extends ConsumerWidget {
                               child: TextButton(
                                 onPressed: () => context.go(routes[i]),
                                 style: TextButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                   backgroundColor: selected == i
                                       ? AppColors.mint
                                       : null,

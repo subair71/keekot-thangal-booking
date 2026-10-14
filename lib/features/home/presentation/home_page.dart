@@ -183,7 +183,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               color: AppColors.cream,
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,7 +262,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: const _VisitQuestions(),
             ),
           ),
-          const SizedBox(height: 64),
+          const SizedBox(height: 48),
           HomeFooter(onVideos: () => reveal(videosKey)),
         ],
       ),
@@ -277,7 +277,7 @@ class _MaqamHero extends StatelessWidget {
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 650;
       return ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(12),
         child: Stack(
           children: [
             Positioned.fill(
@@ -293,12 +293,10 @@ class _MaqamHero extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(
-                        0xFF082D25,
-                      ).withValues(alpha: compact ? .93 : .96),
-                      const Color(
-                        0xFF082D25,
-                      ).withValues(alpha: compact ? .72 : .16),
+                      const Color(0xFF082D25)
+                          .withValues(alpha: compact ? .93 : .96),
+                      const Color(0xFF082D25)
+                          .withValues(alpha: compact ? .72 : .16),
                     ],
                     stops: const [0, 1],
                   ),
@@ -320,7 +318,7 @@ class _MaqamHero extends StatelessWidget {
                       border: Border.all(
                         color: AppColors.mintStrong.withValues(alpha: .3),
                       ),
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: const AppText(
                       'KEEKKOTT THANGAL MAQAM',
@@ -338,8 +336,10 @@ class _MaqamHero extends StatelessWidget {
                     child: AppText(
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
-                        fontFamily: 'Newsreader',
-                        fontSize: compact ? 44 : 52,
+                        fontFamily: 'Manrope',
+                        fontSize: compact ? 36 : 44,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -.8,
                         height: 1.05,
                         color: Colors.white,
                       ),
@@ -465,7 +465,7 @@ class _VisitStep extends StatelessWidget {
       AppText(
         number,
         style: const TextStyle(
-          fontFamily: 'Newsreader',
+          fontFamily: 'Manrope',
           fontSize: 36,
           color: AppColors.gold,
         ),
@@ -684,8 +684,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text:
-                      'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
+                  text: 'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
                 ),
               ],
             ),
@@ -719,7 +718,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: ColoredBox(
@@ -745,7 +744,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
         padding: EdgeInsets.all(compact ? 20 : 28),
         decoration: BoxDecoration(
           color: AppColors.cream,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.outline),
         ),
         child: compact
