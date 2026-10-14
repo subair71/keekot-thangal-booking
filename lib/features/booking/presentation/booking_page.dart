@@ -141,7 +141,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                 AppText(
                                   '${dt.day}',
                                   style: const TextStyle(
-                                    fontFamily: 'Newsreader',
+                                    fontFamily: 'Manrope',
                                     fontSize: 30,
                                   ),
                                 ),
@@ -346,9 +346,9 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   child: AppText(
                                     '$visitors',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleLarge,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge,
                                   ),
                                 ),
                                 IconButton.filled(

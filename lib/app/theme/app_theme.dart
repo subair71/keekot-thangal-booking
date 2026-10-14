@@ -20,7 +20,7 @@ abstract final class AppColors {
 ThemeData buildTheme() {
   final base = ThemeData(
     useMaterial3: true,
-    fontFamily: 'Plus Jakarta Sans',
+    fontFamily: 'DM Sans',
     scaffoldBackgroundColor: AppColors.ivory,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.emerald,
@@ -31,61 +31,61 @@ ThemeData buildTheme() {
     ),
   );
   const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(16)),
+    borderRadius: BorderRadius.all(Radius.circular(8)),
   );
   return base.copyWith(
     textTheme: base.textTheme
         .apply(bodyColor: AppColors.ink, displayColor: AppColors.emerald)
         .copyWith(
           displayLarge: const TextStyle(
-            fontFamily: 'Newsreader',
-            fontSize: 54,
+            fontFamily: 'Manrope',
+            fontSize: 48,
             height: 1.08,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w800,
             color: AppColors.emerald,
           ),
           headlineLarge: const TextStyle(
-            fontFamily: 'Newsreader',
-            fontSize: 36,
+            fontFamily: 'Manrope',
+            fontSize: 32,
             height: 1.18,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w800,
             color: AppColors.emerald,
           ),
           headlineMedium: const TextStyle(
-            fontFamily: 'Newsreader',
-            fontSize: 28,
+            fontFamily: 'Manrope',
+            fontSize: 26,
             height: 1.2,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w800,
             color: AppColors.emerald,
           ),
           titleLarge: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'Manrope',
             fontSize: 19,
             height: 1.4,
             fontWeight: FontWeight.w600,
             color: AppColors.ink,
           ),
           bodyLarge: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'DM Sans',
             fontSize: 16,
             height: 1.65,
             color: AppColors.ink,
           ),
           bodyMedium: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontSize: 16,
+            fontFamily: 'DM Sans',
+            fontSize: 15,
             height: 1.6,
             color: AppColors.muted,
           ),
           labelLarge: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
+            fontFamily: 'DM Sans',
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
         ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size(48, 52),
+        minimumSize: const Size(48, 48),
         shape: shape,
         backgroundColor: AppColors.emerald,
         foregroundColor: AppColors.white,
@@ -94,7 +94,7 @@ ThemeData buildTheme() {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        minimumSize: const Size(48, 52),
+        minimumSize: const Size(48, 48),
         shape: shape,
         side: const BorderSide(color: AppColors.outline),
         foregroundColor: AppColors.emerald,
@@ -107,17 +107,17 @@ ThemeData buildTheme() {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.white,
-      contentPadding: const EdgeInsets.all(18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: AppColors.secondary, width: 2),
       ),
     ),
@@ -125,7 +125,28 @@ ThemeData buildTheme() {
       backgroundColor: AppColors.ivory,
       indicatorColor: AppColors.mintStrong,
       labelTextStyle: WidgetStatePropertyAll(
-        TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 13),
+        TextStyle(fontFamily: 'DM Sans', fontSize: 13),
+      ),
+    ),
+    cardTheme: const CardThemeData(
+      elevation: 0,
+      color: AppColors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        side: BorderSide(color: AppColors.outline),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.mint,
+      side: const BorderSide(color: AppColors.outline),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    ),
+    dialogTheme: const DialogThemeData(
+      backgroundColor: AppColors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     ),
     dividerColor: AppColors.outline,
