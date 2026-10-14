@@ -140,10 +140,26 @@ test('Firestore transactions and rules',async t=>{
   await t.test('secure pass requires staff, time window, and prevents repeated entry',async()=>{
     const h=await hold(24,4);const result=await service.createBooking(actor(24),h.holdId,'Gate Visitor');
     const b=(await db.doc(`bookings/${result.bookingId}`).get()).data()!;
+    const staff={...actor(100),gate:true};
     await assert.rejects(()=>service.validatePass(actor(1),b.qrToken,true));
-    assert.equal((await service.validatePass({...actor(100),gate:true},b.qrToken,false)).valid,false);
-    now=b.startAt+1000; assert.equal((await service.validatePass({...actor(100),gate:true},b.qrToken,true)).valid,true);
-    assert.equal((await service.validatePass({...actor(100),gate:true},b.qrToken,true)).valid,false);
+    assert.equal((await service.validatePass(staff,'bad-qr',true)).reason,'invalid_pass');
+    assert.equal((await service.validatePass(staff,'x'.repeat(43),true)).reason,'invalid_pass');
+    assert.equal((await service.validatePass(staff,b.qrToken,false)).reason,'too_early');
+    now=b.endAt;
+    assert.equal((await service.validatePass(staff,b.qrToken,true)).reason,'expired');
+    now=b.startAt+1000;
+    assert.equal((await service.validatePass(staff,b.qrToken,false)).valid,true);
+    assert.equal((await db.doc(`bookings/${result.bookingId}`).get()).data()!.status,'confirmed');
+    const scans=await Promise.all([service.validatePass(staff,b.qrToken,true),service.validatePass({...actor(101),admin:true},b.qrToken,true)]);
+    assert.equal(scans.filter(r=>r.valid).length,1);
+    assert.equal(scans.filter(r=>r.reason==='already_used').length,1);
+    const saved=(await db.doc(`bookings/${result.bookingId}`).get()).data()!;
+    assert.equal(saved.status,'completed');
+    assert.ok(saved.checkedInAt);
+    assert.ok(['test-100','test-101'].includes(saved.checkedInBy));
+    assert.equal((await service.validatePass(staff,b.qrToken,true)).reason,'already_used');
+    const cancelled=(await db.doc(`bookings/${bookingId}`).get()).data()!;
+    assert.equal((await service.validatePass(staff,cancelled.qrToken,true)).reason,'cancelled');
   });
   await t.test('Firestore rules isolate owners and reject all client capacity mutations',async()=>{
     const env=await initializeTestEnvironment({projectId,firestore:{rules:await readFile('../firestore.rules','utf8'),host:'127.0.0.1',port:8080}});

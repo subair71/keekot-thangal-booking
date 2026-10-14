@@ -156,21 +156,22 @@ export class BookingService {
   }
   async validatePass(actor: Actor, qrToken: string, checkIn: boolean) {
     if(!actor.admin && !actor.gate)throw new DomainError('permission-denied','Entry staff access is required.');
-    if(typeof qrToken!=='string' || !/^[A-Za-z0-9_-]{43}$/.test(qrToken))return {valid:false};
+    if(typeof qrToken!=='string' || !/^[A-Za-z0-9_-]{43}$/.test(qrToken))return {valid:false,reason:'invalid_pass'};
     const tokenDocument=await this.db.doc(`passTokens/${tokenHash(qrToken)}`).get();
-    if(!tokenDocument.exists)return {valid:false};
+    if(!tokenDocument.exists)return {valid:false,reason:'invalid_pass'};
     await this.ensureBookingTokens(actor,tokenDocument.data()!.bookingId);
     return this.db.runTransaction(async tx=>{
-      const p=await tx.get(this.db.doc(`passTokens/${tokenHash(qrToken)}`)); if(!p.exists)return {valid:false};
+      const p=await tx.get(this.db.doc(`passTokens/${tokenHash(qrToken)}`)); if(!p.exists)return {valid:false,reason:'invalid_pass'};
       const [booking,config]=await tx.getAll(this.db.doc(`bookings/${p.data()!.bookingId}`),this.db.doc('settings/booking'));
-      if(!booking.exists)return {valid:false};
+      if(!booking.exists)return {valid:false,reason:'invalid_pass'};
       const b=booking.data()!, c=settingsFrom(config.data()), now=this.clock();
-      const valid=b.status==='confirmed' && now>=b.startAt-c.arrivalMinutes*60_000 && now<b.endAt;
+      const reason=b.status==='completed'?'already_used':b.status==='cancelled'?'cancelled':b.status!=='confirmed'?'invalid_pass':now<b.startAt-c.arrivalMinutes*60_000?'too_early':now>=b.endAt?'expired':null;
+      const valid=reason===null;
       if(valid && checkIn){
-        tx.update(booking.ref,{status:'completed',checkedInAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});
+        tx.update(booking.ref,{status:'completed',checkedInBy:actor.uid,checkedInAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});
         tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'checkIn',bookingId:booking.id,at:FieldValue.serverTimestamp()});
       }
-      return {valid,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,tokenStart:b.tokenStart ?? null,tokenEnd:b.tokenEnd ?? null,status:valid && checkIn?'completed':b.status};
+      return {valid,reason,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,tokenStart:b.tokenStart ?? null,tokenEnd:b.tokenEnd ?? null,status:valid && checkIn?'completed':b.status};
     });
   }
   async cleanupExpiredHolds() {
