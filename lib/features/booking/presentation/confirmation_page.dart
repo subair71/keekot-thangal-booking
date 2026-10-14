@@ -10,6 +10,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
 import '../domain/booking_models.dart';
+import '../../notifications/presentation/notifications_page.dart';
 
 class ConfirmationPage extends ConsumerStatefulWidget {
   const ConfirmationPage({super.key});
@@ -265,6 +266,8 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       ),
                       const SizedBox(height: 20),
                     ],
+                    const NotificationOptIn(),
+                    const SizedBox(height: 20),
                     FilledButton.icon(
                       onPressed: busy || remaining == 0 ? null : submit,
                       icon: const Icon(Icons.lock_outline),
