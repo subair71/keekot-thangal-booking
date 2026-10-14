@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -21,7 +20,6 @@ import 'package:keekot_thangal/features/my_bookings/presentation/pass_card.dart'
 import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
 
 import 'fixtures.dart';
-import 'package:keekot_thangal/core/widgets/keekkott_logo_data.dart';
 
 import 'package:keekot_thangal/core/utils/visit_clock.dart';
 
@@ -39,7 +37,7 @@ Future<void> capturePage(WidgetTester tester, String name) async {
     );
     if (context.mounted) {
       await precacheImage(
-        MemoryImage(base64Decode(keekkottLogoBase64)),
+        const AssetImage('assets/brand/official-logo.png'),
         context,
       );
     }

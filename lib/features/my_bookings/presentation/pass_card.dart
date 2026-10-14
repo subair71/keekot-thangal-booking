@@ -8,7 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
-import '../data/pass_download.dart';
+import '../data/pass_download.dart' deferred as pass_download;
 
 class PassCard extends ConsumerStatefulWidget {
   const PassCard({super.key, required this.booking});
@@ -136,7 +136,8 @@ class _PassCardState extends ConsumerState<PassCard> {
                   : () async {
                       setState(() => busy = true);
                       try {
-                        await PassDownload.download(b);
+                        await pass_download.loadLibrary();
+                        await pass_download.PassDownload.download(b);
                       } catch (e) {
                         if (context.mounted) {
                           showMessage(context, failureMessage(e));
