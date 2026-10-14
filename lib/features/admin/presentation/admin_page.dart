@@ -429,9 +429,11 @@ class _GateValidationState extends ConsumerState<GateValidation> {
                   'already_used' || 'completed' =>
                     'This pass has already been used. Do not admit again.',
                   'cancelled' => 'This booking has been cancelled.',
-                  'too_early' => 'This pass is not yet valid. Check the scheduled visit time.',
+                  'too_early' =>
+                    'This pass is not yet valid. Check the scheduled visit time.',
                   'expired' => 'The visit time for this pass has expired.',
-                  _ => 'This pass is not valid for entry. Check the booking and visit time.',
+                  _ =>
+                    'This pass is not valid for entry. Check the booking and visit time.',
                 }),
               if (result!['bookingReference'] != null)
                 Text(
