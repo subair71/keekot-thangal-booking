@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
@@ -78,6 +79,24 @@ void main() {
         isNotNull,
       );
       expect(tester.takeException(), isNull);
+      // Header shortcuts must work from a different page and within Home.
+      for (final item in const [
+        ('Videos', 'videos'),
+        ('Visitor guide', 'guide'),
+        ('Questions before you visit', 'questions'),
+      ]) {
+        await tester.tap(find.byKey(const ValueKey('header-menu')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(ListTile, item.$1));
+        await tester.pumpAndSettle();
+        final uri = GoRouter.of(
+          tester.element(toggle),
+        ).routeInformationProvider.value.uri;
+        expect(uri.path, '/');
+        expect(uri.queryParameters['section'], item.$2);
+        expect(find.byType(Drawer), findsNothing);
+        expect(tester.takeException(), isNull);
+      }
       await tester.pumpWidget(const SizedBox());
     });
   }

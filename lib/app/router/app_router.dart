@@ -63,7 +63,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
         routes: [
-          GoRoute(path: '/', builder: (_, _) => const HomePage()),
+          GoRoute(
+            path: '/',
+            builder: (_, state) =>
+                HomePage(section: state.uri.queryParameters['section']),
+          ),
           GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
           GoRoute(
             path: '/auth',
