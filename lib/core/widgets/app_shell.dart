@@ -71,7 +71,7 @@ class AppShell extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       AppText(
-                                        'KEEKOTT SAYYID AATTAKOYA THANGAL MAQAM',
+                                        'Keekkott Sayyid Aattakkoya Thangal',
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
