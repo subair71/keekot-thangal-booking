@@ -1,5 +1,6 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  "KEEKKOTT SAYYID ATTAKOYA THANGAL": "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ",
   "Contact us": "ബന്ധപ്പെടുക",
   "KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM":
       "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം",
