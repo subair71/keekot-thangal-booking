@@ -15,8 +15,12 @@ class ProgrammeCarousel extends StatefulWidget {
 
 class _ProgrammeCarouselState extends State<ProgrammeCarousel>
     with WidgetsBindingObserver {
-  static const _slides = [
-    ('ദിക്ർ ഹൽഖ', ['എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം']),
+  static const List<(String, String, List<String>)> _slides = [
+    (
+      'assets/brand/programme-dhikr-small.webp',
+      'ദിക്ർ ഹൽഖ',
+      ['എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'],
+    ),
     (
       'assets/brand/programme-mawlid-small.webp',
       'മൗലിദ് സദസ്സ്',
