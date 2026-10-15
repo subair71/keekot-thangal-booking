@@ -125,7 +125,7 @@ ThemeData buildTheme() {
       backgroundColor: AppColors.ivory,
       indicatorColor: AppColors.mintStrong,
       labelTextStyle: WidgetStatePropertyAll(
-        TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 13),
+        TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11),
       ),
     ),
     dividerColor: AppColors.outline,
