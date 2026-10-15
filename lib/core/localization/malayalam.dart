@@ -12,7 +12,8 @@ const malayalam = <String, String>{
   "Please complete this field.": "ദയവായി ഈ വിവരങ്ങൾ പൂർണ്ണമായി നൽകുക.",
   "Enter a valid email address.": "ശരിയായ ഇമെയിൽ വിലാസം നൽകുക.",
   "Enter a valid phone number.": "ശരിയായ ഫോൺ നമ്പർ നൽകുക.",
-  "Your contact details and message will be emailed to the Maqam team so we can respond to your enquiry.": "നിങ്ങളുടെ ചോദ്യത്തിന് മറുപടി നൽകുന്നതിനായി ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും സന്ദേശവും മഖാം ടീമിന് ഇമെയിൽ ചെയ്യും.",
+  "Your contact details and message will be emailed to the Maqam team so we can respond to your enquiry.":
+      "നിങ്ങളുടെ ചോദ്യത്തിന് മറുപടി നൽകുന്നതിനായി ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും സന്ദേശവും മഖാം ടീമിന് ഇമെയിൽ ചെയ്യും.",
   "Send message": "സന്ദേശം അയയ്ക്കുക",
   "Sending…": "അയയ്ക്കുന്നു…",
   "Thank you. Your message has been sent to our team.":
@@ -20,7 +21,8 @@ const malayalam = <String, String>{
   "Send another message": "മറ്റൊരു സന്ദേശം അയയ്ക്കുക",
   "Too many messages. Please try again later.":
       "സന്ദേശങ്ങളുടെ പരിധി കഴിഞ്ഞു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
-  "Your message could not be sent. Please try again later or email us directly.": "സന്ദേശം അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ നേരിട്ട് ഇമെയിൽ അയയ്ക്കുക.",
+  "Your message could not be sent. Please try again later or email us directly.":
+      "സന്ദേശം അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ നേരിട്ട് ഇമെയിൽ അയയ്ക്കുക.",
   "You can also email us directly.": "നിങ്ങൾക്ക് നേരിട്ടും ഇമെയിൽ അയയ്ക്കാം.",
   "Open email app": "ഇമെയിൽ ആപ്പ് തുറക്കുക",
   "Please copy the email address into your email app.":
@@ -28,14 +30,17 @@ const malayalam = <String, String>{
   'Booking notifications enabled': 'ബുക്കിംഗ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കി',
   'Get your booking confirmation': 'ബുക്കിംഗ് സ്ഥിരീകരണ അറിയിപ്പ് നേടുക',
   'Enable notifications': 'അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക',
-  'Enable notifications before confirming your booking to receive an alert on this device. Updates also appear in Notifications.': 'ഈ ഉപകരണത്തിൽ അറിയിപ്പ് ലഭിക്കാൻ ബുക്കിംഗ് സ്ഥിരീകരിക്കുന്നതിന് മുമ്പ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക. വിവരങ്ങൾ അറിയിപ്പുകൾ എന്ന വിഭാഗത്തിലും ലഭിക്കും.',
-  'On iPhone, add this app to your Home Screen and open it there to enable notifications.': 'ഐഫോണിൽ അറിയിപ്പുകൾ ലഭിക്കാൻ ഈ ആപ്പ് ഹോം സ്ക്രീനിൽ ചേർത്ത് അവിടെ നിന്ന് തുറക്കുക.',
+  'Enable notifications before confirming your booking to receive an alert on this device. Updates also appear in Notifications.':
+      'ഈ ഉപകരണത്തിൽ അറിയിപ്പ് ലഭിക്കാൻ ബുക്കിംഗ് സ്ഥിരീകരിക്കുന്നതിന് മുമ്പ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക. വിവരങ്ങൾ അറിയിപ്പുകൾ എന്ന വിഭാഗത്തിലും ലഭിക്കും.',
+  'On iPhone, add this app to your Home Screen and open it there to enable notifications.':
+      'ഐഫോണിൽ അറിയിപ്പുകൾ ലഭിക്കാൻ ഈ ആപ്പ് ഹോം സ്ക്രീനിൽ ചേർത്ത് അവിടെ നിന്ന് തുറക്കുക.',
 
   'Share the invitation with family and friends.':
       'കുടുംബാംഗങ്ങളുമായും സുഹൃത്തുക്കളുമായും സന്ദർശന ക്ഷണം പങ്കിടുക.',
   'Plan your ziyarat': 'സിയാറത്ത് ആസൂത്രണം ചെയ്യുക',
   'Before your visit': 'സന്ദർശനത്തിന് മുമ്പ്',
-  'Keep your booking details ready and review the visitor guidance before travelling.': 'യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് വിവരങ്ങൾ തയ്യാറാക്കി വയ്ക്കുകയും സന്ദർശക നിർദേശങ്ങൾ വായിക്കുകയും ചെയ്യുക.',
+  'Keep your booking details ready and review the visitor guidance before travelling.':
+      'യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് വിവരങ്ങൾ തയ്യാറാക്കി വയ്ക്കുകയും സന്ദർശക നിർദേശങ്ങൾ വായിക്കുകയും ചെയ്യുക.',
   'A considerate visit. A peaceful atmosphere.':
       'പരസ്പര ബഹുമാനത്തോടെ ഒരു സന്ദർശനം. ശാന്തമായ അന്തരീക്ഷം.',
 
@@ -81,8 +86,10 @@ const malayalam = <String, String>{
   "WELCOME TO KEEKKOTT": "കീക്കോട്ടിലേക്ക് സ്വാഗതം",
   "A place for remembrance.\nA moment for yourself.":
       "സ്മരണയ്ക്കൊരു ഇടം.\nനിങ്ങൾക്കായി ഒരു നിമിഷം.",
-  "Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.": "അസ്സലാമു അലൈക്കും. കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം. സിയാറത്തിനും ദുആക്കും ശാന്തമായ ആത്മചിന്തയ്ക്കും സമയം കണ്ടെത്തൂ. ആദരവോടെയും മറ്റുള്ളവരെ പരിഗണിച്ചും സന്ദർശിക്കുക.",
-  "This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.": "സന്ദർശനം മുൻകൂട്ടി ആസൂത്രണം ചെയ്യാൻ ഈ സേവനം സഹായിക്കുന്നു. ലഭ്യമായ തീയതികൾ പരിശോധിച്ച് അനുയോജ്യമായ സമയം ബുക്ക് ചെയ്യുക; പ്രവേശന പാസ് കരുതുക. ഒറ്റയ്ക്കോ കുടുംബത്തോടൊപ്പമോ എത്തുമ്പോൾ മുൻകൂട്ടിയുള്ള തയ്യാറെടുപ്പ് ഉപകാരപ്പെടും.",
+  "Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.":
+      "അസ്സലാമു അലൈക്കും. കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം. സിയാറത്തിനും ദുആക്കും ശാന്തമായ ആത്മചിന്തയ്ക്കും സമയം കണ്ടെത്തൂ. ആദരവോടെയും മറ്റുള്ളവരെ പരിഗണിച്ചും സന്ദർശിക്കുക.",
+  "This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.":
+      "സന്ദർശനം മുൻകൂട്ടി ആസൂത്രണം ചെയ്യാൻ ഈ സേവനം സഹായിക്കുന്നു. ലഭ്യമായ തീയതികൾ പരിശോധിച്ച് അനുയോജ്യമായ സമയം ബുക്ക് ചെയ്യുക; പ്രവേശന പാസ് കരുതുക. ഒറ്റയ്ക്കോ കുടുംബത്തോടൊപ്പമോ എത്തുമ്പോൾ മുൻകൂട്ടിയുള്ള തയ്യാറെടുപ്പ് ഉപകാരപ്പെടും.",
   "Remembrance & dua": "സ്മരണയും ദുആയും",
   "Set aside the rush of the day for a thoughtful visit.":
       "ദൈനംദിന തിരക്കുകളിൽ നിന്ന് മാറി ശാന്തമായ സന്ദർശനത്തിന് സമയം കണ്ടെത്തൂ.",
@@ -93,25 +100,32 @@ const malayalam = <String, String>{
   "Arrive prepared. Be fully present.":
       "തയ്യാറായി എത്തൂ. മനസ്സമാധാനത്തോടെ സന്ദർശിക്കൂ.",
   "Choose your time": "സമയം തിരഞ്ഞെടുക്കുക",
-  "Select an available date and time that works for you. Check the latest schedule before making travel plans.": "നിങ്ങൾക്ക് അനുയോജ്യമായ ലഭ്യമായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക. യാത്ര ആസൂത്രണം ചെയ്യുന്നതിന് മുമ്പ് പുതുക്കിയ സമയക്രമം പരിശോധിക്കുക.",
+  "Select an available date and time that works for you. Check the latest schedule before making travel plans.":
+      "നിങ്ങൾക്ക് അനുയോജ്യമായ ലഭ്യമായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക. യാത്ര ആസൂത്രണം ചെയ്യുന്നതിന് മുമ്പ് പുതുക്കിയ സമയക്രമം പരിശോധിക്കുക.",
   "Confirm your details": "വിവരങ്ങൾ സ്ഥിരീകരിക്കുക",
-  "Verify your mobile number and add the visitor details requested to complete your reservation.": "മൊബൈൽ നമ്പർ സ്ഥിരീകരിച്ച് ആവശ്യമായ സന്ദർശക വിവരങ്ങൾ നൽകി ബുക്കിംഗ് പൂർത്തിയാക്കുക.",
+  "Verify your mobile number and add the visitor details requested to complete your reservation.":
+      "മൊബൈൽ നമ്പർ സ്ഥിരീകരിച്ച് ആവശ്യമായ സന്ദർശക വിവരങ്ങൾ നൽകി ബുക്കിംഗ് പൂർത്തിയാക്കുക.",
   "Keep your pass ready": "പാസ് തയ്യാറാക്കി വയ്ക്കുക",
-  "Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.": "QR പാസും ടോക്കൺ വിവരങ്ങളും കാണാൻ ‘എന്റെ ബുക്കിംഗുകൾ’ തുറക്കുക. ബുക്കിംഗിൽ നൽകിയ എത്തിച്ചേരൽ സമയം പാലിക്കുക.",
+  "Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.":
+      "QR പാസും ടോക്കൺ വിവരങ്ങളും കാണാൻ ‘എന്റെ ബുക്കിംഗുകൾ’ തുറക്കുക. ബുക്കിംഗിൽ നൽകിയ എത്തിച്ചേരൽ സമയം പാലിക്കുക.",
   "A CONSIDERATE ZIYARAT": "പരിഗണനയോടെയുള്ള സിയാറത്ത്",
   "Small gestures. A peaceful atmosphere.":
       "ചെറിയ കരുതലുകൾ. ശാന്തമായ അന്തരീക്ഷം.",
   "BEFORE YOU SET OUT": "യാത്ര തിരിക്കും മുമ്പ്",
   "Make room for a meaningful visit.":
       "അർഥവത്തായ സന്ദർശനത്തിന് സമയം കണ്ടെത്തൂ.",
-  "Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.": "കീക്കോട്ട് മഖാമിലേക്ക് യാത്ര തിരിക്കും മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക. ബുക്കിംഗ് വിവരങ്ങൾ കൈവശം കരുതുക, യാത്രയ്ക്ക് മതിയായ സമയം അനുവദിക്കുക, എത്തിയശേഷം ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുക.",
+  "Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.":
+      "കീക്കോട്ട് മഖാമിലേക്ക് യാത്ര തിരിക്കും മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക. ബുക്കിംഗ് വിവരങ്ങൾ കൈവശം കരുതുക, യാത്രയ്ക്ക് മതിയായ സമയം അനുവദിക്കുക, എത്തിയശേഷം ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുക.",
   "Visiting with family": "കുടുംബത്തോടൊപ്പം സന്ദർശിക്കുമ്പോൾ",
-  "Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.": "ബുക്കിംഗിൽ ഉൾപ്പെടുത്തിയ സന്ദർശകരുടെ വിവരങ്ങൾ ശരിയാണെന്ന് ഉറപ്പാക്കുക. ഒരുമിച്ച് നിൽക്കുകയും കുട്ടികളെയും മുതിർന്നവരെയും ശ്രദ്ധിക്കുകയും ചെയ്യുക.",
+  "Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.":
+      "ബുക്കിംഗിൽ ഉൾപ്പെടുത്തിയ സന്ദർശകരുടെ വിവരങ്ങൾ ശരിയാണെന്ന് ഉറപ്പാക്കുക. ഒരുമിച്ച് നിൽക്കുകയും കുട്ടികളെയും മുതിർന്നവരെയും ശ്രദ്ധിക്കുകയും ചെയ്യുക.",
   "Photography & privacy": "ഫോട്ടോഗ്രഫിയും സ്വകാര്യതയും",
-  "Ask staff before taking photographs. Respect other visitors and any restrictions within the Maqam.": "ഫോട്ടോ എടുക്കുന്നതിന് മുമ്പ് ജീവനക്കാരോട് അനുമതി ചോദിക്കുക. മറ്റു സന്ദർശകരുടെ സ്വകാര്യതയും മഖാമിലെ നിയന്ത്രണങ്ങളും മാനിക്കുക.",
+  "Ask staff before taking photographs. Respect other visitors and any restrictions within the Maqam.":
+      "ഫോട്ടോ എടുക്കുന്നതിന് മുമ്പ് ജീവനക്കാരോട് അനുമതി ചോദിക്കുക. മറ്റു സന്ദർശകരുടെ സ്വകാര്യതയും മഖാമിലെ നിയന്ത്രണങ്ങളും മാനിക്കുക.",
   "Your next visit begins with a little planning.":
       "അടുത്ത സന്ദർശനം ചെറിയൊരു ആസൂത്രണത്തോടെ തുടങ്ങാം.",
-  "Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.": "അനുയോജ്യമായ സമയം കണ്ടെത്തി കീക്കോട്ട് മഖാമിലെ ശാന്തമായ സിയാറത്തിനായി തയ്യാറാകൂ.",
+  "Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.":
+      "അനുയോജ്യമായ സമയം കണ്ടെത്തി കീക്കോട്ട് മഖാമിലെ ശാന്തമായ സിയാറത്തിനായി തയ്യാറാകൂ.",
   "Plan my visit": "സന്ദർശനം ആസൂത്രണം ചെയ്യുക",
   "Keekkott Thangal Maqam": "കീക്കോട്ട് തങ്ങൾ മഖാം",
   "Ziyarat & visitor booking · Chavakkad, Kerala":
@@ -123,20 +137,26 @@ const malayalam = <String, String>{
   "KEEKKOTT THANGAL MAQAM": "കീക്കോട്ട് തങ്ങൾ മഖാം",
   "A peaceful place.\nA heartfelt visit.":
       "ശാന്തമായ ഒരിടം.\nഹൃദയപൂർവമായ സന്ദർശനം.",
-  "Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Maqam, Chavakkad.": "സ്മരണയ്ക്കായി അൽപനേരം മാറ്റിവയ്ക്കൂ. ദുആയ്ക്ക് സമയം കണ്ടെത്തൂ. ചാവക്കാട്ടെ കീക്കോട്ട് മഖാമിലേക്കുള്ള സിയാറത്ത് ആസൂത്രണം ചെയ്യൂ.",
+  "Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Maqam, Chavakkad.":
+      "സ്മരണയ്ക്കായി അൽപനേരം മാറ്റിവയ്ക്കൂ. ദുആയ്ക്ക് സമയം കണ്ടെത്തൂ. ചാവക്കാട്ടെ കീക്കോട്ട് മഖാമിലേക്കുള്ള സിയാറത്ത് ആസൂത്രണം ചെയ്യൂ.",
   "CHAVAKKAD  /  KERALA  /  INDIA": "ചാവക്കാട്  /  കേരളം  /  ഇന്ത്യ",
   "Oil painting inspired by the Keekkott Maqam photograph":
       "കീക്കോട്ട് മഖാമിന്റെ ചിത്രത്തെ ആസ്പദമാക്കിയ ഓയിൽ പെയിന്റിംഗ്",
   "How do I reserve a visit?": "സന്ദർശനം എങ്ങനെ ബുക്ക് ചെയ്യാം?",
-  "Choose Book a visit, select an available date and time, and follow the steps to verify your mobile number and confirm your visitor details.": "‘സന്ദർശനം ബുക്ക് ചെയ്യുക’ തിരഞ്ഞെടുത്ത് ലഭ്യമായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക. തുടർന്ന് മൊബൈൽ നമ്പർ സ്ഥിരീകരിച്ച് സന്ദർശക വിവരങ്ങൾ നൽകുക.",
+  "Choose Book a visit, select an available date and time, and follow the steps to verify your mobile number and confirm your visitor details.":
+      "‘സന്ദർശനം ബുക്ക് ചെയ്യുക’ തിരഞ്ഞെടുത്ത് ലഭ്യമായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക. തുടർന്ന് മൊബൈൽ നമ്പർ സ്ഥിരീകരിച്ച് സന്ദർശക വിവരങ്ങൾ നൽകുക.",
   "Where can I find my entry pass?": "പ്രവേശന പാസ് എവിടെ ലഭിക്കും?",
-  "Sign in with the mobile number used for your reservation and open My Bookings. Your confirmed booking contains your QR pass and token details.": "ബുക്കിംഗിന് ഉപയോഗിച്ച മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്ത് ‘എന്റെ ബുക്കിംഗുകൾ’ തുറക്കുക. സ്ഥിരീകരിച്ച ബുക്കിംഗിൽ QR പാസും ടോക്കൺ വിവരങ്ങളും ലഭിക്കും.",
+  "Sign in with the mobile number used for your reservation and open My Bookings. Your confirmed booking contains your QR pass and token details.":
+      "ബുക്കിംഗിന് ഉപയോഗിച്ച മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്ത് ‘എന്റെ ബുക്കിംഗുകൾ’ തുറക്കുക. സ്ഥിരീകരിച്ച ബുക്കിംഗിൽ QR പാസും ടോക്കൺ വിവരങ്ങളും ലഭിക്കും.",
   "What if my plans change?": "യാത്രാപദ്ധതി മാറിയാൽ എന്തു ചെയ്യണം?",
-  "Open My Bookings to check whether your booking is eligible for cancellation. If it is, cancel it there before making another reservation.": "‘എന്റെ ബുക്കിംഗുകൾ’ തുറന്ന് ബുക്കിംഗ് റദ്ദാക്കാനാകുമോ എന്ന് പരിശോധിക്കുക. കഴിയുമെങ്കിൽ പുതിയ ബുക്കിംഗ് നടത്തുന്നതിന് മുമ്പ് പഴയത് റദ്ദാക്കുക.",
+  "Open My Bookings to check whether your booking is eligible for cancellation. If it is, cancel it there before making another reservation.":
+      "‘എന്റെ ബുക്കിംഗുകൾ’ തുറന്ന് ബുക്കിംഗ് റദ്ദാക്കാനാകുമോ എന്ന് പരിശോധിക്കുക. കഴിയുമെങ്കിൽ പുതിയ ബുക്കിംഗ് നടത്തുന്നതിന് മുമ്പ് പഴയത് റദ്ദാക്കുക.",
   "Which times are available?": "ഏതു സമയങ്ങളാണ് ലഭ്യമായിട്ടുള്ളത്?",
-  "The booking calendar shows the latest available slots and closures. Times are shown in India Standard Time. Check availability before travelling.": "ബുക്കിംഗ് കലണ്ടറിൽ ലഭ്യമായ സമയങ്ങളും അടച്ചിട്ട ദിവസങ്ങളും കാണാം. സമയങ്ങൾ ഇന്ത്യൻ സ്റ്റാൻഡേർഡ് സമയത്തിലാണ്. യാത്രയ്ക്ക് മുമ്പ് ലഭ്യത പരിശോധിക്കുക.",
+  "The booking calendar shows the latest available slots and closures. Times are shown in India Standard Time. Check availability before travelling.":
+      "ബുക്കിംഗ് കലണ്ടറിൽ ലഭ്യമായ സമയങ്ങളും അടച്ചിട്ട ദിവസങ്ങളും കാണാം. സമയങ്ങൾ ഇന്ത്യൻ സ്റ്റാൻഡേർഡ് സമയത്തിലാണ്. യാത്രയ്ക്ക് മുമ്പ് ലഭ്യത പരിശോധിക്കുക.",
   "Who can help with my visit?": "സന്ദർശനത്തിന് സഹായം എവിടെ ലഭിക്കും?",
-  "Open Visitor Information for directions and the contact details supplied by the Maqam administration. Ask staff about access needs before your journey.": "വഴിയും മഖാം അധികൃതർ നൽകിയ ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും കാണാൻ ‘സന്ദർശക വിവരങ്ങൾ’ തുറക്കുക. പ്രത്യേക പ്രവേശന സൗകര്യങ്ങൾ ആവശ്യമെങ്കിൽ യാത്രയ്ക്ക് മുമ്പ് ജീവനക്കാരോട് ചോദിക്കുക.",
+  "Open Visitor Information for directions and the contact details supplied by the Maqam administration. Ask staff about access needs before your journey.":
+      "വഴിയും മഖാം അധികൃതർ നൽകിയ ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും കാണാൻ ‘സന്ദർശക വിവരങ്ങൾ’ തുറക്കുക. പ്രത്യേക പ്രവേശന സൗകര്യങ്ങൾ ആവശ്യമെങ്കിൽ യാത്രയ്ക്ക് മുമ്പ് ജീവനക്കാരോട് ചോദിക്കുക.",
   "Bookings are currently paused":
       "ബുക്കിംഗ് താൽക്കാലികമായി നിർത്തിവച്ചിരിക്കുന്നു",
   "Please check again soon.": "ദയവായി കുറച്ച് കഴിഞ്ഞ് വീണ്ടും പരിശോധിക്കുക.",
@@ -151,8 +171,10 @@ const malayalam = <String, String>{
   "A quiet moment before your visit.":
       "സന്ദർശനത്തിന് മുമ്പ് ശാന്തമായൊരു നിമിഷം.",
   "Discover Keekkott Maqam. ": "കീക്കോട്ട് മഖാമിനെ അടുത്തറിയൂ. ",
-  "Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.": "ഞങ്ങളുടെ ചാനലിലെ വീഡിയോയിലൂടെ മഖാമും ഹരിതാഭമായ പരിസരവും കാണൂ. യാത്രയ്ക്ക് മുമ്പ് ശാന്തമായി ചിന്തിക്കാനും ആത്മബന്ധം അനുഭവിക്കാനും ഒരു നിമിഷം.",
-  "Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.": "സിയാറത്ത് ആസൂത്രണം ചെയ്യുന്നുണ്ടോ? ലഭ്യമായ സമയങ്ങൾ പരിശോധിച്ച് ബുക്ക് ചെയ്യുക. യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് പാസ് തയ്യാറാക്കി വയ്ക്കുക.",
+  "Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.":
+      "ഞങ്ങളുടെ ചാനലിലെ വീഡിയോയിലൂടെ മഖാമും ഹരിതാഭമായ പരിസരവും കാണൂ. യാത്രയ്ക്ക് മുമ്പ് ശാന്തമായി ചിന്തിക്കാനും ആത്മബന്ധം അനുഭവിക്കാനും ഒരു നിമിഷം.",
+  "Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.":
+      "സിയാറത്ത് ആസൂത്രണം ചെയ്യുന്നുണ്ടോ? ലഭ്യമായ സമയങ്ങൾ പരിശോധിച്ച് ബുക്ക് ചെയ്യുക. യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് പാസ് തയ്യാറാക്കി വയ്ക്കുക.",
   "Watch the full video with sound": "ശബ്ദത്തോടെ മുഴുവൻ വീഡിയോ കാണുക",
   "Keekkott Bungalow Online · Silent video preview":
       "കീക്കോട്ട് ബംഗ്ലാവ് ഓൺലൈൻ · ശബ്ദമില്ലാത്ത വീഡിയോ",
@@ -161,7 +183,8 @@ const malayalam = <String, String>{
   "KEEKKOTT BUNGALOW ONLINE": "കീക്കോട്ട് ബംഗ്ലാവ് ഓൺലൈൻ",
   "Moments of faith.\nStories that bring us together.":
       "വിശ്വാസത്തിന്റെ നിമിഷങ്ങൾ.\nനമ്മെ ഒന്നിപ്പിക്കുന്ന കഥകൾ.",
-  "Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.": "മഖാമിന്റെ കാഴ്ചകളും സംഗമങ്ങളും സ്മരണയുടെ നിമിഷങ്ങളും ഞങ്ങളുടെ YouTube ചാനലിൽ കാണൂ.",
+  "Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.":
+      "മഖാമിന്റെ കാഴ്ചകളും സംഗമങ്ങളും സ്മരണയുടെ നിമിഷങ്ങളും ഞങ്ങളുടെ YouTube ചാനലിൽ കാണൂ.",
   "Explore our YouTube channel": "ഞങ്ങളുടെ YouTube ചാനൽ സന്ദർശിക്കുക",
   "Little moments, lasting meaning": "ചെറിയ നിമിഷങ്ങൾ, മായാത്ത ഓർമകൾ",
   "Watch, reflect and reconnect": "കാണൂ, ചിന്തിക്കൂ, അടുത്തറിയൂ",
@@ -171,13 +194,18 @@ const malayalam = <String, String>{
   "All Videos": "എല്ലാ വീഡിയോകളും",
   "All Shorts": "എല്ലാ ഷോർട്സും",
   "Your guide to Keekkott Maqam": "കീക്കോട്ട് മഖാമിലേക്കുള്ള മാർഗദർശി",
-  "Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.": "യാത്രയ്ക്കും എത്തിച്ചേരലിനും മഖാമിലെ സന്ദർശനത്തിനുമുള്ള മാർഗനിർദേശങ്ങളോടെ സിയാറത്തിന് തയ്യാറാകൂ.",
+  "Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.":
+      "യാത്രയ്ക്കും എത്തിച്ചേരലിനും മഖാമിലെ സന്ദർശനത്തിനുമുള്ള മാർഗനിർദേശങ്ങളോടെ സിയാറത്തിന് തയ്യാറാകൂ.",
   "Welcome to Keekkott Thangal Maqam": "കീക്കോട്ട് തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം",
-  "Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.": "കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് മഖാം ആദരവോടെയും സ്മരണയോടെയും ശാന്തമായ ആത്മചിന്തയോടെയും സന്ദർശിക്കേണ്ട ഇടമാണ്. സ്ഥിരീകരിച്ച ബുക്കിംഗ് സമയത്തിന് അനുസരിച്ച് സിയാറത്ത് ആസൂത്രണം ചെയ്യുകയും ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുകയും ചെയ്യുക.",
-  "Before travelling, check your reservation, allow enough time for your journey and keep your digital pass accessible. If you are accompanying children or older family members, plan a comfortable journey together.": "യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക, മതിയായ യാത്രാസമയം അനുവദിക്കുക, ഡിജിറ്റൽ പാസ് കൈവശം കരുതുക. കുട്ടികളോ മുതിർന്നവരോ കൂടെയുണ്ടെങ്കിൽ സൗകര്യപ്രദമായ യാത്ര ആസൂത്രണം ചെയ്യുക.",
+  "Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.":
+      "കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് മഖാം ആദരവോടെയും സ്മരണയോടെയും ശാന്തമായ ആത്മചിന്തയോടെയും സന്ദർശിക്കേണ്ട ഇടമാണ്. സ്ഥിരീകരിച്ച ബുക്കിംഗ് സമയത്തിന് അനുസരിച്ച് സിയാറത്ത് ആസൂത്രണം ചെയ്യുകയും ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുകയും ചെയ്യുക.",
+  "Before travelling, check your reservation, allow enough time for your journey and keep your digital pass accessible. If you are accompanying children or older family members, plan a comfortable journey together.":
+      "യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക, മതിയായ യാത്രാസമയം അനുവദിക്കുക, ഡിജിറ്റൽ പാസ് കൈവശം കരുതുക. കുട്ടികളോ മുതിർന്നവരോ കൂടെയുണ്ടെങ്കിൽ സൗകര്യപ്രദമായ യാത്ര ആസൂത്രണം ചെയ്യുക.",
   "Your information": "നിങ്ങളുടെ വിവരങ്ങൾ",
-  "Your name and verified mobile number support your booking. Your digital pass uses a private token. Keep it safe and only show it to entry staff. You can cancel an eligible booking from My Bookings.": "പേരും സ്ഥിരീകരിച്ച മൊബൈൽ നമ്പറും ബുക്കിംഗിന് ഉപയോഗിക്കുന്നു. ഡിജിറ്റൽ പാസിലെ സ്വകാര്യ ടോക്കൺ സുരക്ഷിതമായി സൂക്ഷിച്ച് പ്രവേശന ജീവനക്കാരെ മാത്രം കാണിക്കുക. അനുവദനീയമായ ബുക്കിംഗുകൾ ‘എന്റെ ബുക്കിംഗുകൾ’ വഴി റദ്ദാക്കാം.",
-  "Phone verification is provided by Google Firebase. Phone numbers are sent to Google for authentication and abuse prevention. Browser reminders are optional.": "മൊബൈൽ സ്ഥിരീകരണം Google Firebase വഴിയാണ്. സ്ഥിരീകരണത്തിനും ദുരുപയോഗം തടയുന്നതിനും മൊബൈൽ നമ്പർ Google-ന് നൽകുന്നു. ബ്രൗസർ ഓർമപ്പെടുത്തലുകൾ നിങ്ങളുടെ ഇഷ്ടപ്രകാരമാണ്.",
+  "Your name and verified mobile number support your booking. Your digital pass uses a private token. Keep it safe and only show it to entry staff. You can cancel an eligible booking from My Bookings.":
+      "പേരും സ്ഥിരീകരിച്ച മൊബൈൽ നമ്പറും ബുക്കിംഗിന് ഉപയോഗിക്കുന്നു. ഡിജിറ്റൽ പാസിലെ സ്വകാര്യ ടോക്കൺ സുരക്ഷിതമായി സൂക്ഷിച്ച് പ്രവേശന ജീവനക്കാരെ മാത്രം കാണിക്കുക. അനുവദനീയമായ ബുക്കിംഗുകൾ ‘എന്റെ ബുക്കിംഗുകൾ’ വഴി റദ്ദാക്കാം.",
+  "Phone verification is provided by Google Firebase. Phone numbers are sent to Google for authentication and abuse prevention. Browser reminders are optional.":
+      "മൊബൈൽ സ്ഥിരീകരണം Google Firebase വഴിയാണ്. സ്ഥിരീകരണത്തിനും ദുരുപയോഗം തടയുന്നതിനും മൊബൈൽ നമ്പർ Google-ന് നൽകുന്നു. ബ്രൗസർ ഓർമപ്പെടുത്തലുകൾ നിങ്ങളുടെ ഇഷ്ടപ്രകാരമാണ്.",
   "Visiting etiquette": "സന്ദർശന മര്യാദകൾ",
   "Dress respectfully": "മാന്യമായ വസ്ത്രം ധരിക്കുക",
   "Choose modest attire for your visit.":
@@ -189,7 +217,8 @@ const malayalam = <String, String>{
   "Silence your mobile phone and be considerate of others.":
       "മൊബൈൽ ഫോൺ നിശ്ശബ്ദമാക്കി മറ്റുള്ളവരെ പരിഗണിക്കുക.",
   "Bring your digital pass": "ഡിജിറ്റൽ പാസ് കൊണ്ടുവരുക",
-  "Show your QR pass to entry staff. One pass covers the visitors on your booking.": "പ്രവേശന ജീവനക്കാരെ QR പാസ് കാണിക്കുക. ബുക്കിംഗിലെ എല്ലാ സന്ദർശകർക്കും ഒരൊറ്റ പാസ് മതിയാകും.",
+  "Show your QR pass to entry staff. One pass covers the visitors on your booking.":
+      "പ്രവേശന ജീവനക്കാരെ QR പാസ് കാണിക്കുക. ബുക്കിംഗിലെ എല്ലാ സന്ദർശകർക്കും ഒരൊറ്റ പാസ് മതിയാകും.",
   "Chavakkad, Kerala, India": "ചാവക്കാട്, കേരളം, ഇന്ത്യ",
   "Directions could not be opened. Please try again.":
       "വഴി തുറക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
@@ -211,15 +240,18 @@ const malayalam = <String, String>{
   "Full / past": "നിറഞ്ഞു / കഴിഞ്ഞു",
   "No visits on this date": "ഈ തീയതിയിൽ സന്ദർശനമില്ല",
   "A peaceful visit for everyone": "എല്ലാവർക്കും ശാന്തമായ സന്ദർശനം",
-  "No available time for this group. Try another date or adjust the number of visitors.": "ഇത്രയും സന്ദർശകർക്ക് സമയം ലഭ്യമല്ല. മറ്റൊരു തീയതി തിരഞ്ഞെടുക്കുകയോ സന്ദർശകരുടെ എണ്ണം മാറ്റുകയോ ചെയ്യുക.",
-  "No scheduled slots in this period. Choose All times or another date.": "ഈ സമയപരിധിയിൽ സ്ലോട്ടുകളില്ല. ‘എല്ലാ സമയങ്ങളും’ അല്ലെങ്കിൽ മറ്റൊരു തീയതി തിരഞ്ഞെടുക്കുക.",
+  "No available time for this group. Try another date or adjust the number of visitors.":
+      "ഇത്രയും സന്ദർശകർക്ക് സമയം ലഭ്യമല്ല. മറ്റൊരു തീയതി തിരഞ്ഞെടുക്കുകയോ സന്ദർശകരുടെ എണ്ണം മാറ്റുകയോ ചെയ്യുക.",
+  "No scheduled slots in this period. Choose All times or another date.":
+      "ഈ സമയപരിധിയിൽ സ്ലോട്ടുകളില്ല. ‘എല്ലാ സമയങ്ങളും’ അല്ലെങ്കിൽ മറ്റൊരു തീയതി തിരഞ്ഞെടുക്കുക.",
   "Your visit": "നിങ്ങളുടെ സന്ദർശനം",
   "Number of visitors": "സന്ദർശകരുടെ എണ്ണം",
   "Remove one visitor": "ഒരു സന്ദർശകനെ കുറയ്ക്കുക",
   "Add one visitor": "ഒരു സന്ദർശകനെ കൂട്ടുക",
   "Select an available time to continue.":
       "തുടരാൻ ലഭ്യമായ സമയം തിരഞ്ഞെടുക്കുക.",
-  "After mobile verification, your places are held for 5 minutes while you confirm.": "മൊബൈൽ സ്ഥിരീകരണത്തിന് ശേഷം ബുക്കിംഗ് പൂർത്തിയാക്കാൻ നിങ്ങളുടെ സ്ഥലങ്ങൾ 5 മിനിറ്റ് മാറ്റിവയ്ക്കും.",
+  "After mobile verification, your places are held for 5 minutes while you confirm.":
+      "മൊബൈൽ സ്ഥിരീകരണത്തിന് ശേഷം ബുക്കിംഗ് പൂർത്തിയാക്കാൻ നിങ്ങളുടെ സ്ഥലങ്ങൾ 5 മിനിറ്റ് മാറ്റിവയ്ക്കും.",
   "Continue": "തുടരുക",
   "Calendar": "കലണ്ടർ",
   "Available": "ലഭ്യമാണ്",
@@ -233,14 +265,17 @@ const malayalam = <String, String>{
   "Welcome to your visit": "സന്ദർശനത്തിലേക്ക് സ്വാഗതം",
   "Enter the 6-digit code sent to your mobile.":
       "മൊബൈലിൽ ലഭിച്ച 6 അക്ക കോഡ് നൽകുക.",
-  "Sign in with your mobile number to reserve a visit and keep your pass.": "സന്ദർശനം ബുക്ക് ചെയ്യാനും പാസ് ലഭിക്കാനും മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക.",
+  "Sign in with your mobile number to reserve a visit and keep your pass.":
+      "സന്ദർശനം ബുക്ക് ചെയ്യാനും പാസ് ലഭിക്കാനും മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുക.",
   "Mobile number": "മൊബൈൽ നമ്പർ",
   "Include country code, for example +91":
       "രാജ്യത്തിന്റെ കോഡ് ഉൾപ്പെടുത്തുക, ഉദാ: +91",
   "Send me a verification SMS": "സ്ഥിരീകരണ SMS അയയ്ക്കുക",
-  "Google processes your number for verification and abuse prevention.": "സ്ഥിരീകരണത്തിനും ദുരുപയോഗം തടയുന്നതിനുമായി Google നിങ്ങളുടെ നമ്പർ ഉപയോഗിക്കുന്നു.",
+  "Google processes your number for verification and abuse prevention.":
+      "സ്ഥിരീകരണത്തിനും ദുരുപയോഗം തടയുന്നതിനുമായി Google നിങ്ങളുടെ നമ്പർ ഉപയോഗിക്കുന്നു.",
   "SMS verification code": "SMS സ്ഥിരീകരണ കോഡ്",
-  "Waiting for phone verification. Complete the security check if it appears. This can take up to 90 seconds.": "മൊബൈൽ സ്ഥിരീകരണത്തിനായി കാത്തിരിക്കുന്നു. സുരക്ഷാ പരിശോധന വന്നാൽ പൂർത്തിയാക്കുക. 90 സെക്കൻഡ് വരെ എടുത്തേക്കാം.",
+  "Waiting for phone verification. Complete the security check if it appears. This can take up to 90 seconds.":
+      "മൊബൈൽ സ്ഥിരീകരണത്തിനായി കാത്തിരിക്കുന്നു. സുരക്ഷാ പരിശോധന വന്നാൽ പൂർത്തിയാക്കുക. 90 സെക്കൻഡ് വരെ എടുത്തേക്കാം.",
   "Verify and continue": "സ്ഥിരീകരിച്ച് തുടരുക",
   "Send verification code": "സ്ഥിരീകരണ കോഡ് അയയ്ക്കുക",
   "Change number or send a new code":
@@ -254,7 +289,8 @@ const malayalam = <String, String>{
   "Your time": "നിങ്ങളുടെ സമയം",
   "India Standard Time": "ഇന്ത്യൻ സ്റ്റാൻഡേർഡ് സമയം",
   "Visitors": "സന്ദർശകർ",
-  "Keep your pass ready when you arrive. Please dress respectfully and silence your phone during your visit.": "എത്തുമ്പോൾ പാസ് തയ്യാറാക്കി വയ്ക്കുക. മാന്യമായ വസ്ത്രം ധരിച്ച് സന്ദർശന സമയത്ത് ഫോൺ നിശ്ശബ്ദമാക്കുക.",
+  "Keep your pass ready when you arrive. Please dress respectfully and silence your phone during your visit.":
+      "എത്തുമ്പോൾ പാസ് തയ്യാറാക്കി വയ്ക്കുക. മാന്യമായ വസ്ത്രം ധരിച്ച് സന്ദർശന സമയത്ത് ഫോൺ നിശ്ശബ്ദമാക്കുക.",
   "Visitor details": "സന്ദർശക വിവരങ്ങൾ",
   "Full name": "മുഴുവൻ പേര്",
   "Enter your full name.": "മുഴുവൻ പേര് നൽകുക.",
@@ -317,7 +353,8 @@ const malayalam = <String, String>{
       "പുതിയ ബുക്കിംഗ് അറിയിപ്പുകൾ ഇവിടെ കാണാം.",
   "Browser reminders enabled": "ബ്രൗസർ ഓർമപ്പെടുത്തലുകൾ പ്രവർത്തനക്ഷമമായി",
   "A gentle reminder before your visit": "സന്ദർശനത്തിന് മുമ്പൊരു ഓർമപ്പെടുത്തൽ",
-  "Get your booking updates on this device. This is optional.": "ഈ ഉപകരണത്തിൽ ബുക്കിംഗ് അറിയിപ്പുകൾ സ്വീകരിക്കാം. ഇത് നിങ്ങളുടെ ഇഷ്ടപ്രകാരമാണ്.",
+  "Get your booking updates on this device. This is optional.":
+      "ഈ ഉപകരണത്തിൽ ബുക്കിംഗ് അറിയിപ്പുകൾ സ്വീകരിക്കാം. ഇത് നിങ്ങളുടെ ഇഷ്ടപ്രകാരമാണ്.",
   "You can enable notifications later in your browser settings.":
       "പിന്നീട് ബ്രൗസർ ക്രമീകരണങ്ങളിൽ അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കാം.",
   "Enable reminders": "ഓർമപ്പെടുത്തലുകൾ പ്രവർത്തനക്ഷമമാക്കുക",
@@ -369,7 +406,8 @@ const malayalam = <String, String>{
       "കോഡ് തെറ്റാണ്. SMS പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.",
   "This code has expired. Request a new code.":
       "കോഡിന്റെ കാലാവധി കഴിഞ്ഞു. പുതിയ കോഡ് ആവശ്യപ്പെടുക.",
-  "Too many verification attempts. Please wait a while and try again.": "വളരെയധികം സ്ഥിരീകരണ ശ്രമങ്ങൾ നടത്തി. അൽപനേരം കഴിഞ്ഞ് വീണ്ടും ശ്രമിക്കുക.",
+  "Too many verification attempts. Please wait a while and try again.":
+      "വളരെയധികം സ്ഥിരീകരണ ശ്രമങ്ങൾ നടത്തി. അൽപനേരം കഴിഞ്ഞ് വീണ്ടും ശ്രമിക്കുക.",
   "The SMS verification quota has been reached. Please try again later.":
       "SMS സ്ഥിരീകരണ പരിധി കഴിഞ്ഞു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
   "Please sign in again to continue.": "തുടരാൻ വീണ്ടും ലോഗിൻ ചെയ്യുക.",
@@ -382,12 +420,16 @@ const malayalam = <String, String>{
   "We could not find this booking.": "ഈ ബുക്കിംഗ് കണ്ടെത്താനായില്ല.",
   "Phone sign-in is not enabled for this Firebase project.":
       "മൊബൈൽ ലോഗിൻ നിലവിൽ പ്രവർത്തനക്ഷമമല്ല.",
-  "This website domain is not authorized for phone verification. Please add subair71.github.io to Firebase Authentication authorized domains.": "ഈ വെബ്സൈറ്റിന് മൊബൈൽ സ്ഥിരീകരണ അനുമതി സജ്ജമാക്കിയിട്ടില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
-  "The reCAPTCHA verification failed. Check that subair71.github.io is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.": "സുരക്ഷാ പരിശോധന പരാജയപ്പെട്ടു. പേജ് പുതുക്കി വീണ്ടും ശ്രമിക്കുക. പ്രശ്നം തുടർന്നാൽ അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
+  "This website domain is not authorized for phone verification. Please add subair71.github.io to Firebase Authentication authorized domains.":
+      "ഈ വെബ്സൈറ്റിന് മൊബൈൽ സ്ഥിരീകരണ അനുമതി സജ്ജമാക്കിയിട്ടില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
+  "The reCAPTCHA verification failed. Check that subair71.github.io is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.":
+      "സുരക്ഷാ പരിശോധന പരാജയപ്പെട്ടു. പേജ് പുതുക്കി വീണ്ടും ശ്രമിക്കുക. പ്രശ്നം തുടർന്നാൽ അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
   "Firebase could not validate the verification request. Check the authorized domain, reCAPTCHA configuration, and Firebase web app settings.":
       "സ്ഥിരീകരണ അഭ്യർഥന പരിശോധിക്കാനായില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
-  "The phone verification configuration is incomplete. Please check the Firebase web authentication setup.": "മൊബൈൽ സ്ഥിരീകരണ ക്രമീകരണം പൂർത്തിയായിട്ടില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
+  "The phone verification configuration is incomplete. Please check the Firebase web authentication setup.":
+      "മൊബൈൽ സ്ഥിരീകരണ ക്രമീകരണം പൂർത്തിയായിട്ടില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
   "SMS verification is unavailable because billing is not enabled for the Firebase project.":
       "സേവനത്തിന്റെ ബില്ലിംഗ് സജ്ജമല്ലാത്തതിനാൽ SMS സ്ഥിരീകരണം ലഭ്യമല്ല.",
-  "The Firebase web configuration is invalid. Please check the project API key.": "വെബ്സൈറ്റിന്റെ സേവന ക്രമീകരണത്തിൽ പിശകുണ്ട്. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
+  "The Firebase web configuration is invalid. Please check the project API key.":
+      "വെബ്സൈറ്റിന്റെ സേവന ക്രമീകരണത്തിൽ പിശകുണ്ട്. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
 };
