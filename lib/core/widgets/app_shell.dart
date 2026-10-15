@@ -76,7 +76,7 @@ class AppShell extends ConsumerWidget {
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w700,
                                           fontSize: wide ? 24 : 18,
                                           height: 1.2,
                                           color: AppColors.emerald,
