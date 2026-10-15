@@ -1,4 +1,6 @@
 import '../core/localization/app_language.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/semantics.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +11,29 @@ import 'router/app_router.dart';
 import 'bootstrap/providers.dart';
 import 'theme/app_theme.dart';
 
-class KeekotApp extends ConsumerWidget {
+class KeekotApp extends ConsumerStatefulWidget {
   const KeekotApp({super.key});
+  @override
+  ConsumerState<KeekotApp> createState() => _KeekotAppState();
+}
+
+class _KeekotAppState extends ConsumerState<KeekotApp> {
+  SemanticsHandle? _semantics;
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) _semantics = SemanticsBinding.instance.ensureSemantics();
+  }
+
+  @override
+  void dispose() {
+    _semantics?.dispose();
+    super.dispose();
+  }
+
   static final _messenger = GlobalKey<ScaffoldMessengerState>();
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (ref.watch(appConfigProvider).configured) {
       ref.listen(foregroundMessagesProvider, (_, next) {
         final message = next.asData?.value;

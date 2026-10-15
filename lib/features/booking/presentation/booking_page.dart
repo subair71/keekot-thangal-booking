@@ -37,6 +37,10 @@ class _BookingPageState extends ConsumerState<BookingPage> {
       if (buttonContext == null) return;
       final button = buttonContext.widget as FilledButton;
       if (button.onPressed == null) return;
+      // Keep keyboard and screen-reader users on their chosen slot.
+      if (MediaQuery.accessibleNavigationOf(context) ||
+          FocusManager.instance.highlightMode == FocusHighlightMode.traditional)
+        return;
       _continueFocus.requestFocus();
       Scrollable.ensureVisible(
         buttonContext,
@@ -114,7 +118,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                           selectableDayPredicate: (d) =>
                               !closed.contains(VisitClock.dayKey(d)),
                         );
-                        if (picked != null) {
+                        if (picked != null && mounted) {
                           setState(() {
                             date = VisitClock.dayKey(picked);
                             selectedId = null;
@@ -396,14 +400,19 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               'Up to ${config.maxVisitorsPerBooking} visitors per booking.',
                             ),
                             const SizedBox(height: 24),
-                            AppText(
-                              selected == null
-                                  ? 'Select an available time to continue.'
-                                  : '${VisitClock.dayLabel(day)}\n${selected.label}',
-                              style: const TextStyle(
-                                color: AppColors.emerald,
-                                height: 1.7,
-                                fontWeight: FontWeight.w600,
+                            Semantics(
+                              liveRegion: true,
+                              child: AppText(
+                                selected == null
+                                    ? (selectedId == null
+                                          ? 'Select an available time to continue.'
+                                          : 'Your selected time is no longer available for this group. Choose another time.')
+                                    : '${VisitClock.dayLabel(day)}\n${selected.label}',
+                                style: const TextStyle(
+                                  color: AppColors.emerald,
+                                  height: 1.7,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 20),

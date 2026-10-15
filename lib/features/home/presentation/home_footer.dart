@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/link.dart';
 
 import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
@@ -113,6 +114,17 @@ class HomeFooter extends StatelessWidget {
                   () => context.go('/information'),
                 ),
                 _link(context, 'Videos', Icons.play_circle_outline, onVideos),
+                Link(
+                  uri: Uri.parse(
+                    'https://subair71.github.io/keekot-thangal-booking/visitor-guide.html',
+                  ),
+                  builder: (context, followLink) => _link(
+                    context,
+                    'Public visitor guide',
+                    Icons.article_outlined,
+                    () => followLink?.call(),
+                  ),
+                ),
                 _link(
                   context,
                   'Contact us',
