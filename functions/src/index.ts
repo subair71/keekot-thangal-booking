@@ -89,3 +89,5 @@ export const sendBookingConfirmation=onDocumentWritten('bookings/{bookingId}',as
 export const sendPushNotification=onDocumentCreated('notifications/{id}',e=>deliverNotice(db,e.params.id));
 export const bookingReminderScheduler=onSchedule('every 1 minutes',()=>reminders(db));
 export const cleanupExpiredHolds=onSchedule('every 1 minutes',async()=>{await service.cleanupExpiredHolds();});
+
+export {submitContact} from "./contact.js";

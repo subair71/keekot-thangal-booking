@@ -1,5 +1,32 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  "Contact us": "ബന്ധപ്പെടുക",
+  "KEEKKOTT MAQAM": "കീക്കോട്ട് മഖാം",
+  "Have a question about your visit? Send us a message.":
+      "സന്ദർശനത്തെക്കുറിച്ച് ചോദ്യങ്ങളുണ്ടോ? ഞങ്ങൾക്ക് സന്ദേശം അയയ്ക്കുക.",
+  "Your name": "നിങ്ങളുടെ പേര്",
+  "Email address": "ഇമെയിൽ വിലാസം",
+  "Phone number (optional)": "ഫോൺ നമ്പർ (നിർബന്ധമില്ല)",
+  "Subject": "വിഷയം",
+  "Your message": "നിങ്ങളുടെ സന്ദേശം",
+  "Please complete this field.": "ദയവായി ഈ വിവരങ്ങൾ പൂർണ്ണമായി നൽകുക.",
+  "Enter a valid email address.": "ശരിയായ ഇമെയിൽ വിലാസം നൽകുക.",
+  "Enter a valid phone number.": "ശരിയായ ഫോൺ നമ്പർ നൽകുക.",
+  "Your contact details and message will be emailed to the Maqam team so we can respond to your enquiry.":
+      "നിങ്ങളുടെ ചോദ്യത്തിന് മറുപടി നൽകുന്നതിനായി ബന്ധപ്പെടാനുള്ള വിവരങ്ങളും സന്ദേശവും മഖാം ടീമിന് ഇമെയിൽ ചെയ്യും.",
+  "Send message": "സന്ദേശം അയയ്ക്കുക",
+  "Sending…": "അയയ്ക്കുന്നു…",
+  "Thank you. Your message has been sent to our team.":
+      "നന്ദി. നിങ്ങളുടെ സന്ദേശം ഞങ്ങളുടെ ടീമിന് അയച്ചു.",
+  "Send another message": "മറ്റൊരു സന്ദേശം അയയ്ക്കുക",
+  "Too many messages. Please try again later.":
+      "സന്ദേശങ്ങളുടെ പരിധി കഴിഞ്ഞു. പിന്നീട് വീണ്ടും ശ്രമിക്കുക.",
+  "Your message could not be sent. Please try again later or email us directly.":
+      "സന്ദേശം അയയ്ക്കാനായില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ നേരിട്ട് ഇമെയിൽ അയയ്ക്കുക.",
+  "You can also email us directly.": "നിങ്ങൾക്ക് നേരിട്ടും ഇമെയിൽ അയയ്ക്കാം.",
+  "Open email app": "ഇമെയിൽ ആപ്പ് തുറക്കുക",
+  "Please copy the email address into your email app.":
+      "ഇമെയിൽ വിലാസം നിങ്ങളുടെ ഇമെയിൽ ആപ്പിലേക്ക് പകർത്തുക.",
   'Booking notifications enabled': 'ബുക്കിംഗ് അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കി',
   'Get your booking confirmation': 'ബുക്കിംഗ് സ്ഥിരീകരണ അറിയിപ്പ് നേടുക',
   'Enable notifications': 'അറിയിപ്പുകൾ പ്രവർത്തനക്ഷമമാക്കുക',

@@ -162,6 +162,10 @@ class AppShell extends ConsumerWidget {
                           }
                         },
                         itemBuilder: (_) => [
+                          const PopupMenuItem(
+                            value: '/contact',
+                            child: AppText('Contact us'),
+                          ),
                           if (user == null)
                             const PopupMenuItem(
                               value: '/auth',

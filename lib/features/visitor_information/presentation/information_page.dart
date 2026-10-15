@@ -1,5 +1,6 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -158,6 +159,12 @@ class LocationCard extends ConsumerWidget {
             },
             icon: const Icon(Icons.directions_outlined),
             label: const AppText('Get directions'),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: () => context.go('/contact'),
+            icon: const Icon(Icons.mail_outline),
+            label: const AppText('Contact us'),
           ),
           if (config?.contactPhone.isNotEmpty == true) ...[
             const SizedBox(height: 12),
