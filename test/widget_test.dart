@@ -160,8 +160,14 @@ void main() {
       expect(find.byType(SlotCard), findsNWidgets(24));
       await tester.ensureVisible(find.byType(SlotCard).first);
       await tester.tap(find.byType(SlotCard).first);
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('Selected'), findsOneWidget);
+      final continueButton = find.widgetWithText(FilledButton, 'Continue');
+      expect(continueButton.hitTestable(), findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(continueButton).focusNode!.hasFocus,
+        isTrue,
+      );
       expect(tester.takeException(), isNull);
       await tester.ensureVisible(find.text('Your visit'));
       await tester.pumpAndSettle();
