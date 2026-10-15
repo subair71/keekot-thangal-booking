@@ -163,7 +163,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                   const SizedBox(height: 24),
                   const InfoLine(
                     Icons.location_on_outlined,
-                    'Keekkott Thangal Maqam',
+                    'Keekkott Sayyid Attakoya Thangal Maqam',
                     'Chavakkad, Kerala',
                   ),
                   const SizedBox(height: 24),

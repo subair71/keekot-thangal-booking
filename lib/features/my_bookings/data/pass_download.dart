@@ -22,9 +22,9 @@ class PassDownload {
           crossAxisAlignment: pw.CrossAxisAlignment.stretch,
           children: [
             pw.Text(
-              'KEEKKOTT THANGAL',
+              'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
               style: pw.TextStyle(
-                fontSize: 24,
+                fontSize: 18,
                 fontWeight: pw.FontWeight.bold,
                 color: PdfColor.fromHex('#064E3B'),
               ),

@@ -174,7 +174,7 @@ class BookingExport {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Keekkott Thangal - Daily bookings',
+                'Keekkott Sayyid Attakoya Thangal Maqam - Daily bookings',
                 style: pw.TextStyle(
                   fontSize: 18,
                   fontWeight: pw.FontWeight.bold,

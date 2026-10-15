@@ -35,7 +35,7 @@ class HomeFooter extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const AppText(
-                'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.',
+                'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Sayyid Attakoya Thangal Maqam.',
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -77,7 +77,7 @@ class HomeFooter extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 AppText(
-                  'KEEKKOTT SAYYID ATTAKOYA THANGAL',
+                  'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
                   style: Theme.of(
                     context,
                   ).textTheme.headlineMedium!.copyWith(color: AppColors.ivory),

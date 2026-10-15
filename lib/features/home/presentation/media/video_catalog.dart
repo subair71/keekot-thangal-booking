@@ -38,17 +38,17 @@ const maqamVideos = <MaqamVideo>[
   MaqamVideo("aI3QiR2ErVs", "കീക്കോട്ടിന്റെ  സ്നേഹാദരവ്", false),
   MaqamVideo(
     "xrsTvpbTsO0",
-    "കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം |കീക്കോട്ട് ബംഗ്ലാവ്",
+    "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം |കീക്കോട്ട് ബംഗ്ലാവ്",
     false,
   ),
   MaqamVideo(
     "mQ9lQkqI2MA",
-    "CHAL CHAL KEEKKOTTE | keekkotte attakkoya thangal maqam | azhar rabbani kalloor",
+    "CHAL CHAL KEEKKOTTE | Keekkott Sayyid Attakoya Thangal Maqam | azhar rabbani kalloor",
     false,
   ),
   MaqamVideo(
     "MjukZONIVlo",
-    "Ahlunnabiyore veed | keekkotte attakkoya thangal maqam | azhar rabbani kalloor",
+    "Ahlunnabiyore veed | Keekkott Sayyid Attakoya Thangal Maqam | azhar rabbani kalloor",
     false,
   ),
   MaqamVideo(

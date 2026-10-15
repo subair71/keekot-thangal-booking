@@ -37,7 +37,7 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 136 : 112),
+        preferredSize: Size.fromHeight(wide ? 136 : 128),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -71,7 +71,7 @@ class AppShell extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       AppText(
-                                        'KEEKKOTT SAYYID ATTAKOYA THANGAL',
+                                        'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(

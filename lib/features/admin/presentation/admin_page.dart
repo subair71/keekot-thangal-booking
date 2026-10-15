@@ -23,7 +23,7 @@ class AdminPage extends ConsumerWidget {
         children: [
           PageHeading(
             section == 'gate' ? 'Visitor entry' : 'Administration',
-            eyebrow: 'Keekkott Thangal',
+            eyebrow: 'Keekkott Sayyid Attakoya Thangal Maqam',
           ),
           if (!gateOnly) ...[
             const AdminExportButton(),

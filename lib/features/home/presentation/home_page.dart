@@ -143,12 +143,12 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _SectionTitle(
-                  'WELCOME TO KEEKKOTT',
+                  'WELCOME TO KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
                   'A place for remembrance.\nA moment for yourself.',
                 ),
                 SizedBox(height: 20),
                 AppText(
-                  'Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
+                  'Assalamu alaikum. Welcome to Keekkott Sayyid Attakoya Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
                   style: TextStyle(
                     fontSize: 18,
                     height: 1.8,
@@ -241,7 +241,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
                 SizedBox(height: 18),
                 AppText(
-                  'Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
+                  'Take a moment to review your reservation before travelling to Keekkott Sayyid Attakoya Thangal Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
                 ),
                 SizedBox(height: 24),
                 InfoLine(
@@ -323,7 +323,7 @@ class _MaqamHero extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: const AppText(
-                      'KEEKKOTT SAYYID ATTAKOYA THANGAL',
+                      'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
                       style: TextStyle(
                         color: AppColors.mintStrong,
                         fontSize: 12,
@@ -349,7 +349,7 @@ class _MaqamHero extends StatelessWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
                     child: const AppText(
-                      'Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Maqam, Chavakkad.',
+                      'Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Sayyid Attakoya Thangal Maqam, Chavakkad.',
                       style: TextStyle(
                         color: Color(0xFFE7EEE7),
                         fontSize: 17,
@@ -394,7 +394,7 @@ class _MaqamHero extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const AppText(
-                    'Oil painting inspired by the Keekkott Maqam photograph',
+                    'Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph',
                     style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 11),
                   ),
                 ],
@@ -651,7 +651,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const AppText(
-            'A GLIMPSE OF KEEKKOTT',
+            'A GLIMPSE OF KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
             style: TextStyle(
               color: AppColors.emerald,
               letterSpacing: 1.8,
@@ -666,7 +666,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const AppText(
-            'കീക്കോട്ട് ആറ്റക്കോയ തങ്ങൾ മഖാം',
+            'കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം',
             style: TextStyle(
               color: AppColors.emerald,
               fontWeight: FontWeight.w600,
@@ -677,7 +677,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
             const TextSpan(
               children: [
                 TextSpan(
-                  text: 'Discover Keekkott Maqam. ',
+                  text: 'Discover Keekkott Sayyid Attakoya Thangal Maqam. ',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: AppColors.ink,

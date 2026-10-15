@@ -6,7 +6,7 @@ export function noticeData(bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
   const time=new Intl.DateTimeFormat('en-IN',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const date=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}).format(b.startAt);
-  const body=kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekot Thangal visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
+  const body=kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekkott Sayyid Attakoya Thangal Maqam visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
   return {userId:b.userId,bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()};
 }
 

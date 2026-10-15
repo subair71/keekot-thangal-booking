@@ -120,7 +120,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
       children: [
         const PageHeading(
           'Contact us',
-          eyebrow: 'KEEKKOTT MAQAM',
+          eyebrow: 'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
           subtitle: 'Have a question about your visit? Send us a message.',
         ),
         SurfaceCard(
