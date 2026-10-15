@@ -17,7 +17,8 @@ import 'programme_carousel.dart';
 import 'media/youtube_player.dart';
 
 class HomePage extends ConsumerStatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.section});
+  final String? section;
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
 }
@@ -26,6 +27,31 @@ class _HomePageState extends ConsumerState<HomePage> {
   final videosKey = GlobalKey(),
       guideKey = GlobalKey(),
       questionsKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _revealSection();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _revealSection();
+  }
+
+  void _revealSection() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final key = switch (widget.section) {
+        'guide' => guideKey,
+        'videos' => videosKey,
+        'questions' => questionsKey,
+        _ => null,
+      };
+      if (key != null) reveal(key);
+    });
+  }
 
   void reveal(GlobalKey key) {
     final target = key.currentContext;
@@ -105,37 +131,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 18),
-          SurfaceCard(
-            padding: 12,
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 4,
-              children: [
-                TextButton.icon(
-                  onPressed: () => context.go('/book'),
-                  icon: const Icon(Icons.calendar_month_outlined),
-                  label: const AppText('Book a visit'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(guideKey),
-                  icon: const Icon(Icons.menu_book_outlined),
-                  label: const AppText('Visitor guide'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(videosKey),
-                  icon: const Icon(Icons.play_circle_outline),
-                  label: const AppText('Videos'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(questionsKey),
-                  icon: const Icon(Icons.help_outline),
-                  label: const AppText('Questions before you visit'),
-                ),
-              ],
             ),
           ),
           const SizedBox(height: 18),
