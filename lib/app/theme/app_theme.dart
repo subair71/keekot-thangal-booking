@@ -39,42 +39,42 @@ ThemeData buildTheme() {
         .copyWith(
           displayLarge: const TextStyle(
             fontFamily: 'Newsreader',
-            fontSize: 54,
+            fontSize: 40,
             height: 1.08,
             fontWeight: FontWeight.w500,
             color: AppColors.emerald,
           ),
           headlineLarge: const TextStyle(
             fontFamily: 'Newsreader',
-            fontSize: 36,
+            fontSize: 28,
             height: 1.18,
             fontWeight: FontWeight.w500,
             color: AppColors.emerald,
           ),
           headlineMedium: const TextStyle(
             fontFamily: 'Newsreader',
-            fontSize: 28,
+            fontSize: 24,
             height: 1.2,
             fontWeight: FontWeight.w500,
             color: AppColors.emerald,
           ),
           titleLarge: const TextStyle(
             fontFamily: 'Plus Jakarta Sans',
-            fontSize: 19,
+            fontSize: 17,
             height: 1.4,
             fontWeight: FontWeight.w600,
             color: AppColors.ink,
           ),
           bodyLarge: const TextStyle(
             fontFamily: 'Plus Jakarta Sans',
-            fontSize: 16,
-            height: 1.65,
+            fontSize: 15,
+            height: 1.5,
             color: AppColors.ink,
           ),
           bodyMedium: const TextStyle(
             fontFamily: 'Plus Jakarta Sans',
-            fontSize: 16,
-            height: 1.6,
+            fontSize: 15,
+            height: 1.5,
             color: AppColors.muted,
           ),
           labelLarge: const TextStyle(
@@ -85,20 +85,20 @@ ThemeData buildTheme() {
         ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size(48, 52),
+        minimumSize: const Size(48, 48),
         shape: shape,
         backgroundColor: AppColors.emerald,
         foregroundColor: AppColors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        minimumSize: const Size(48, 52),
+        minimumSize: const Size(48, 48),
         shape: shape,
         side: const BorderSide(color: AppColors.outline),
         foregroundColor: AppColors.emerald,
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
@@ -107,7 +107,7 @@ ThemeData buildTheme() {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.white,
-      contentPadding: const EdgeInsets.all(18),
+      contentPadding: const EdgeInsets.all(16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: AppColors.outline),

@@ -30,7 +30,7 @@ class InformationPage extends StatelessWidget {
                 'Welcome to Keekkott Sayyid Attakoya Thangal Maqam',
                 style: TextStyle(
                   fontFamily: 'Newsreader',
-                  fontSize: 28,
+                  fontSize: 24,
                   color: AppColors.emerald,
                 ),
               ),
@@ -45,9 +45,9 @@ class InformationPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 28),
+        SizedBox(height: 20),
         TwoColumn(main: GuidelinesCard(), aside: LocationCard()),
-        SizedBox(height: 28),
+        SizedBox(height: 20),
         SurfaceCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,7 @@ class InformationPage extends StatelessWidget {
               AppText(
                 'Your information',
                 style: TextStyle(
-                  fontSize: 19,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: AppColors.emerald,
                 ),
@@ -89,13 +89,13 @@ class GuidelinesCard extends ConsumerWidget {
             'Visiting etiquette',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           const InfoLine(
             Icons.spa_outlined,
             'Dress respectfully',
             'Choose modest attire for your visit.',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           InfoLine(
             Icons.schedule,
             'Allow time to arrive',
@@ -103,13 +103,13 @@ class GuidelinesCard extends ConsumerWidget {
                 ? 'Check your confirmed visit time before travelling.'
                 : 'Please arrive ${config.arrivalMinutes} minutes before your visit.',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           const InfoLine(
             Icons.volume_off_outlined,
             'Keep the atmosphere peaceful',
             'Silence your mobile phone and be considerate of others.',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           const InfoLine(
             Icons.qr_code_2,
             'Bring your digital pass',
@@ -143,7 +143,7 @@ class LocationCard extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           const AppText('Chavakkad, Kerala, India'),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: () async {
               final opened = await launchUrl(

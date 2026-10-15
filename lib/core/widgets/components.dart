@@ -34,8 +34,8 @@ class PageContainer extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: width),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.sizeOf(context).width < 600 ? 18 : 32,
-            vertical: 36,
+            horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+            vertical: 20,
           ),
           child: child,
         ),
@@ -49,7 +49,7 @@ class SurfaceCard extends StatelessWidget {
     super.key,
     required this.child,
     this.color = AppColors.white,
-    this.padding = 24,
+    this.padding = 18,
   });
   final Widget child;
   final Color color;
@@ -74,7 +74,7 @@ class PageHeading extends StatelessWidget {
   final String? eyebrow, subtitle;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 28),
+    padding: const EdgeInsets.only(bottom: 18),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,8 +222,8 @@ class TwoColumn extends StatelessWidget {
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: asideFirstOnMobile
-                ? [aside, const SizedBox(height: 24), main]
-                : [main, const SizedBox(height: 24), aside],
+                ? [aside, const SizedBox(height: 18), main]
+                : [main, const SizedBox(height: 18), aside],
           ),
   );
 }
@@ -242,7 +242,7 @@ class AsyncPanel<T> extends StatelessWidget {
   Widget build(BuildContext context) => value.when(
     data: builder,
     loading: () => const Padding(
-      padding: EdgeInsets.all(40),
+      padding: EdgeInsets.all(24),
       child: Center(
         child: Column(
           children: [
