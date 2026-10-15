@@ -143,27 +143,22 @@ class LocationCard extends ConsumerWidget {
           const SizedBox(height: 8),
           const AppText('Chavakkad, Kerala, India'),
           const SizedBox(height: 24),
-          if (config?.locationUrl.isNotEmpty == true)
-            OutlinedButton.icon(
-              onPressed: () async {
-                final opened = await launchUrl(
-                  Uri.parse(config!.locationUrl),
-                  mode: LaunchMode.externalApplication,
+          OutlinedButton.icon(
+            onPressed: () async {
+              final opened = await launchUrl(
+                Uri.parse('https://maps.app.goo.gl/EeBuXUcd7LHgeig17?g_st=ic'),
+                mode: LaunchMode.externalApplication,
+              );
+              if (!opened && context.mounted) {
+                showMessage(
+                  context,
+                  'Directions could not be opened. Please try again.',
                 );
-                if (!opened && context.mounted) {
-                  showMessage(
-                    context,
-                    'Directions could not be opened. Please try again.',
-                  );
-                }
-              },
-              icon: const Icon(Icons.directions_outlined),
-              label: const AppText('Get directions'),
-            )
-          else
-            const AppText(
-              'Detailed directions will appear here when available.',
-            ),
+              }
+            },
+            icon: const Icon(Icons.directions_outlined),
+            label: const AppText('Get directions'),
+          ),
           if (config?.contactPhone.isNotEmpty == true) ...[
             const SizedBox(height: 12),
             TextButton.icon(
