@@ -28,7 +28,7 @@ export function validateContact(data: unknown) {
 
 export function contactMail(data: ReturnType<typeof validateContact>) {
   return {
-    from: {name: 'Keekkott Maqam Website', address: contactMailbox},
+    from: {name: 'Keekkott Sayyid Attakoya Thangal Maqam Website', address: contactMailbox},
     to: contactMailbox,
     replyTo: {name: data.name, address: data.email},
     subject: `[Website enquiry] ${data.subject}`,
