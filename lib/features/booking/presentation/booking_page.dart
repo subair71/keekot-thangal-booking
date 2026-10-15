@@ -20,6 +20,35 @@ class _BookingPageState extends ConsumerState<BookingPage> {
   String? date, selectedId;
   int visitors = 1;
   String periodFilter = 'All times';
+  final _continueKey = GlobalKey();
+  final _continueFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _continueFocus.dispose();
+    super.dispose();
+  }
+
+  void _selectSlot(String id) {
+    setState(() => selectedId = id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || selectedId != id) return;
+      final buttonContext = _continueKey.currentContext;
+      if (buttonContext == null) return;
+      final button = buttonContext.widget as FilledButton;
+      if (button.onPressed == null) return;
+      _continueFocus.requestFocus();
+      Scrollable.ensureVisible(
+        buttonContext,
+        alignment: 0.5,
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) => PageContainer(
     child: Column(
@@ -288,9 +317,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                           slot: slot,
                                           selected: selected?.id == slot.id,
                                           visitors: visitors,
-                                          onSelect: () => setState(
-                                            () => selectedId = slot.id,
-                                          ),
+                                          onSelect: () => _selectSlot(slot.id),
                                         ),
                                       ),
                                   ],
@@ -381,6 +408,8 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                             ),
                             const SizedBox(height: 20),
                             FilledButton.icon(
+                              key: _continueKey,
+                              focusNode: _continueFocus,
                               onPressed: selected == null
                                   ? null
                                   : () {
