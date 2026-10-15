@@ -105,7 +105,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           AsyncPanel(
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
@@ -136,11 +136,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 18),
           const ProgrammeCarousel(),
-          const SizedBox(height: 48),
+          const SizedBox(height: 18),
           const _HomeFeaturedVideo(),
-          const SizedBox(height: 72),
+          const SizedBox(height: 40),
           TwoColumn(
             main: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,8 +153,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 AppText(
                   'Assalamu alaikum. Welcome to Keekkott Sayyid Attakoya Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.',
                   style: TextStyle(
-                    fontSize: 18,
-                    height: 1.8,
+                    fontSize: 15,
+                    height: 1.5,
                     color: AppColors.ink,
                   ),
                 ),
@@ -162,7 +162,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 AppText(
                   'This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.',
                 ),
-                SizedBox(height: 28),
+                SizedBox(height: 18),
                 _FeatureGrid(
                   children: [
                     InfoLine(
@@ -181,9 +181,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             aside: const LocationCard(),
           ),
-          const SizedBox(height: 72),
+          const SizedBox(height: 40),
           Container(
-            padding: const EdgeInsets.all(28),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.cream,
               borderRadius: BorderRadius.circular(28),
@@ -195,7 +195,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   'YOUR VISIT, SIMPLIFIED',
                   'Arrive prepared. Be fully present.',
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 20),
                 _FeatureGrid(
                   children: [
                     _VisitStep(
@@ -218,14 +218,14 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          const SizedBox(height: 72),
+          const SizedBox(height: 40),
           KeyedSubtree(key: videosKey, child: const VideoGallery()),
-          const SizedBox(height: 72),
+          const SizedBox(height: 40),
           const _SectionTitle(
             'A CONSIDERATE ZIYARAT',
             'Small gestures. A peaceful atmosphere.',
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           KeyedSubtree(
             key: guideKey,
             child: const TwoColumn(
@@ -233,7 +233,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               aside: LocationCard(),
             ),
           ),
-          const SizedBox(height: 72),
+          const SizedBox(height: 40),
           TwoColumn(
             main: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,13 +246,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                 AppText(
                   'Take a moment to review your reservation before travelling to Keekkott Sayyid Attakoya Thangal Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.',
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: 16),
                 InfoLine(
                   Icons.family_restroom_outlined,
                   'Visiting with family',
                   'Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.',
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: 16),
                 InfoLine(
                   Icons.photo_camera_outlined,
                   'Photography & privacy',
@@ -456,12 +456,12 @@ class _FeatureGrid extends StatelessWidget {
           ? 2
           : children.length;
       return Wrap(
-        spacing: 24,
-        runSpacing: 28,
+        spacing: 18,
+        runSpacing: 18,
         children: [
           for (final child in children)
             SizedBox(
-              width: (constraints.maxWidth - (columns - 1) * 24) / columns,
+              width: (constraints.maxWidth - (columns - 1) * 18) / columns,
               child: child,
             ),
         ],
@@ -481,7 +481,7 @@ class _VisitStep extends StatelessWidget {
         number,
         style: const TextStyle(
           fontFamily: 'Newsreader',
-          fontSize: 36,
+          fontSize: 28,
           color: AppColors.gold,
         ),
       ),
@@ -757,7 +757,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
         ],
       );
       return Container(
-        padding: EdgeInsets.all(compact ? 20 : 28),
+        padding: EdgeInsets.all(compact ? 16 : 20),
         decoration: BoxDecoration(
           color: AppColors.cream,
           borderRadius: BorderRadius.circular(24),
@@ -768,7 +768,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   content,
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 14),
                   Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 420),

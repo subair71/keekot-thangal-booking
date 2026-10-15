@@ -106,7 +106,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
     String label(String english, String malayalam) => ml ? malayalam : english;
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 840),
+        constraints: const BoxConstraints(maxWidth: 680),
         child: Focus(
           onFocusChange: (focused) {
             _focused = focused;

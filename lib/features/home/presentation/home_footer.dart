@@ -23,7 +23,7 @@ class HomeFooter extends StatelessWidget {
       children: [
         Container(
           color: AppColors.cream,
-          padding: const EdgeInsets.all(28),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               const Icon(Icons.spa_outlined, color: AppColors.gold, size: 32),
@@ -38,7 +38,7 @@ class HomeFooter extends StatelessWidget {
                 'Find a suitable time and prepare for a peaceful ziyarat at Keekkott Sayyid Attakoya Thangal Maqam.',
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 12,
@@ -164,7 +164,7 @@ class HomeFooter extends StatelessWidget {
               ],
             );
             return Padding(
-              padding: EdgeInsets.all(wide ? 40 : 24),
+              padding: EdgeInsets.all(wide ? 24 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -181,12 +181,12 @@ class HomeFooter extends StatelessWidget {
                     )
                   else ...[
                     brand,
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
                     links,
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 18),
                     guidance,
                   ],
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
                   Divider(color: Colors.white.withValues(alpha: .18)),
                   const SizedBox(height: 14),
                   const AppText(
