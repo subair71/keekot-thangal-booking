@@ -77,7 +77,7 @@ class HomeFooter extends StatelessWidget {
                 ),
                 const SizedBox(height: 18),
                 AppText(
-                  'Keekkott Sayyid Aattakkoya Thangal',
+                  'KEEKKOTT SAYYID ATTAKOYA THANGAL',
                   style: Theme.of(
                     context,
                   ).textTheme.headlineMedium!.copyWith(color: AppColors.ivory),
