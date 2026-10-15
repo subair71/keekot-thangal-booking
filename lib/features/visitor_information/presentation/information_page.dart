@@ -16,7 +16,7 @@ class InformationPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PageHeading(
-          'Your guide to Keekkott Maqam',
+          'Your guide to Keekkott Sayyid Attakoya Thangal Maqam',
           eyebrow: 'Visitor information',
           subtitle:
               'Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.',
@@ -27,7 +27,7 @@ class InformationPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppText(
-                'Welcome to Keekkott Thangal Maqam',
+                'Welcome to Keekkott Sayyid Attakoya Thangal Maqam',
                 style: TextStyle(
                   fontFamily: 'Newsreader',
                   fontSize: 28,
@@ -36,7 +36,7 @@ class InformationPage extends StatelessWidget {
               ),
               SizedBox(height: 14),
               AppText(
-                'Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.',
+                'Located in Chavakkad, Kerala, Keekkott Sayyid Attakoya Thangal Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.',
               ),
               SizedBox(height: 16),
               AppText(
@@ -138,7 +138,7 @@ class LocationCard extends ConsumerWidget {
           ),
           const SizedBox(height: 20),
           AppText(
-            'Keekkott Thangal Maqam',
+            'Keekkott Sayyid Attakoya Thangal Maqam',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 8),
