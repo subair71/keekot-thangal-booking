@@ -280,7 +280,7 @@ class _MaqamHero extends StatelessWidget {
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 650;
       return ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: [
             Positioned.fill(
@@ -309,14 +309,14 @@ class _MaqamHero extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(compact ? 26 : 36),
+              padding: EdgeInsets.all(compact ? 18 : 26),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                      horizontal: 12,
+                      vertical: 6,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.emerald.withValues(alpha: .7),
@@ -329,46 +329,52 @@ class _MaqamHero extends StatelessWidget {
                       'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
                       style: TextStyle(
                         color: AppColors.mintStrong,
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 650),
                     child: AppText(
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
                         fontFamily: 'Newsreader',
-                        fontSize: compact ? 44 : 52,
+                        fontSize: compact ? 28 : 36,
                         height: 1.05,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
-                    child: const AppText(
+                    child: AppText(
                       'Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Sayyid Attakoya Thangal Maqam, Chavakkad.',
                       style: TextStyle(
-                        color: Color(0xFFE7EEE7),
-                        fontSize: 17,
-                        height: 1.8,
+                        color: const Color(0xFFE7EEE7),
+                        fontSize: compact ? 14 : 15,
+                        height: 1.5,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 18),
                   Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       FilledButton.icon(
                         onPressed: () => context.go('/book'),
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.mintStrong,
+                          minimumSize: const Size(48, 44),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          textStyle: const TextStyle(fontSize: 13),
                           foregroundColor: AppColors.emerald,
                         ),
                         icon: const Icon(Icons.calendar_month_outlined),
@@ -378,24 +384,30 @@ class _MaqamHero extends StatelessWidget {
                         onPressed: () => context.go('/information'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
+                          minimumSize: const Size(48, 44),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          textStyle: const TextStyle(fontSize: 13),
                           side: const BorderSide(color: Color(0xFFB7C9BE)),
                         ),
                         child: const AppText('Visitor guide'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
                   const Divider(color: AppColors.secondary),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   const AppText(
                     'CHAVAKKAD  /  KERALA  /  INDIA',
                     style: TextStyle(
                       color: AppColors.mintStrong,
                       fontSize: 11,
-                      letterSpacing: 2,
+                      letterSpacing: 1,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   const AppText(
                     'Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph',
                     style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 11),
