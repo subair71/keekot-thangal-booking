@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
 
-/// Live Malayalam typography keeps the programme banners crisp at small sizes.
+/// Regenerated programme images with smaller lettering and accessible descriptions.
 class ProgrammeCarousel extends StatefulWidget {
   const ProgrammeCarousel({super.key});
 
@@ -15,9 +15,14 @@ class ProgrammeCarousel extends StatefulWidget {
 
 class _ProgrammeCarouselState extends State<ProgrammeCarousel>
     with WidgetsBindingObserver {
-  static const _slides = [
-    ('ദിക്ർ ഹൽഖ', ['എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം']),
+  static const List<(String, String, List<String>)> _slides = [
     (
+      'assets/brand/programme-dhikr-small.webp',
+      'ദിക്ർ ഹൽഖ',
+      ['എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'],
+    ),
+    (
+      'assets/brand/programme-mawlid-small.webp',
       'മൗലിദ് സദസ്സ്',
       [
         'എല്ലാ അറബിമാസം 24ന്\nമഹാനായ കീക്കോട്ട് ആറ്റക്കോയ ഉപ്പാപ്പാടെയും',
@@ -25,6 +30,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
       ],
     ),
     (
+      'assets/brand/programme-annual-small.webp',
       'ആണ്ട് നേർച്ച',
       [
         'റമദാൻ 8 ന് കീക്കോട്ട് വലിയ ഉപ്പാപ്പാടെ ആണ്ട്',
@@ -137,101 +143,27 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                   ),
                 ),
                 const SizedBox(height: 16),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final compact = constraints.maxWidth < 500;
-                    final headingStyle = TextStyle(
-                      fontFamily: 'Noto Sans Malayalam',
-                      fontSize: compact ? 18 : 20,
-                      height: 1.5,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF102C58),
-                    );
-                    final bodyStyle = TextStyle(
-                      fontFamily: 'Noto Sans Malayalam',
-                      fontSize: compact ? 13 : 14,
-                      height: 1.6,
-                      color: const Color(0xFF102C58),
-                    );
-                    final scaler = MediaQuery.textScalerOf(context);
-                    double textHeight(String text, TextStyle style) {
-                      final painter = TextPainter(
-                        text: TextSpan(text: text, style: style),
-                        textDirection: TextDirection.ltr,
-                        textScaler: scaler,
-                      )..layout(maxWidth: constraints.maxWidth - 34);
-                      final height = painter.height;
-                      painter.dispose();
-                      return height;
-                    }
-
-                    // Reserve enough space for every slide, including enlarged text.
-                    // The carousel never jumps in height when it advances.
-                    var height = 0.0;
-                    for (final slide in _slides) {
-                      final contentHeight =
-                          textHeight(slide.$1, headingStyle) +
-                          slide.$2.fold<double>(
-                            0,
-                            (sum, row) => sum + textHeight(row, bodyStyle),
-                          ) +
-                          (slide.$2.length - 1) * 8 +
-                          58;
-                      if (contentHeight > height) height = contentHeight;
-                    }
-                    return SizedBox(
-                      height: height.ceilToDouble() + 2,
-                      child: PageView.builder(
-                        controller: _controller,
-                        itemCount: _slides.length,
-                        onPageChanged: (index) {
-                          setState(() => _index = index);
-                          _schedule();
-                        },
-                        itemBuilder: (context, index) {
-                          final slide = _slides[index];
-                          return Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppColors.ivory,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(color: AppColors.gold),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Semantics(
-                                  header: true,
-                                  child: Text(
-                                    slide.$1,
-                                    textAlign: TextAlign.center,
-                                    style: headingStyle,
-                                  ),
-                                ),
-                                const Divider(
-                                  height: 24,
-                                  color: AppColors.gold,
-                                ),
-                                for (
-                                  var row = 0;
-                                  row < slide.$2.length;
-                                  row++
-                                ) ...[
-                                  if (row > 0) const SizedBox(height: 8),
-                                  Text(
-                                    slide.$2[row],
-                                    textAlign: TextAlign.center,
-                                    style: bodyStyle,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: AspectRatio(
+                    aspectRatio: 3 / 2,
+                    child: PageView.builder(
+                      controller: _controller,
+                      itemCount: _slides.length,
+                      onPageChanged: (index) {
+                        setState(() => _index = index);
+                        _schedule();
+                      },
+                      itemBuilder: (context, index) {
+                        final slide = _slides[index];
+                        return Image.asset(
+                          slide.$1,
+                          fit: BoxFit.contain,
+                          semanticLabel: '${slide.$2}. ${slide.$3.join('. ')}',
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ],
             ),
