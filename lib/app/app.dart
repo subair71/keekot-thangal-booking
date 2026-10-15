@@ -1,7 +1,9 @@
 import '../core/localization/app_language.dart';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/config/app_config.dart';
 import 'router/app_router.dart';
 import 'bootstrap/providers.dart';
@@ -41,12 +43,7 @@ class KeekotApp extends ConsumerWidget {
           routerConfig: ref.watch(routerProvider),
           builder: (context, child) {
             final config = ref.watch(appConfigProvider);
-            final content = Column(
-              children: [
-                const LanguageToggleBar(),
-                Expanded(child: child!),
-              ],
-            );
+            final content = child!;
             if (config.environment == 'production') return content;
             return Column(
               children: [

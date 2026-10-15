@@ -128,69 +128,84 @@ class AppShell extends ConsumerWidget {
                           ),
                         const SizedBox(width: 8),
                       ],
-                      IconButton(
-                        tooltip: tr(context, 'Notifications'),
-                        onPressed: () => context.go('/notifications'),
-                        icon: const Icon(Icons.notifications_none),
-                      ),
-                      PopupMenuButton<String>(
-                        tooltip: tr(
-                          context,
-                          user == null ? 'Sign in' : 'Account',
-                        ),
-                        icon: const Icon(Icons.account_circle_outlined),
-                        onSelected: (value) async {
-                          if (value == 'signout') {
-                            try {
-                              try {
-                                await ref
-                                    .read(notificationRepositoryProvider)
-                                    .disable();
-                              } catch (_) {
-                                // Notification network failure must not prevent local sign-out.
-                              }
-                              await ref.read(authRepositoryProvider).signOut();
-                              ref.read(draftProvider.notifier).clear();
-                              if (context.mounted) context.go('/');
-                            } catch (e) {
-                              if (context.mounted) {
-                                showMessage(context, failureMessage(e));
-                              }
-                            }
-                          } else {
-                            context.go(value);
-                          }
-                        },
-                        itemBuilder: (_) => [
-                          const PopupMenuItem(
-                            value: '/contact',
-                            child: AppText('Contact us'),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const HeaderLanguageToggle(),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: tr(context, 'Notifications'),
+                                onPressed: () => context.go('/notifications'),
+                                icon: const Icon(Icons.notifications_none),
+                              ),
+                              PopupMenuButton<String>(
+                                tooltip: tr(
+                                  context,
+                                  user == null ? 'Sign in' : 'Account',
+                                ),
+                                icon: const Icon(Icons.account_circle_outlined),
+                                onSelected: (value) async {
+                                  if (value == 'signout') {
+                                    try {
+                                      try {
+                                        await ref
+                                            .read(
+                                              notificationRepositoryProvider,
+                                            )
+                                            .disable();
+                                      } catch (_) {
+                                        // Notification network failure must not prevent local sign-out.
+                                      }
+                                      await ref
+                                          .read(authRepositoryProvider)
+                                          .signOut();
+                                      ref.read(draftProvider.notifier).clear();
+                                      if (context.mounted) context.go('/');
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        showMessage(context, failureMessage(e));
+                                      }
+                                    }
+                                  } else {
+                                    context.go(value);
+                                  }
+                                },
+                                itemBuilder: (_) => [
+                                  const PopupMenuItem(
+                                    value: '/contact',
+                                    child: AppText('Contact us'),
+                                  ),
+                                  if (user == null)
+                                    const PopupMenuItem(
+                                      value: '/auth',
+                                      child: AppText('Sign in with mobile'),
+                                    ),
+                                  if (user != null)
+                                    PopupMenuItem(
+                                      enabled: false,
+                                      child: Text(user.maskedPhone),
+                                    ),
+                                  if (user?.admin == true)
+                                    const PopupMenuItem(
+                                      value: '/admin',
+                                      child: AppText('Administration'),
+                                    ),
+                                  if (user?.gate == true && user?.admin != true)
+                                    const PopupMenuItem(
+                                      value: '/admin/gate',
+                                      child: AppText('Validate visitor pass'),
+                                    ),
+                                  if (user != null)
+                                    const PopupMenuItem(
+                                      value: 'signout',
+                                      child: AppText('Sign out'),
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
-                          if (user == null)
-                            const PopupMenuItem(
-                              value: '/auth',
-                              child: AppText('Sign in with mobile'),
-                            ),
-                          if (user != null)
-                            PopupMenuItem(
-                              enabled: false,
-                              child: Text(user.maskedPhone),
-                            ),
-                          if (user?.admin == true)
-                            const PopupMenuItem(
-                              value: '/admin',
-                              child: AppText('Administration'),
-                            ),
-                          if (user?.gate == true && user?.admin != true)
-                            const PopupMenuItem(
-                              value: '/admin/gate',
-                              child: AppText('Validate visitor pass'),
-                            ),
-                          if (user != null)
-                            const PopupMenuItem(
-                              value: 'signout',
-                              child: AppText('Sign out'),
-                            ),
                         ],
                       ),
                     ],
