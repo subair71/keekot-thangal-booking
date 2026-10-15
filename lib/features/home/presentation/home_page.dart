@@ -75,36 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             },
           ),
           const SizedBox(height: 20),
-          SurfaceCard(
-            padding: 12,
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 12,
-              runSpacing: 4,
-              children: [
-                TextButton.icon(
-                  onPressed: () => context.go('/book'),
-                  icon: const Icon(Icons.calendar_month_outlined),
-                  label: const AppText('Book a visit'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(guideKey),
-                  icon: const Icon(Icons.menu_book_outlined),
-                  label: const AppText('Visitor guide'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(videosKey),
-                  icon: const Icon(Icons.play_circle_outline),
-                  label: const AppText('Videos'),
-                ),
-                TextButton.icon(
-                  onPressed: () => reveal(questionsKey),
-                  icon: const Icon(Icons.help_outline),
-                  label: const AppText('Questions before you visit'),
-                ),
-              ],
-            ),
-          ),
+          const ProgrammeCarousel(),
           const SizedBox(height: 16),
           AsyncPanel(
             value: config,
@@ -137,7 +108,36 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           const SizedBox(height: 18),
-          const ProgrammeCarousel(),
+          SurfaceCard(
+            padding: 12,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 4,
+              children: [
+                TextButton.icon(
+                  onPressed: () => context.go('/book'),
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  label: const AppText('Book a visit'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(guideKey),
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const AppText('Visitor guide'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(videosKey),
+                  icon: const Icon(Icons.play_circle_outline),
+                  label: const AppText('Videos'),
+                ),
+                TextButton.icon(
+                  onPressed: () => reveal(questionsKey),
+                  icon: const Icon(Icons.help_outline),
+                  label: const AppText('Questions before you visit'),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(height: 18),
           const _HomeFeaturedVideo(),
           const SizedBox(height: 40),
