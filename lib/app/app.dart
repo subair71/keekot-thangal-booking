@@ -29,7 +29,7 @@ class KeekotApp extends ConsumerWidget {
           supportedLocales: const [Locale('en'), Locale('ml')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           scaffoldMessengerKey: _messenger,
-          title: 'Keekkott Thangal | Visit Booking',
+          title: 'KEEKOTT SAYYID AATTAKOYA THANGAL MAQAM',
           debugShowCheckedModeBanner: false,
           theme: AppLanguage.of(context) == 'ml'
               ? buildTheme().copyWith(
