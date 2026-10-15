@@ -78,9 +78,8 @@ class HomeFooter extends StatelessWidget {
                 const SizedBox(height: 18),
                 AppText(
                   'KEEKKOTT SAYYID ATTAKOYA THANGAL',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.headlineMedium!.copyWith(color: AppColors.ivory),
+                  style: Theme.of(context).textTheme.headlineMedium!
+                      .copyWith(color: AppColors.ivory),
                 ),
                 const SizedBox(height: 8),
                 const AppText(
@@ -113,6 +112,12 @@ class HomeFooter extends StatelessWidget {
                   () => context.go('/information'),
                 ),
                 _link(context, 'Videos', Icons.play_circle_outline, onVideos),
+                _link(
+                  context,
+                  'Contact us',
+                  Icons.mail_outline,
+                  () => context.go('/contact'),
+                ),
               ],
             );
             final guidance = Column(
