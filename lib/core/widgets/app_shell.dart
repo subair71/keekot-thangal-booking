@@ -37,7 +37,7 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 136 : 112),
+        preferredSize: Size.fromHeight(wide ? 184 : 208),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -72,12 +72,12 @@ class AppShell extends ConsumerWidget {
                                     children: [
                                       AppText(
                                         'Keekkott Sayyid Aattakkoya Thangal',
-                                        maxLines: 3,
+                                        maxLines: 4,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w600,
-                                          fontSize: wide ? 24 : 16,
+                                          fontSize: 28,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
