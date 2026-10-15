@@ -39,8 +39,10 @@ class _BookingPageState extends ConsumerState<BookingPage> {
       if (button.onPressed == null) return;
       // Keep keyboard and screen-reader users on their chosen slot.
       if (MediaQuery.accessibleNavigationOf(context) ||
-          FocusManager.instance.highlightMode == FocusHighlightMode.traditional)
+          FocusManager.instance.highlightMode ==
+              FocusHighlightMode.traditional) {
         return;
+      }
       _continueFocus.requestFocus();
       Scrollable.ensureVisible(
         buttonContext,

@@ -261,9 +261,9 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       const SizedBox(height: 20),
                     ],
                     if (remaining == 0) ...[
-                      const Semantics(
+                      Semantics(
                         liveRegion: true,
-                        child: AppText(
+                        child: const AppText(
                           'Your hold has ended. Please select your time again.',
                         ),
                       ),

@@ -213,6 +213,9 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                     'Programme ${_index + 1} of ${_slides.length}',
                     'പരിപാടി ${_index + 1}, ആകെ ${_slides.length}',
                   ),
+                  value: '${_index + 1}',
+                  increasedValue: '${(_index + 1) % _slides.length + 1}',
+                  decreasedValue: '${(_index - 1) % _slides.length + 1}',
                   onIncrease: () => manualSlide(1),
                   onDecrease: () => manualSlide(-1),
                   child: Column(
