@@ -323,7 +323,7 @@ class _MaqamHero extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: const AppText(
-                      'Keekkott Sayyid Aattakkoya Thangal',
+                      'KEEKKOTT SAYYID ATTAKOYA THANGAL',
                       style: TextStyle(
                         color: AppColors.mintStrong,
                         fontSize: 12,

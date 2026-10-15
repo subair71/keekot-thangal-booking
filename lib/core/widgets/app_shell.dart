@@ -71,13 +71,13 @@ class AppShell extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       AppText(
-                                        'Keekkott Sayyid Aattakkoya Thangal',
+                                        'KEEKKOTT SAYYID ATTAKOYA THANGAL',
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w600,
-                                          fontSize: wide ? 24 : 16,
+                                          fontSize: wide ? 24 : 18,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
