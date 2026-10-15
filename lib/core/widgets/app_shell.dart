@@ -77,7 +77,7 @@ class AppShell extends ConsumerWidget {
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w600,
-                                          fontSize: wide ? 22 : 14,
+                                          fontSize: wide ? 24 : 16,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
