@@ -37,7 +37,7 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 136 : 128),
+        preferredSize: Size.fromHeight(wide ? 136 : 108),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -50,7 +50,7 @@ class AppShell extends ConsumerWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
-                    vertical: 10,
+                    vertical: wide ? 10 : 4,
                   ),
                   child: Row(
                     children: [
@@ -62,7 +62,7 @@ class AppShell extends ConsumerWidget {
                             padding: const EdgeInsets.all(4),
                             child: Row(
                               children: [
-                                Emblem(size: wide ? 48 : 34),
+                                Emblem(size: wide ? 48 : 30),
                                 const SizedBox(width: 10),
                                 Flexible(
                                   child: Column(
@@ -77,17 +77,17 @@ class AppShell extends ConsumerWidget {
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w700,
-                                          fontSize: wide ? 24 : 18,
+                                          fontSize: wide ? 24 : 16,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
                                       ),
-                                      const AppText(
+                                      AppText(
                                         'MAQAM · CHAVAKKAD',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: wide ? 12 : 11,
                                           height: 1.2,
                                           color: AppColors.muted,
                                         ),
@@ -220,12 +220,13 @@ class AppShell extends ConsumerWidget {
       bottomNavigationBar: wide
           ? null
           : NavigationBar(
+              height: 64,
               selectedIndex: selected,
               onDestinationSelected: (i) => context.go(routes[i]),
               destinations: [
                 for (var i = 0; i < routes.length; i++)
                   NavigationDestination(
-                    icon: Icon(icons[i]),
+                    icon: Icon(icons[i], size: 20),
                     label: tr(context, ['Home', 'Book', 'Bookings', 'Info'][i]),
                   ),
               ],
