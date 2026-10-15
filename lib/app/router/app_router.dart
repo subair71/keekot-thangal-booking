@@ -6,6 +6,7 @@ import '../bootstrap/providers.dart';
 import '../../core/widgets/app_shell.dart';
 import '../../core/widgets/components.dart';
 import '../../features/home/presentation/home_page.dart';
+import '../../features/contact/presentation/contact_page.dart';
 import '../../features/authentication/presentation/auth_page.dart';
 import '../../features/booking/presentation/booking_page.dart';
 import '../../features/booking/presentation/confirmation_page.dart';
@@ -63,6 +64,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, child) => AppShell(child: child),
         routes: [
           GoRoute(path: '/', builder: (_, _) => const HomePage()),
+          GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
           GoRoute(
             path: '/auth',
             builder: (_, s) =>
