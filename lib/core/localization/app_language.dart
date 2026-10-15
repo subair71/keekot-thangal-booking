@@ -108,8 +108,9 @@ String translateMalayalam(String text) {
     'Nov': 'നവംബർ',
     'Dec': 'ഡിസംബർ',
   };
-  if (RegExp(r'^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d+ [A-Z][a-z]{2} \d{4}')
-      .hasMatch(text)) {
+  if (RegExp(
+    r'^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d+ [A-Z][a-z]{2} \d{4}',
+  ).hasMatch(text)) {
     return text
         .replaceAllMapped(
           RegExp(r'\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b'),
