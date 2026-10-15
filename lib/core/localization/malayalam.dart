@@ -1,7 +1,8 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
   "Contact us": "ബന്ധപ്പെടുക",
-  "KEEKKOTT MAQAM": "കീക്കോട്ട് മഖാം",
+  "KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം",
   "Have a question about your visit? Send us a message.":
       "സന്ദർശനത്തെക്കുറിച്ച് ചോദ്യങ്ങളുണ്ടോ? ഞങ്ങൾക്ക് സന്ദേശം അയയ്ക്കുക.",
   "Your name": "നിങ്ങളുടെ പേര്",
@@ -62,8 +63,8 @@ const malayalam = <String, String>{
   "Book Visit": "സന്ദർശനം ബുക്ക് ചെയ്യുക",
   "My Bookings": "എന്റെ ബുക്കിംഗുകൾ",
   "Visitor Information": "സന്ദർശക വിവരങ്ങൾ",
-  "Keekkott Thangal": "കീക്കോട്ട് തങ്ങൾ",
-  "KEEKKOTT SAYYID ATTAKOYA THANGAL": "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ",
+  "Keekkott Sayyid Attakoya Thangal Maqam":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം",
   "MAQAM · CHAVAKKAD": "മഖാം · ചാവക്കാട്",
   "Notifications": "അറിയിപ്പുകൾ",
   "Sign in": "ലോഗിൻ",
@@ -83,11 +84,12 @@ const malayalam = <String, String>{
   "Easy entry": "എളുപ്പത്തിൽ പ്രവേശനം",
   "Your booking. Your digital pass.":
       "നിങ്ങളുടെ ബുക്കിംഗ്. നിങ്ങളുടെ ഡിജിറ്റൽ പാസ്.",
-  "WELCOME TO KEEKKOTT": "കീക്കോട്ടിലേക്ക് സ്വാഗതം",
+  "WELCOME TO KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം സന്ദർശനത്തിലേക്ക് സ്വാഗതം",
   "A place for remembrance.\nA moment for yourself.":
       "സ്മരണയ്ക്കൊരു ഇടം.\nനിങ്ങൾക്കായി ഒരു നിമിഷം.",
-  "Assalamu alaikum. Welcome to Keekkott Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.":
-      "അസ്സലാമു അലൈക്കും. കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം. സിയാറത്തിനും ദുആക്കും ശാന്തമായ ആത്മചിന്തയ്ക്കും സമയം കണ്ടെത്തൂ. ആദരവോടെയും മറ്റുള്ളവരെ പരിഗണിച്ചും സന്ദർശിക്കുക.",
+  "Assalamu alaikum. Welcome to Keekkott Sayyid Attakoya Thangal Maqam in Chavakkad, Kerala. Make time for ziyarat, dua and quiet reflection, and approach your visit with a spirit of respect and consideration.":
+      "അസ്സലാമു അലൈക്കും. കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം. സിയാറത്തിനും ദുആക്കും ശാന്തമായ ആത്മചിന്തയ്ക്കും സമയം കണ്ടെത്തൂ. ആദരവോടെയും മറ്റുള്ളവരെ പരിഗണിച്ചും സന്ദർശിക്കുക.",
   "This visitor service helps you plan ahead: explore available dates, reserve a suitable time and keep your entry pass close at hand. Whether you are visiting on your own or accompanying family, a little preparation helps everyone arrive with peace of mind.":
       "സന്ദർശനം മുൻകൂട്ടി ആസൂത്രണം ചെയ്യാൻ ഈ സേവനം സഹായിക്കുന്നു. ലഭ്യമായ തീയതികൾ പരിശോധിച്ച് അനുയോജ്യമായ സമയം ബുക്ക് ചെയ്യുക; പ്രവേശന പാസ് കരുതുക. ഒറ്റയ്ക്കോ കുടുംബത്തോടൊപ്പമോ എത്തുമ്പോൾ മുൻകൂട്ടിയുള്ള തയ്യാറെടുപ്പ് ഉപകാരപ്പെടും.",
   "Remembrance & dua": "സ്മരണയും ദുആയും",
@@ -114,8 +116,8 @@ const malayalam = <String, String>{
   "BEFORE YOU SET OUT": "യാത്ര തിരിക്കും മുമ്പ്",
   "Make room for a meaningful visit.":
       "അർഥവത്തായ സന്ദർശനത്തിന് സമയം കണ്ടെത്തൂ.",
-  "Take a moment to review your reservation before travelling to Keekkott Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.":
-      "കീക്കോട്ട് മഖാമിലേക്ക് യാത്ര തിരിക്കും മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക. ബുക്കിംഗ് വിവരങ്ങൾ കൈവശം കരുതുക, യാത്രയ്ക്ക് മതിയായ സമയം അനുവദിക്കുക, എത്തിയശേഷം ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുക.",
+  "Take a moment to review your reservation before travelling to Keekkott Sayyid Attakoya Thangal Maqam. Keep your booking details accessible, allow time for the journey and follow the guidance of the staff when you arrive.":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്ക് യാത്ര തിരിക്കും മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക. ബുക്കിംഗ് വിവരങ്ങൾ കൈവശം കരുതുക, യാത്രയ്ക്ക് മതിയായ സമയം അനുവദിക്കുക, എത്തിയശേഷം ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുക.",
   "Visiting with family": "കുടുംബത്തോടൊപ്പം സന്ദർശിക്കുമ്പോൾ",
   "Check that the visitors included in your reservation are correct. Stay together and be mindful of children and older companions.":
       "ബുക്കിംഗിൽ ഉൾപ്പെടുത്തിയ സന്ദർശകരുടെ വിവരങ്ങൾ ശരിയാണെന്ന് ഉറപ്പാക്കുക. ഒരുമിച്ച് നിൽക്കുകയും കുട്ടികളെയും മുതിർന്നവരെയും ശ്രദ്ധിക്കുകയും ചെയ്യുക.",
@@ -124,24 +126,22 @@ const malayalam = <String, String>{
       "ഫോട്ടോ എടുക്കുന്നതിന് മുമ്പ് ജീവനക്കാരോട് അനുമതി ചോദിക്കുക. മറ്റു സന്ദർശകരുടെ സ്വകാര്യതയും മഖാമിലെ നിയന്ത്രണങ്ങളും മാനിക്കുക.",
   "Your next visit begins with a little planning.":
       "അടുത്ത സന്ദർശനം ചെറിയൊരു ആസൂത്രണത്തോടെ തുടങ്ങാം.",
-  "Find a suitable time and prepare for a peaceful ziyarat at Keekkott Maqam.":
-      "അനുയോജ്യമായ സമയം കണ്ടെത്തി കീക്കോട്ട് മഖാമിലെ ശാന്തമായ സിയാറത്തിനായി തയ്യാറാകൂ.",
+  "Find a suitable time and prepare for a peaceful ziyarat at Keekkott Sayyid Attakoya Thangal Maqam.":
+      "അനുയോജ്യമായ സമയം കണ്ടെത്തി കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലെ ശാന്തമായ സിയാറത്തിനായി തയ്യാറാകൂ.",
   "Plan my visit": "സന്ദർശനം ആസൂത്രണം ചെയ്യുക",
-  "Keekkott Thangal Maqam": "കീക്കോട്ട് തങ്ങൾ മഖാം",
   "Ziyarat & visitor booking · Chavakkad, Kerala":
       "സിയാറത്തും സന്ദർശന ബുക്കിംഗും · ചാവക്കാട്, കേരളം",
   "Visitor information": "സന്ദർശക വിവരങ്ങൾ",
   "My bookings": "എന്റെ ബുക്കിംഗുകൾ",
   "All visit times are in India Standard Time.":
       "എല്ലാ സന്ദർശന സമയങ്ങളും ഇന്ത്യൻ സ്റ്റാൻഡേർഡ് സമയത്തിലാണ്.",
-  "KEEKKOTT THANGAL MAQAM": "കീക്കോട്ട് തങ്ങൾ മഖാം",
   "A peaceful place.\nA heartfelt visit.":
       "ശാന്തമായ ഒരിടം.\nഹൃദയപൂർവമായ സന്ദർശനം.",
-  "Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Maqam, Chavakkad.":
-      "സ്മരണയ്ക്കായി അൽപനേരം മാറ്റിവയ്ക്കൂ. ദുആയ്ക്ക് സമയം കണ്ടെത്തൂ. ചാവക്കാട്ടെ കീക്കോട്ട് മഖാമിലേക്കുള്ള സിയാറത്ത് ആസൂത്രണം ചെയ്യൂ.",
+  "Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Sayyid Attakoya Thangal Maqam, Chavakkad.":
+      "സ്മരണയ്ക്കായി അൽപനേരം മാറ്റിവയ്ക്കൂ. ദുആയ്ക്ക് സമയം കണ്ടെത്തൂ. ചാവക്കാട്ടെ കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്കുള്ള സിയാറത്ത് ആസൂത്രണം ചെയ്യൂ.",
   "CHAVAKKAD  /  KERALA  /  INDIA": "ചാവക്കാട്  /  കേരളം  /  ഇന്ത്യ",
-  "Oil painting inspired by the Keekkott Maqam photograph":
-      "കീക്കോട്ട് മഖാമിന്റെ ചിത്രത്തെ ആസ്പദമാക്കിയ ഓയിൽ പെയിന്റിംഗ്",
+  "Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിന്റെ ചിത്രത്തെ ആസ്പദമാക്കിയ ഓയിൽ പെയിന്റിംഗ്",
   "How do I reserve a visit?": "സന്ദർശനം എങ്ങനെ ബുക്ക് ചെയ്യാം?",
   "Choose Book a visit, select an available date and time, and follow the steps to verify your mobile number and confirm your visitor details.":
       "‘സന്ദർശനം ബുക്ക് ചെയ്യുക’ തിരഞ്ഞെടുത്ത് ലഭ്യമായ തീയതിയും സമയവും തിരഞ്ഞെടുക്കുക. തുടർന്ന് മൊബൈൽ നമ്പർ സ്ഥിരീകരിച്ച് സന്ദർശക വിവരങ്ങൾ നൽകുക.",
@@ -167,10 +167,12 @@ const malayalam = <String, String>{
   "Choose a time": "സമയം തിരഞ്ഞെടുക്കുക",
   "Availability updates every 20 seconds.":
       "ലഭ്യത ഓരോ 20 സെക്കൻഡിലും പുതുക്കുന്നു.",
-  "A GLIMPSE OF KEEKKOTT": "കീക്കോട്ടിന്റെ ഒരു കാഴ്ച",
+  "A GLIMPSE OF KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം ഒരു കാഴ്ച",
   "A quiet moment before your visit.":
       "സന്ദർശനത്തിന് മുമ്പ് ശാന്തമായൊരു നിമിഷം.",
-  "Discover Keekkott Maqam. ": "കീക്കോട്ട് മഖാമിനെ അടുത്തറിയൂ. ",
+  "Discover Keekkott Sayyid Attakoya Thangal Maqam. ":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിനെ അടുത്തറിയൂ. ",
   "Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.":
       "ഞങ്ങളുടെ ചാനലിലെ വീഡിയോയിലൂടെ മഖാമും ഹരിതാഭമായ പരിസരവും കാണൂ. യാത്രയ്ക്ക് മുമ്പ് ശാന്തമായി ചിന്തിക്കാനും ആത്മബന്ധം അനുഭവിക്കാനും ഒരു നിമിഷം.",
   "Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.":
@@ -193,12 +195,14 @@ const malayalam = <String, String>{
   "Shorts": "ഷോർട്സ്",
   "All Videos": "എല്ലാ വീഡിയോകളും",
   "All Shorts": "എല്ലാ ഷോർട്സും",
-  "Your guide to Keekkott Maqam": "കീക്കോട്ട് മഖാമിലേക്കുള്ള മാർഗദർശി",
+  "Your guide to Keekkott Sayyid Attakoya Thangal Maqam":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്കുള്ള മാർഗദർശി",
   "Prepare for ziyarat with practical guidance for your journey, arrival and time at the Maqam.":
       "യാത്രയ്ക്കും എത്തിച്ചേരലിനും മഖാമിലെ സന്ദർശനത്തിനുമുള്ള മാർഗനിർദേശങ്ങളോടെ സിയാറത്തിന് തയ്യാറാകൂ.",
-  "Welcome to Keekkott Thangal Maqam": "കീക്കോട്ട് തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം",
-  "Located in Chavakkad, Kerala, Keekkott Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.":
-      "കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് മഖാം ആദരവോടെയും സ്മരണയോടെയും ശാന്തമായ ആത്മചിന്തയോടെയും സന്ദർശിക്കേണ്ട ഇടമാണ്. സ്ഥിരീകരിച്ച ബുക്കിംഗ് സമയത്തിന് അനുസരിച്ച് സിയാറത്ത് ആസൂത്രണം ചെയ്യുകയും ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുകയും ചെയ്യുക.",
+  "Welcome to Keekkott Sayyid Attakoya Thangal Maqam":
+      "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്ക് സ്വാഗതം",
+  "Located in Chavakkad, Kerala, Keekkott Sayyid Attakoya Thangal Maqam is a place to approach with respect, remembrance and quiet reflection. Plan your ziyarat around your confirmed booking and follow the guidance of the Maqam staff during your visit.":
+      "കേരളത്തിലെ ചാവക്കാടുള്ള കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം ആദരവോടെയും സ്മരണയോടെയും ശാന്തമായ ആത്മചിന്തയോടെയും സന്ദർശിക്കേണ്ട ഇടമാണ്. സ്ഥിരീകരിച്ച ബുക്കിംഗ് സമയത്തിന് അനുസരിച്ച് സിയാറത്ത് ആസൂത്രണം ചെയ്യുകയും ജീവനക്കാരുടെ നിർദേശങ്ങൾ പാലിക്കുകയും ചെയ്യുക.",
   "Before travelling, check your reservation, allow enough time for your journey and keep your digital pass accessible. If you are accompanying children or older family members, plan a comfortable journey together.":
       "യാത്രയ്ക്ക് മുമ്പ് ബുക്കിംഗ് പരിശോധിക്കുക, മതിയായ യാത്രാസമയം അനുവദിക്കുക, ഡിജിറ്റൽ പാസ് കൈവശം കരുതുക. കുട്ടികളോ മുതിർന്നവരോ കൂടെയുണ്ടെങ്കിൽ സൗകര്യപ്രദമായ യാത്ര ആസൂത്രണം ചെയ്യുക.",
   "Your information": "നിങ്ങളുടെ വിവരങ്ങൾ",
