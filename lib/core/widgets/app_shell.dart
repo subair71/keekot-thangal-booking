@@ -37,7 +37,7 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 184 : 208),
+        preferredSize: Size.fromHeight(wide ? 184 : 232),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
