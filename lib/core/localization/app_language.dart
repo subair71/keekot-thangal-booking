@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'malayalam.dart';
 import 'language_storage.dart';
 
@@ -107,9 +108,8 @@ String translateMalayalam(String text) {
     'Nov': 'നവംബർ',
     'Dec': 'ഡിസംബർ',
   };
-  if (RegExp(
-    r'^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d+ [A-Z][a-z]{2} \d{4}',
-  ).hasMatch(text)) {
+  if (RegExp(r'^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d+ [A-Z][a-z]{2} \d{4}')
+      .hasMatch(text)) {
     return text
         .replaceAllMapped(
           RegExp(r'\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b'),
@@ -212,41 +212,52 @@ class AppText extends StatelessWidget {
   }
 }
 
-class LanguageToggleBar extends StatelessWidget {
-  const LanguageToggleBar({super.key});
+/// Compact header control; retains the existing persisted language setting.
+class HeaderLanguageToggle extends StatelessWidget {
+  const HeaderLanguageToggle({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
-    return Material(
-      color: Theme.of(context).colorScheme.surface,
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              const Icon(Icons.language, size: 18),
-              const SizedBox(width: 8),
-              const Text('English', style: TextStyle(fontSize: 13)),
-              Semantics(
-                label: 'മലയാളം / English',
-                child: Switch(
-                  key: const ValueKey('language-toggle'),
-                  value: ml,
-                  onChanged: (value) =>
-                      AppLanguage.select(context, value ? 'ml' : 'en'),
-                ),
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      label: ml ? 'Switch to English' : 'മലയാളത്തിലേക്ക് മാറ്റുക',
+      toggled: ml,
+      child: TextButton(
+        key: const ValueKey('language-toggle'),
+        onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
+        style: TextButton.styleFrom(
+          minimumSize: const Size(88, 32),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          tapTargetSize: MaterialTapTargetSize.padded,
+          backgroundColor: colors.primary.withValues(alpha: 0.06),
+          shape: const StadiumBorder(),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'EN',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: ml ? FontWeight.w400 : FontWeight.w700,
+                color: ml ? colors.onSurfaceVariant : colors.primary,
               ),
-              const Text(
-                'മലയാളം',
-                style: TextStyle(
-                  fontFamily: 'Noto Sans Malayalam',
-                  fontSize: 13,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Text('|', style: TextStyle(color: colors.outline)),
+            ),
+            Text(
+              'മലയാളം',
+              style: TextStyle(
+                fontFamily: 'Noto Sans Malayalam',
+                fontSize: 10,
+                fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
+                color: ml ? colors.primary : colors.onSurfaceVariant,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
