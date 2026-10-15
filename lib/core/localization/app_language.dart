@@ -169,7 +169,6 @@ class AppText extends StatelessWidget {
       ? (value ?? const TextStyle()).copyWith(
           fontFamily: 'Noto Sans Malayalam',
           letterSpacing: 0,
-          height: 1.5,
         )
       : value;
   InlineSpan translatedSpan(BuildContext context, InlineSpan value) {
@@ -253,7 +252,7 @@ class HeaderLanguageToggle extends StatelessWidget {
               'മലയാളം',
               style: TextStyle(
                 fontFamily: 'Noto Sans Malayalam',
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
                 color: ml ? colors.primary : colors.onSurfaceVariant,
               ),
