@@ -36,7 +36,7 @@ const malayalam = <String, String>{
   "My Bookings": "എന്റെ ബുക്കിംഗുകൾ",
   "Visitor Information": "സന്ദർശക വിവരങ്ങൾ",
   "Keekkott Thangal": "കീക്കോട്ട് തങ്ങൾ",
-  "Keekkott Sayyid Aattakkoya Thangal": "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ",
+  "KEEKKOTT SAYYID ATTAKOYA THANGAL": "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ",
   "MAQAM · CHAVAKKAD": "മഖാം · ചാവക്കാട്",
   "Notifications": "അറിയിപ്പുകൾ",
   "Sign in": "ലോഗിൻ",
