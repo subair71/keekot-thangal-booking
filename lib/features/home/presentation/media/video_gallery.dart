@@ -194,7 +194,9 @@ class _LongVideoCarouselState extends State<_LongVideoCarousel> {
   @override
   Widget build(BuildContext context) {
     if (_videos.isEmpty) return const SizedBox.shrink();
-    final titleHeight = MediaQuery.textScalerOf(context).scale(12) * 2.8;
+    final scaler = MediaQuery.textScalerOf(context);
+    final titleHeight = math.max(32, scaler.scale(12) * 2.8);
+    final channelHeight = scaler.scale(11) * 2.8;
     return MouseRegion(
       onEnter: (_) => _hovered = true,
       onExit: (_) => _hovered = false,
@@ -205,7 +207,7 @@ class _LongVideoCarouselState extends State<_LongVideoCarousel> {
           onPointerUp: (_) => _touching = false,
           onPointerCancel: (_) => _touching = false,
           child: SizedBox(
-            height: _cardWidth * 9 / 16 + math.max(48, titleHeight) + 20,
+            height: _cardWidth * 9 / 16 + titleHeight + channelHeight + 28,
             child: NotificationListener<ScrollEndNotification>(
               onNotification: (notification) {
                 final cycle = _stride * _videos.length;
@@ -307,8 +309,111 @@ class _VideoCard extends StatelessWidget {
     );
   }
 
+  Widget _longVideoCard(BuildContext context) => Material(
+    color: Colors.transparent,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          button: true,
+          label: '${tr(context, 'Play video')}: ${video.title}',
+          child: InkWell(
+            onTap: () => _play(context),
+            borderRadius: BorderRadius.circular(12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.network(
+                  'https://i.ytimg.com/vi/${video.id}/hqdefault.jpg',
+                  fit: BoxFit.cover,
+                  webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+                  errorBuilder: (_, _, _) => const ColoredBox(
+                    color: AppColors.emerald,
+                    child: Center(
+                      child: Icon(
+                        Icons.smart_display_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () => _play(context),
+                child: AppText(
+                  video.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.ink,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.more_horiz, size: 20),
+                onSelected: (action) {
+                  if (action == 'play') {
+                    _play(context);
+                  } else {
+                    _openYouTube(
+                      context,
+                      'https://www.youtube.com/watch?v=${video.id}',
+                    );
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'play',
+                    child: AppText('Play video'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'youtube',
+                    child: AppText('Watch on YouTube'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Keekkott Bungalow Online',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Color(0xFF606060),
+            fontSize: 11,
+            height: 1.4,
+          ),
+        ),
+      ],
+    ),
+  );
+
   @override
-  Widget build(BuildContext context) => Material(
+  Widget build(BuildContext context) => video.isShort
+      ? _shortVideoCard(context)
+      : _longVideoCard(context);
+
+  Widget _shortVideoCard(BuildContext context) => Material(
     color: Colors.white,
     borderRadius: BorderRadius.circular(18),
     clipBehavior: Clip.antiAlias,
