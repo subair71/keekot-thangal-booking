@@ -348,8 +348,20 @@ class _MaqamHero extends StatelessWidget {
                   const SizedBox(height: 8),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
-                    child: AppText(
-                      'Plan for a visit with Mr. Sayyid Ali Noufal Thangal Al-Aidrose Keekkott for your spiritual advice and dua.',
+                    child: AppText.rich(
+                      const TextSpan(
+                        children: [
+                          TextSpan(text: 'Plan for a visit with '),
+                          TextSpan(
+                            text: 'Mr. Sayyid Ali Noufal Thangal Al-Aidrose',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          TextSpan(
+                            text:
+                                ' Keekkott for your spiritual advice and dua.',
+                          ),
+                        ],
+                      ),
                       style: TextStyle(
                         color: const Color(0xFFE7EEE7),
                         fontSize: compact ? 14 : 15,
