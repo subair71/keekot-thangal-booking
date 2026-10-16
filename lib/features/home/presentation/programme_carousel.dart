@@ -128,9 +128,6 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
     String label(String english, String malayalam) => ml ? malayalam : english;
-    final reducedMotion =
-        MediaQuery.disableAnimationsOf(context) ||
-        MediaQuery.accessibleNavigationOf(context);
     void manualSlide(int delta) {
       setState(() => _paused = true);
       _show(_index + delta);
@@ -242,29 +239,32 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                     ],
                   ),
                 ),
-                Center(
-                  child: TextButton.icon(
-                    key: const ValueKey('carousel-pause'),
-                    onPressed: reducedMotion
-                        ? null
-                        : () {
-                            setState(() => _paused = !_paused);
-                            _schedule();
-                          },
-                    icon: Icon(
-                      _paused || reducedMotion ? Icons.play_arrow : Icons.pause,
-                    ),
-                    label: Text(
-                      reducedMotion
-                          ? label(
-                              'Automatic sliding is off',
-                              'ഓട്ടോമാറ്റിക് സ്ലൈഡിംഗ് ഓഫ് ആണ്',
-                            )
-                          : _paused
-                          ? label('Resume slideshow', 'സ്ലൈഡ്ഷോ തുടരുക')
-                          : label('Pause slideshow', 'സ്ലൈഡ്ഷോ നിർത്തുക'),
-                    ),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < _slides.length; i++)
+                      Semantics(
+                        selected: i == _index,
+                        child: IconButton(
+                          key: ValueKey('carousel-dot-$i'),
+                          tooltip: label(
+                            'Show programme ${i + 1}',
+                            'പരിപാടി ${i + 1} കാണുക',
+                          ),
+                          onPressed: () => manualSlide(i - _index),
+                          icon: Container(
+                            width: i == _index ? 12 : 8,
+                            height: i == _index ? 12 : 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: i == _index
+                                  ? AppColors.emerald
+                                  : AppColors.outline,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
