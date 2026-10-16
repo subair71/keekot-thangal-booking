@@ -48,43 +48,44 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('reduced motion prevents autoplay but keyboard can change slides', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: const MediaQuery(
-          data: MediaQueryData(disableAnimations: true),
-          child: Scaffold(
-            body: SingleChildScrollView(child: ProgrammeCarousel()),
+  testWidgets(
+    'reduced motion prevents autoplay but keyboard can change slides',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: const MediaQuery(
+            data: MediaQueryData(disableAnimations: true),
+            child: Scaffold(
+              body: SingleChildScrollView(child: ProgrammeCarousel()),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.pump(const Duration(seconds: 12));
-    expect(find.text('Every Thursday after Maghrib.'), findsOneWidget);
-    expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 0);
-    final captionSize = tester.getSize(find.byType(IndexedStack));
-    // Keyboard navigation remains available when automatic sliding is off.
-    final carouselFocus = find
-        .descendant(
-          of: find.byType(ProgrammeCarousel),
-          matching: find.byType(Focus),
-        )
-        .first;
-    Focus.of(
-      tester.element(
-        find
-            .descendant(of: carouselFocus, matching: find.byType(MouseRegion))
-            .first,
-      ),
-    ).requestFocus();
-    await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
-    await tester.pumpAndSettle();
-    expect(find.text('Mawlid gathering'), findsOneWidget);
-    expect(tester.getSize(find.byType(IndexedStack)), captionSize);
-    await tester.pumpWidget(const SizedBox());
-  });
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 12));
+      expect(find.text('Every Thursday after Maghrib.'), findsOneWidget);
+      expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 0);
+      final captionSize = tester.getSize(find.byType(IndexedStack));
+      // Keyboard navigation remains available when automatic sliding is off.
+      final carouselFocus = find
+          .descendant(
+            of: find.byType(ProgrammeCarousel),
+            matching: find.byType(Focus),
+          )
+          .first;
+      Focus.of(
+        tester.element(
+          find
+              .descendant(of: carouselFocus, matching: find.byType(MouseRegion))
+              .first,
+        ),
+      ).requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(find.text('Mawlid gathering'), findsOneWidget);
+      expect(tester.getSize(find.byType(IndexedStack)), captionSize);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 }
