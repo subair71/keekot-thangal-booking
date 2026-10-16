@@ -143,8 +143,8 @@ const malayalam = <String, String>{
       "എല്ലാ സന്ദർശന സമയങ്ങളും ഇന്ത്യൻ സ്റ്റാൻഡേർഡ് സമയത്തിലാണ്.",
   "A peaceful place.\nA heartfelt visit.":
       "ശാന്തമായ ഒരിടം.\nഹൃദയപൂർവമായ സന്ദർശനം.",
-  "Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Sayyid Attakoya Thangal Maqam, Chavakkad.":
-      "സ്മരണയ്ക്കായി അൽപനേരം മാറ്റിവയ്ക്കൂ. ദുആയ്ക്ക് സമയം കണ്ടെത്തൂ. ചാവക്കാട്ടെ കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിലേക്കുള്ള സിയാറത്ത് ആസൂത്രണം ചെയ്യൂ.",
+  "Plan for a visit with Mr. Sayyid Ali Noufal Thangal Al-Aidrose Keekkott for your spiritual advice and dua.":
+      "ആത്മീയ ഉപദേശത്തിനും ദുആയ്ക്കുമായി കീക്കോട്ട് സയ്യിദ് അലി നൗഫൽ അൽ ഐദ്രോസ് തങ്ങളെ സന്ദർശിക്കാൻ ആസൂത്രണം ചെയ്യൂ.",
   "CHAVAKKAD  /  KERALA  /  INDIA": "ചാവക്കാട്  /  കേരളം  /  ഇന്ത്യ",
   "Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph":
       "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിന്റെ ചിത്രത്തെ ആസ്പദമാക്കിയ ഓയിൽ പെയിന്റിംഗ്",
