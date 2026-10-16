@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'dart:math' as math;
 
@@ -145,85 +146,97 @@ class _LongVideoCarousel extends StatefulWidget {
 }
 
 class _LongVideoCarouselState extends State<_LongVideoCarousel> {
-  final _controller = PageController();
+  final _controller = ScrollController();
   final _videos = maqamVideos.where((video) => !video.isShort).toList();
-  int _page = 0;
+  Timer? _timer;
+  bool _hovered = false;
+  bool _focused = false;
+  bool _touching = false;
+
+  double get _gap => widget.width < 600 ? 12.0 : 20.0;
+  double get _cardWidth =>
+      (widget.width - _gap * (widget.columns - 1)) / widget.columns;
+  double get _stride => _cardWidth + _gap;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 4), (_) => _advance());
+  }
+
+  void _advance() {
+    if (!mounted ||
+        !_controller.hasClients ||
+        _videos.length <= widget.columns ||
+        _hovered ||
+        _focused ||
+        _touching ||
+        _controller.position.isScrollingNotifier.value ||
+        MediaQuery.disableAnimationsOf(context) ||
+        ModalRoute.of(context)?.isCurrent == false) {
+      return;
+    }
+    final index = (_controller.offset / _stride).round();
+    _controller.animateTo(
+      (index + 1) * _stride,
+      duration: const Duration(milliseconds: 550),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
-  }
-
-  void _move(int page) {
-    if (MediaQuery.disableAnimationsOf(context)) {
-      _controller.jumpToPage(page);
-    } else {
-      _controller.animateToPage(
-        page,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeInOut,
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_videos.isEmpty) return const SizedBox.shrink();
-    final columns = widget.columns;
-    final pages = (_videos.length / columns).ceil();
-    final gap = widget.width < 600 ? 12.0 : 20.0;
-    final cardWidth = (widget.width - gap * (columns - 1)) / columns;
-    final fontSize = DefaultTextStyle.of(context).style.fontSize ?? 14;
-    final titleHeight = MediaQuery.textScalerOf(context).scale(fontSize) * 3;
-    return Column(
-      children: [
-        SizedBox(
-          height: cardWidth * 9 / 16 + titleHeight + 36,
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: pages,
-            onPageChanged: (page) => setState(() => _page = page),
-            itemBuilder: (context, page) {
-              // Keep the final page full when the count is not a multiple.
-              final start = math.min(
-                page * columns,
-                math.max(0, _videos.length - columns),
-              );
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (var i = 0; i < columns; i++) ...[
-                    if (i > 0) SizedBox(width: gap),
-                    SizedBox(
-                      width: cardWidth,
-                      child: start + i < _videos.length
-                          ? _VideoCard(_videos[start + i])
-                          : null,
-                    ),
-                  ],
-                ],
-              );
-            },
+    final titleHeight = MediaQuery.textScalerOf(context).scale(12) * 2.8;
+    return MouseRegion(
+      onEnter: (_) => _hovered = true,
+      onExit: (_) => _hovered = false,
+      child: Focus(
+        onFocusChange: (focused) => _focused = focused,
+        child: Listener(
+          onPointerDown: (_) => _touching = true,
+          onPointerUp: (_) => _touching = false,
+          onPointerCancel: (_) => _touching = false,
+          child: SizedBox(
+            height: _cardWidth * 9 / 16 + math.max(48, titleHeight) + 20,
+            child: NotificationListener<ScrollEndNotification>(
+              onNotification: (notification) {
+                final cycle = _stride * _videos.length;
+                if (_controller.offset >= cycle) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted && _controller.hasClients) {
+                      _controller.jumpTo(_controller.offset % cycle);
+                    }
+                  });
+                }
+                return false;
+              },
+              child: ListView.builder(
+                controller: _controller,
+                scrollDirection: Axis.horizontal,
+                itemExtent: _stride,
+                itemCount: _videos.length <= widget.columns
+                    ? _videos.length
+                    : null,
+                itemBuilder: (context, index) => Padding(
+                  padding: EdgeInsets.only(right: _gap),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: _VideoCard(_videos[index % _videos.length]),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
-        if (pages > 1)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                tooltip: tr(context, 'Previous videos'),
-                onPressed: _page > 0 ? () => _move(_page - 1) : null,
-                icon: const Icon(Icons.chevron_left),
-              ),
-              IconButton(
-                tooltip: tr(context, 'Next videos'),
-                onPressed: _page < pages - 1 ? () => _move(_page + 1) : null,
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
-          ),
-      ],
+      ),
     );
   }
 }
@@ -333,20 +346,6 @@ class _VideoCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      color: Color(0xEFFFFFFF),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.play_arrow_rounded,
-                      color: AppColors.emerald,
-                      size: 28,
-                    ),
-                  ),
-                ),
                 if (video.isShort)
                   const Positioned(
                     left: 12,
@@ -365,12 +364,28 @@ class _VideoCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(14),
-            child: AppText(
-              video.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w600, height: 1.5),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: AppText(
+                    video.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  tooltip: tr(context, 'Play video'),
+                  onPressed: () => _play(context),
+                  color: AppColors.emerald,
+                  icon: const Icon(Icons.play_circle_fill_rounded, size: 28),
+                ),
+              ],
             ),
           ),
         ],
