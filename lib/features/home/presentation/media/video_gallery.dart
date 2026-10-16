@@ -31,50 +31,43 @@ class VideoGallery extends StatelessWidget {
   const VideoGallery({super.key});
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 20 : 36),
-    decoration: BoxDecoration(
-      color: AppColors.cream,
-      borderRadius: BorderRadius.circular(28),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppText(
-          'KEEKKOTT BUNGALOW ONLINE',
-          style: TextStyle(
-            color: AppColors.emerald,
-            letterSpacing: 2,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const AppText(
+        'KEEKKOTT BUNGALOW ONLINE',
+        style: TextStyle(
+          color: AppColors.emerald,
+          letterSpacing: 2,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
         ),
-        const SizedBox(height: 12),
-        AppText(
-          'Moments of faith.\nStories that bring us together.',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
-        const SizedBox(height: 14),
-        const AppText(
-          'Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.',
-        ),
-        const SizedBox(height: 32),
-        const _ShortsSection(),
-        const SizedBox(height: 32),
-        _heading(context, 'Videos', 'Watch, reflect and reconnect'),
-        const SizedBox(height: 16),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
-            return _LongVideoCarousel(
-              key: ValueKey(columns),
-              columns: columns,
-              width: constraints.maxWidth,
-            );
-          },
-        ),
-      ],
-    ),
+      ),
+      const SizedBox(height: 12),
+      AppText(
+        'Moments of faith.\nStories that bring us together.',
+        style: Theme.of(context).textTheme.headlineLarge,
+      ),
+      const SizedBox(height: 14),
+      const AppText(
+        'Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.',
+      ),
+      const SizedBox(height: 32),
+      const _ShortsSection(),
+      const SizedBox(height: 32),
+      _heading(context, 'Videos', 'Watch, reflect and reconnect'),
+      const SizedBox(height: 16),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+          return _LongVideoCarousel(
+            key: ValueKey(columns),
+            columns: columns,
+            width: constraints.maxWidth,
+          );
+        },
+      ),
+    ],
   );
 
   Widget _heading(BuildContext context, String title, String subtitle) =>
@@ -121,7 +114,7 @@ class _ShortsSection extends StatelessWidget {
             final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
             final gap = constraints.maxWidth < 600 ? 12.0 : 20.0;
             final width =
-                (constraints.maxWidth - gap * (columns - 1)) / columns;
+                (constraints.maxWidth - gap * columns) / (columns + 0.25);
             return SizedBox(
               height: width * 1.5,
               child: ListView.separated(
@@ -164,7 +157,7 @@ class _LongVideoCarouselState extends State<_LongVideoCarousel> {
 
   double get _gap => widget.width < 600 ? 12.0 : 20.0;
   double get _cardWidth =>
-      (widget.width - _gap * (widget.columns - 1)) / widget.columns;
+      (widget.width - _gap * widget.columns) / (widget.columns + 0.25);
   double get _stride => _cardWidth + _gap;
 
   @override
