@@ -67,7 +67,7 @@ class VideoGallery extends StatelessWidget {
         const SizedBox(height: 32),
         const _ShortsSection(),
         const SizedBox(height: 32),
-        _heading(context, 'Videos', 'Watch, reflect and reconnect', 'videos'),
+        _heading(context, 'Videos', 'Watch, reflect and reconnect'),
         const SizedBox(height: 16),
         LayoutBuilder(
           builder: (context, constraints) {
@@ -83,31 +83,14 @@ class VideoGallery extends StatelessWidget {
     ),
   );
 
-  Widget _heading(
-    BuildContext context,
-    String title,
-    String subtitle,
-    String tab,
-  ) => Wrap(
-    alignment: WrapAlignment.spaceBetween,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: 20,
-    runSpacing: 8,
-    children: [
+  Widget _heading(BuildContext context, String title, String subtitle) =>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppText(title, style: Theme.of(context).textTheme.headlineSmall),
           AppText(subtitle, style: const TextStyle(color: AppColors.ink)),
         ],
-      ),
-      TextButton.icon(
-        onPressed: () => _openYouTube(context, '$_channel/$tab'),
-        label: AppText('All $title'),
-        icon: const Icon(Icons.arrow_outward, size: 17),
-      ),
-    ],
-  );
+      );
 }
 
 class _ShortsSection extends StatelessWidget {
