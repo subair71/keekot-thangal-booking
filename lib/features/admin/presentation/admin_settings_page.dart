@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/bootstrap/providers.dart';
@@ -103,6 +104,12 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (ref.watch(authProvider).asData?.value?.admin == true)
+              OutlinedButton.icon(
+                onPressed: () => context.go('/admin/khadims'),
+                icon: const Icon(Icons.manage_accounts),
+                label: const Text('Manage Khadim accounts'),
+              ),
             Text(
               'Booking configuration',
               style: Theme.of(context).textTheme.headlineMedium,

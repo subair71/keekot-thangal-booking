@@ -243,7 +243,7 @@ class AppShell extends ConsumerWidget {
                                       enabled: false,
                                       child: Text(user.maskedPhone),
                                     ),
-                                  if (user?.admin == true)
+                                  if (user?.staff == true)
                                     const PopupMenuItem(
                                       value: '/admin',
                                       child: AppText('Administration'),

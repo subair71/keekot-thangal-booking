@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,17 +13,74 @@ class FirebaseAuthRepository implements AuthRepository {
   ConfirmationResult? _confirmation;
   bool _sending = false;
   @override
-  Stream<AppUser?> get userChanges =>
-      auth.idTokenChanges().asyncMap((user) async {
-        if (user == null) return null;
-        final token = await user.getIdTokenResult();
-        return AppUser(
-          user.uid,
-          user.phoneNumber ?? '',
-          admin: token.claims?['admin'] == true,
-          gate: token.claims?['gate'] == true,
-        );
-      });
+  Stream<AppUser?> get userChanges {
+    late StreamController<AppUser?> controller;
+    StreamSubscription<User?>? authSubscription;
+    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+    staffSubscription;
+    var generation = 0;
+    controller = StreamController<AppUser?>(
+      onListen: () {
+        authSubscription = auth.idTokenChanges().listen((user) async {
+          final current = ++generation;
+          await staffSubscription?.cancel();
+          staffSubscription = null;
+          if (current != generation || controller.isClosed) return;
+          if (user == null) {
+            controller.add(null);
+            return;
+          }
+          try {
+            final token = await user.getIdTokenResult();
+            if (current != generation || controller.isClosed) return;
+            if (token.claims?['khadimVersion'] != null) {
+              staffSubscription = FirebaseFirestore.instance
+                  .doc('khadims/${user.uid}')
+                  .snapshots()
+                  .listen((snapshot) {
+                    if (current != generation || controller.isClosed) return;
+                    final data = snapshot.data();
+                    final valid =
+                        data?['enabled'] == true &&
+                        data?['version'] == token.claims?['khadimVersion'];
+                    if (!valid) {
+                      unawaited(auth.signOut());
+                      return;
+                    }
+                    controller.add(
+                      AppUser(
+                        user.uid,
+                        data?['phone'] as String? ?? '',
+                        permissions: List<String>.from(
+                          data?['permissions'] ?? [],
+                        ),
+                      ),
+                    );
+                  }, onError: controller.addError);
+            } else {
+              controller.add(
+                AppUser(
+                  user.uid,
+                  user.phoneNumber ?? '',
+                  admin: token.claims?['admin'] == true,
+                  gate: token.claims?['gate'] == true,
+                ),
+              );
+            }
+          } catch (error, stack) {
+            if (!controller.isClosed) controller.addError(error, stack);
+          }
+        }, onError: controller.addError);
+      },
+      onCancel: () async {
+        generation++;
+        await authSubscription?.cancel();
+        await staffSubscription?.cancel();
+      },
+    );
+    return controller.stream;
+  }
+
   @override
   Future<void> sendCode(String phone) => protect(() async {
     if (!RegExp(r'^\+[1-9]\d{6,14}$').hasMatch(phone)) {

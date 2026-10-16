@@ -185,6 +185,24 @@ test('Firestore transactions and rules',async t=>{
       await assertFails(getDoc(doc(own,'slotTokenCounters',`${day}_0700`)));
       await assertFails(getDoc(doc(own,'slotState',`${day}_0700`)));await assertFails(setDoc(doc(own,'users',owner.uid,'devices','fake'),{token:'fake'}));
       await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(),'settings','booking')));
+      await db.doc('khadims/limited-staff').set({name:'Test Khadim',phone:'+919888888888',enabled:true,version:1,permissions:['bookings']});
+      await db.doc('khadimSecrets/limited-staff').set({hash:'private',salt:'private'});
+      const staff=env.authenticatedContext('limited-staff',{khadimVersion:1}).firestore();
+      await assertSucceeds(getDocs(collection(staff,'bookings')));
+      await assertSucceeds(getDoc(doc(staff,'khadims','limited-staff')));
+      await assertFails(getDocs(collection(staff,'khadims')));
+      await assertFails(getDoc(doc(staff,'khadimSecrets','limited-staff')));
+      await assertFails(getDoc(doc(admin,'khadimSecrets','limited-staff')));
+      await assertFails(setDoc(doc(staff,'khadims','limited-staff'),{permissions:['settings'],enabled:true,version:1}));
+      await db.doc('khadims/limited-staff').update({version:2});
+      await assertFails(getDocs(collection(staff,'bookings')));
+      const refreshed=env.authenticatedContext('limited-staff',{khadimVersion:2}).firestore();
+      await assertSucceeds(getDocs(collection(refreshed,'bookings')));
+      await db.doc('khadims/limited-staff').update({enabled:false});
+      await assertFails(getDocs(collection(refreshed,'bookings')));
+      await db.doc('khadims/limited-staff').update({enabled:true,permissions:['gate']});
+      await assertFails(getDocs(collection(refreshed,'bookings')));
+
     }finally{await env.cleanup();}
   });
 });

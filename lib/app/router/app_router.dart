@@ -14,6 +14,7 @@ import '../../features/my_bookings/presentation/my_bookings_page.dart';
 import '../../features/notifications/presentation/notifications_page.dart';
 import '../../features/visitor_information/presentation/information_page.dart';
 import '../../features/admin/presentation/admin_page.dart';
+import '../../features/admin/presentation/khadim_page.dart';
 
 class _AuthRefresh extends ChangeNotifier {
   void refresh() => notifyListeners();
@@ -48,11 +49,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (protected && user == null) {
         return '/auth?next=${Uri.encodeComponent(state.uri.toString())}';
       }
-      if (path.startsWith('/admin') &&
-          user != null &&
-          !user.admin &&
-          !(path == '/admin/gate' && user.gate)) {
-        return '/access-denied';
+      if (path.startsWith('/admin') && user != null) {
+        final section = path == '/admin' ? 'dashboard' : path.split('/').last;
+        if (path == '/admin' && user.staff && !user.can('dashboard')) {
+          return user.staffHome;
+        }
+        if (!(section == 'khadims' ? user.admin : user.can(section))) {
+          return '/access-denied';
+        }
+      }
+      if (path == '/khadim-login' && user != null) {
+        return user.staff ? user.staffHome : '/access-denied';
       }
       if (path == '/auth' && user != null) {
         return safeNext(state.uri.queryParameters['next']);
@@ -67,6 +74,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/',
             builder: (_, state) =>
                 HomePage(section: state.uri.queryParameters['section']),
+          ),
+          GoRoute(
+            path: '/khadim-login',
+            builder: (_, _) => const KhadimLoginPage(),
+          ),
+          GoRoute(
+            path: '/admin/khadims',
+            builder: (_, _) => const KhadimManagementPage(),
           ),
           GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
           GoRoute(

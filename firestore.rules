@@ -4,6 +4,13 @@ service cloud.firestore {
     function signedIn() { return request.auth != null; }
     function owner(uid) { return signedIn() && request.auth.uid == uid; }
     function admin() { return signedIn() && request.auth.token.admin == true; }
+    function khadimAccess(permission) {
+      let staff = get(/databases/$(database)/documents/khadims/$(request.auth.uid)).data;
+      return signedIn() && staff.enabled == true
+        && request.auth.token.khadimVersion == staff.version
+        && permission in staff.permissions;
+    }
+    match /khadims/{uid} { allow read: if owner(uid) || admin(); allow write: if false; }
     match /settings/booking { allow read: if true; allow write: if false; }
     match /closures/{id} { allow read: if true; allow write: if false; }
     match /visitSlots/{id} { allow read: if true; allow write: if false; }
@@ -17,7 +24,7 @@ service cloud.firestore {
       allow delete: if false;
       match /devices/{id} { allow read, write: if false; }
     }
-    match /bookings/{id} { allow read: if owner(resource.data.userId) || admin(); allow write: if false; }
+    match /bookings/{id} { allow read: if owner(resource.data.userId) || admin() || khadimAccess('bookings'); allow write: if false; }
     match /slotHolds/{id} { allow read: if owner(resource.data.userId); allow write: if false; }
     match /activeUserHolds/{uid} { allow read: if owner(uid); allow write: if false; }
     match /notifications/{id} {

@@ -16,7 +16,7 @@ class AdminPage extends ConsumerWidget {
   final String section;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gateOnly = ref.watch(authProvider).asData?.value?.admin != true;
+    final user = ref.watch(authProvider).asData?.value;
     return PageContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -25,8 +25,8 @@ class AdminPage extends ConsumerWidget {
             section == 'gate' ? 'Visitor entry' : 'Administration',
             eyebrow: 'Keekkott Sayyid Attakoya Thangal Maqam',
           ),
-          if (!gateOnly) ...[
-            const AdminExportButton(),
+          if (user?.staff == true) ...[
+            if (user?.can('bookings') == true) const AdminExportButton(),
             const SizedBox(height: 20),
             Wrap(
               spacing: 8,
@@ -38,18 +38,22 @@ class AdminPage extends ConsumerWidget {
                   ('slots', 'Slots & closures'),
                   ('settings', 'Settings'),
                   ('gate', 'Scan visitor pass'),
+                  if (user?.admin == true) ('khadims', 'Khadim accounts'),
                 ])
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: item.$1 == section
-                          ? AppColors.mint
-                          : null,
+                  if (item.$1 == 'khadims'
+                      ? user?.admin == true
+                      : user?.can(item.$1) == true)
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: item.$1 == section
+                            ? AppColors.mint
+                            : null,
+                      ),
+                      onPressed: () => context.go(
+                        item.$1 == 'dashboard' ? '/admin' : '/admin/${item.$1}',
+                      ),
+                      child: Text(item.$2),
                     ),
-                    onPressed: () => context.go(
-                      item.$1 == 'dashboard' ? '/admin' : '/admin/${item.$1}',
-                    ),
-                    child: Text(item.$2),
-                  ),
               ],
             ),
             const SizedBox(height: 28),
