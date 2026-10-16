@@ -58,12 +58,6 @@ class VideoGallery extends StatelessWidget {
         const AppText(
           'Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.',
         ),
-        const SizedBox(height: 18),
-        OutlinedButton.icon(
-          onPressed: () => _openYouTube(context, _channel),
-          icon: const Icon(Icons.smart_display_outlined),
-          label: const AppText('Explore our YouTube channel'),
-        ),
         const SizedBox(height: 32),
         const _ShortsSection(),
         const SizedBox(height: 32),
