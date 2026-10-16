@@ -58,6 +58,7 @@ void main() {
     await tester.pump(const Duration(seconds: 12));
     expect(find.text('Every Thursday after Maghrib.'), findsOneWidget);
     expect(find.text('Automatic sliding is off'), findsOneWidget);
+    final captionSize = tester.getSize(find.byType(IndexedStack));
     // Focus the carousel itself: its pause control is disabled by reduced motion.
     final carouselFocus = find
         .descendant(
@@ -76,6 +77,7 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await tester.pumpAndSettle();
     expect(find.text('Mawlid gathering'), findsOneWidget);
+    expect(tester.getSize(find.byType(IndexedStack)), captionSize);
     await tester.pumpWidget(const SizedBox());
   });
 }
