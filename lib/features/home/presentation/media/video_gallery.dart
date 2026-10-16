@@ -65,30 +65,7 @@ class VideoGallery extends StatelessWidget {
           label: const AppText('Explore our YouTube channel'),
         ),
         const SizedBox(height: 32),
-        _heading(
-          context,
-          'Shorts',
-          'Little moments, lasting meaning',
-          'shorts',
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 374,
-          child: Scrollbar(
-            child: ListView.separated(
-              primary: false,
-              scrollDirection: Axis.horizontal,
-              itemCount: maqamVideos.where((v) => v.isShort).length,
-              separatorBuilder: (_, _) => const SizedBox(width: 16),
-              itemBuilder: (context, i) => SizedBox(
-                width: 182,
-                child: _VideoCard(
-                  maqamVideos.where((v) => v.isShort).elementAt(i),
-                ),
-              ),
-            ),
-          ),
-        ),
+        const _ShortsSection(),
         const SizedBox(height: 32),
         _heading(context, 'Videos', 'Watch, reflect and reconnect', 'videos'),
         const SizedBox(height: 16),
@@ -131,6 +108,107 @@ class VideoGallery extends StatelessWidget {
       ),
     ],
   );
+}
+
+class _ShortsSection extends StatelessWidget {
+  const _ShortsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final videos = maqamVideos.where((video) => video.isShort).toList();
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const CustomPaint(
+                size: Size(28, 32),
+                painter: _ShortsLogoPainter(),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AppText(
+                  'Shorts',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_horiz, color: Colors.black),
+                onSelected: (_) => _openYouTube(context, '$_channel/shorts'),
+                itemBuilder: (_) => [
+                  const PopupMenuItem(
+                    value: 'shorts',
+                    child: AppText('All Shorts'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+              const gap = 10.0;
+              final width =
+                  (constraints.maxWidth - gap * (columns - 1)) / columns;
+              return SizedBox(
+                height: width * 1.5,
+                child: ListView.separated(
+                  primary: false,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: videos.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: gap),
+                  itemBuilder: (_, index) =>
+                      SizedBox(width: width, child: _VideoCard(videos[index])),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ShortsLogoPainter extends CustomPainter {
+  const _ShortsLogoPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 24, size.height / 28);
+    final shape = Path()
+      ..moveTo(15, 1)
+      ..cubicTo(21, -2, 26, 5, 20, 9)
+      ..lineTo(17, 11)
+      ..cubicTo(24, 12, 24, 19, 19, 22)
+      ..lineTo(9, 27)
+      ..cubicTo(2, 30, -2, 22, 4, 18)
+      ..lineTo(7, 16)
+      ..cubicTo(0, 15, 0, 8, 5, 6)
+      ..close();
+    canvas.drawPath(shape, Paint()..color = const Color(0xFFFF0033));
+    canvas.drawPath(
+      Path()
+        ..moveTo(9, 9)
+        ..lineTo(17, 14)
+        ..lineTo(9, 19)
+        ..close(),
+      Paint()..color = Colors.white,
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _ShortsLogoPainter oldDelegate) => false;
 }
 
 class _LongVideoCarousel extends StatefulWidget {
@@ -411,83 +489,81 @@ class _VideoCard extends StatelessWidget {
       video.isShort ? _shortVideoCard(context) : _longVideoCard(context);
 
   Widget _shortVideoCard(BuildContext context) => Material(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(18),
+    color: AppColors.emerald,
+    borderRadius: BorderRadius.circular(12),
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: () => _play(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          AspectRatio(
-            aspectRatio: video.isShort ? 9 / 14 : 16 / 9,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(
-                  'https://i.ytimg.com/vi/${video.id}/${video.isShort ? 'oar2' : 'hqdefault'}.jpg',
-                  fit: BoxFit.cover,
-                  webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-                  errorBuilder: (_, _, _) => const ColoredBox(
-                    color: AppColors.emerald,
-                    child: Center(
-                      child: Icon(
-                        Icons.smart_display_outlined,
-                        color: Colors.white,
-                        size: 44,
-                      ),
-                    ),
-                  ),
+          Image.network(
+            'https://i.ytimg.com/vi/${video.id}/oar2.jpg',
+            fit: BoxFit.cover,
+            webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+            errorBuilder: (_, _, _) => const Center(
+              child: Icon(Icons.smart_display_outlined, color: Colors.white),
+            ),
+          ),
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0, 0.5, 1],
+                colors: [
+                  Color(0x22000000),
+                  Colors.transparent,
+                  Color(0xCC000000),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: PopupMenuButton<String>(
+              icon: const Icon(
+                Icons.more_horiz,
+                color: Colors.white,
+                shadows: [Shadow(blurRadius: 4, color: Colors.black54)],
+              ),
+              onSelected: (action) {
+                if (action == 'play') {
+                  _play(context);
+                } else {
+                  _openYouTube(
+                    context,
+                    'https://www.youtube.com/shorts/${video.id}',
+                  );
+                }
+              },
+              itemBuilder: (_) => [
+                const PopupMenuItem(
+                  value: 'play',
+                  child: AppText('Play video'),
                 ),
-                const DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Color(0x66000000)],
-                    ),
-                  ),
+                const PopupMenuItem(
+                  value: 'youtube',
+                  child: AppText('Watch on YouTube'),
                 ),
-                if (video.isShort)
-                  const Positioned(
-                    left: 12,
-                    bottom: 12,
-                    child: AppText(
-                      'SHORTS',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: AppText(
-                    video.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  tooltip: tr(context, 'Play video'),
-                  onPressed: () => _play(context),
-                  color: AppColors.emerald,
-                  icon: const Icon(Icons.play_circle_fill_rounded, size: 28),
-                ),
-              ],
+          Positioned(
+            left: 10,
+            right: 10,
+            bottom: 12,
+            child: AppText(
+              video.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+              ),
             ),
           ),
         ],
