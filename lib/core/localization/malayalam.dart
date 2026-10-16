@@ -145,6 +145,12 @@ const malayalam = <String, String>{
       "ശാന്തമായ ഒരിടം.\nഹൃദയപൂർവമായ സന്ദർശനം.",
   "Plan for a visit with Mr. Sayyid Ali Noufal Thangal Al-Aidrose Keekkott for your spiritual advice and dua.":
       "ആത്മീയ ഉപദേശത്തിനും ദുആയ്ക്കുമായി കീക്കോട്ട് സയ്യിദ് അലി നൗഫൽ അൽ ഐദ്രോസ് തങ്ങളെ സന്ദർശിക്കാൻ ആസൂത്രണം ചെയ്യൂ.",
+  "Plan for a visit with ":
+      "ആത്മീയ ഉപദേശത്തിനും ദുആയ്ക്കുമായി കീക്കോട്ട് ",
+  "Mr. Sayyid Ali Noufal Thangal Al-Aidrose":
+      "സയ്യിദ് അലി നൗഫൽ അൽ ഐദ്രോസ് തങ്ങളെ",
+  " Keekkott for your spiritual advice and dua.":
+      " സന്ദർശിക്കാൻ ആസൂത്രണം ചെയ്യൂ.",
   "CHAVAKKAD  /  KERALA  /  INDIA": "ചാവക്കാട്  /  കേരളം  /  ഇന്ത്യ",
   "Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph":
       "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമിന്റെ ചിത്രത്തെ ആസ്പദമാക്കിയ ഓയിൽ പെയിന്റിംഗ്",
