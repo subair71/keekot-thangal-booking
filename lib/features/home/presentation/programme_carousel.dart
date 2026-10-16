@@ -128,10 +128,6 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
     String label(String english, String malayalam) => ml ? malayalam : english;
-    final title = ml ? _slides[_index].$2 : _english[_index].$1;
-    final description = ml
-        ? _slides[_index].$3.join('\n')
-        : _english[_index].$2;
     final reducedMotion =
         MediaQuery.disableAnimationsOf(context) ||
         MediaQuery.accessibleNavigationOf(context);
@@ -218,22 +214,31 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                   decreasedValue: '${(_index - 1) % _slides.length + 1}',
                   onIncrease: () => manualSlide(1),
                   onDecrease: () => manualSlide(-1),
-                  child: Column(
+                  // Keep the tallest caption's space so automatic slides do
+                  // not move the content below while the visitor scrolls.
+                  child: IndexedStack(
+                    index: _index,
+                    alignment: Alignment.topCenter,
                     children: [
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          title,
-                          style: Theme.of(context).textTheme.titleMedium,
-                          textAlign: TextAlign.center,
+                      for (var i = 0; i < _slides.length; i++)
+                        Column(
+                          children: [
+                            Semantics(
+                              header: true,
+                              child: Text(
+                                ml ? _slides[i].$2 : _english[i].$1,
+                                style: Theme.of(context).textTheme.titleMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              ml ? _slides[i].$3.join('\n') : _english[i].$2,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        description,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
                     ],
                   ),
                 ),
