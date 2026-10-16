@@ -34,14 +34,19 @@ class SlotCard extends StatelessWidget {
     final label = selected
         ? 'Selected'
         : switch (slot.status) {
-            SlotStatus.available => '${slot.remaining} places left',
+            SlotStatus.available =>
+              enabled
+                  ? '${slot.remaining} places left'
+                  : 'Not enough places for this group',
             SlotStatus.full => 'Fully booked',
             SlotStatus.blocked =>
               slot.reason.isEmpty ? 'Unavailable' : slot.reason,
             SlotStatus.past => 'Time passed',
           };
     return Semantics(
-      label: '${slot.label}. ${tr(context, label)}',
+      label: '${tr(context, slot.label)}. ${tr(context, label)}',
+      excludeSemantics: true,
+      onTap: enabled ? onSelect : null,
       button: true,
       selected: selected,
       enabled: enabled,

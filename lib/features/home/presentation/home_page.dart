@@ -58,7 +58,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     if (target == null) return;
     Scrollable.ensureVisible(
       target,
-      duration: MediaQuery.disableAnimationsOf(context)
+      duration:
+          MediaQuery.disableAnimationsOf(context) ||
+              MediaQuery.accessibleNavigationOf(context)
           ? Duration.zero
           : const Duration(milliseconds: 350),
       alignment: 0.05,
@@ -434,7 +436,10 @@ class _SectionTitle extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 14),
-      AppText(title, style: Theme.of(context).textTheme.headlineLarge),
+      Semantics(
+        header: true,
+        child: AppText(title, style: Theme.of(context).textTheme.headlineLarge),
+      ),
     ],
   );
 }

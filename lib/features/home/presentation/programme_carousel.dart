@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
@@ -40,9 +41,21 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
     ),
   ];
 
+  static const _english = [
+    ('Dhikr gathering', 'Every Thursday after Maghrib.'),
+    (
+      'Mawlid gathering',
+      'On the 24th of every Hijri month: Keekkott Attakoya Uppappa.\nOn the 10th of every Hijri month: Ahlul Aba.',
+    ),
+    (
+      'Annual commemorations',
+      'Ramadan 8: Keekkott Valiya Uppappa.\nSafar 24: Keekkott Attakoya Uppappa.\nMuharram 10: Ahlul Aba.',
+    ),
+  ];
   final _controller = PageController();
   Timer? _timer;
   int _index = 0;
+  bool _paused = false;
   bool _hovered = false;
   bool _focused = false;
   bool _active = true;
@@ -68,6 +81,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
   void _schedule() {
     _timer?.cancel();
     if (!mounted ||
+        _paused ||
         _hovered ||
         _focused ||
         !_active ||
@@ -114,10 +128,34 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
     String label(String english, String malayalam) => ml ? malayalam : english;
+    final title = ml ? _slides[_index].$2 : _english[_index].$1;
+    final description = ml
+        ? _slides[_index].$3.join('\n')
+        : _english[_index].$2;
+    final reducedMotion =
+        MediaQuery.disableAnimationsOf(context) ||
+        MediaQuery.accessibleNavigationOf(context);
+    void manualSlide(int delta) {
+      setState(() => _paused = true);
+      _show(_index + delta);
+    }
+
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 680),
         child: Focus(
+          onKeyEvent: (_, event) {
+            if (event is! KeyDownEvent) return KeyEventResult.ignored;
+            if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+              manualSlide(1);
+              return KeyEventResult.handled;
+            }
+            if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+              manualSlide(-1);
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
           onFocusChange: (focused) {
             _focused = focused;
             _schedule();
@@ -134,12 +172,15 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  label('Programmes & gatherings', 'പരിപാടികളും സദസ്സുകളും'),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontFamily: ml ? 'Noto Sans Malayalam' : null,
-                    color: AppColors.emerald,
+                Semantics(
+                  header: true,
+                  child: Text(
+                    label('Programmes & gatherings', 'പരിപാടികളും സദസ്സുകളും'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontFamily: ml ? 'Noto Sans Malayalam' : null,
+                      color: AppColors.emerald,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -159,9 +200,64 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                         return Image.asset(
                           slide.$1,
                           fit: BoxFit.contain,
-                          semanticLabel: '${slide.$2}. ${slide.$3.join('. ')}',
+                          excludeFromSemantics: true,
                         );
                       },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Semantics(
+                  container: true,
+                  label: label(
+                    'Programme ${_index + 1} of ${_slides.length}',
+                    'പരിപാടി ${_index + 1}, ആകെ ${_slides.length}',
+                  ),
+                  value: '${_index + 1}',
+                  increasedValue: '${(_index + 1) % _slides.length + 1}',
+                  decreasedValue: '${(_index - 1) % _slides.length + 1}',
+                  onIncrease: () => manualSlide(1),
+                  onDecrease: () => manualSlide(-1),
+                  child: Column(
+                    children: [
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        description,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: TextButton.icon(
+                    key: const ValueKey('carousel-pause'),
+                    onPressed: reducedMotion
+                        ? null
+                        : () {
+                            setState(() => _paused = !_paused);
+                            _schedule();
+                          },
+                    icon: Icon(
+                      _paused || reducedMotion ? Icons.play_arrow : Icons.pause,
+                    ),
+                    label: Text(
+                      reducedMotion
+                          ? label(
+                              'Automatic sliding is off',
+                              'ഓട്ടോമാറ്റിക് സ്ലൈഡിംഗ് ഓഫ് ആണ്',
+                            )
+                          : _paused
+                          ? label('Resume slideshow', 'സ്ലൈഡ്ഷോ തുടരുക')
+                          : label('Pause slideshow', 'സ്ലൈഡ്ഷോ നിർത്തുക'),
                     ),
                   ),
                 ),

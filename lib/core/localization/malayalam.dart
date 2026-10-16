@@ -1,5 +1,10 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  "Not enough places for this group": "ഈ സംഘത്തിന് ആവശ്യമായ സ്ഥലങ്ങൾ ലഭ്യമല്ല",
+  "Your selected time is no longer available for this group. Choose another time.":
+      "തിരഞ്ഞെടുത്ത സമയത്ത് ഈ സംഘത്തിന് ആവശ്യമായ സ്ഥലങ്ങൾ ഇപ്പോൾ ലഭ്യമല്ല. മറ്റൊരു സമയം തിരഞ്ഞെടുക്കുക.",
+  "Public visitor guide": "പൊതു സന്ദർശക മാർഗനിർദേശം",
+
   "KEEKKOTT SAYYID ATTAKOYA THANGAL": "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ",
   "Contact us": "ബന്ധപ്പെടുക",
   "KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM":

@@ -90,7 +90,13 @@ class PageHeading extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        AppText(title, style: Theme.of(context).textTheme.headlineLarge),
+        Semantics(
+          header: true,
+          child: AppText(
+            title,
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+        ),
         if (subtitle != null) ...[
           const SizedBox(height: 8),
           AppText(subtitle!, style: Theme.of(context).textTheme.bodyLarge),
@@ -114,7 +120,10 @@ class BookingProgress extends StatelessWidget {
         'Confirm your details',
       ].indexed)
         Semantics(
-          label: 'Step ${index + 1} of 2: ${tr(context, label)}',
+          excludeSemantics: true,
+          label: AppLanguage.of(context) == 'ml'
+              ? 'ഘട്ടം ${index + 1}, ആകെ 2: ${tr(context, label)}'
+              : 'Step ${index + 1} of 2: ${tr(context, label)}',
           selected: current == index,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
