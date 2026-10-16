@@ -91,19 +91,11 @@ class VideoGallery extends StatelessWidget {
         const SizedBox(height: 16),
         LayoutBuilder(
           builder: (context, constraints) {
-            final columns = constraints.maxWidth > 950
-                ? 3
-                : constraints.maxWidth > 560
-                ? 2
-                : 1;
-            final width = (constraints.maxWidth - 20 * (columns - 1)) / columns;
-            return Wrap(
-              spacing: 20,
-              runSpacing: 20,
-              children: [
-                for (final video in maqamVideos.where((v) => !v.isShort))
-                  SizedBox(width: width, child: _VideoCard(video)),
-              ],
+            final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+            return _LongVideoCarousel(
+              key: ValueKey(columns),
+              columns: columns,
+              width: constraints.maxWidth,
             );
           },
         ),
@@ -136,6 +128,104 @@ class VideoGallery extends StatelessWidget {
       ),
     ],
   );
+}
+
+class _LongVideoCarousel extends StatefulWidget {
+  const _LongVideoCarousel({
+    super.key,
+    required this.columns,
+    required this.width,
+  });
+
+  final int columns;
+  final double width;
+
+  @override
+  State<_LongVideoCarousel> createState() => _LongVideoCarouselState();
+}
+
+class _LongVideoCarouselState extends State<_LongVideoCarousel> {
+  final _controller = PageController();
+  final _videos = maqamVideos.where((video) => !video.isShort).toList();
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _move(int page) {
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.jumpToPage(page);
+    } else {
+      _controller.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_videos.isEmpty) return const SizedBox.shrink();
+    final columns = widget.columns;
+    final pages = (_videos.length / columns).ceil();
+    final gap = widget.width < 600 ? 12.0 : 20.0;
+    final cardWidth = (widget.width - gap * (columns - 1)) / columns;
+    final fontSize = DefaultTextStyle.of(context).style.fontSize ?? 14;
+    final titleHeight = MediaQuery.textScalerOf(context).scale(fontSize) * 3;
+    return Column(
+      children: [
+        SizedBox(
+          height: cardWidth * 9 / 16 + titleHeight + 36,
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: pages,
+            onPageChanged: (page) => setState(() => _page = page),
+            itemBuilder: (context, page) {
+              // Keep the final page full when the count is not a multiple.
+              final start = math.min(
+                page * columns,
+                math.max(0, _videos.length - columns),
+              );
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < columns; i++) ...[
+                    if (i > 0) SizedBox(width: gap),
+                    SizedBox(
+                      width: cardWidth,
+                      child: start + i < _videos.length
+                          ? _VideoCard(_videos[start + i])
+                          : null,
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
+        ),
+        if (pages > 1)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                tooltip: tr(context, 'Previous videos'),
+                onPressed: _page > 0 ? () => _move(_page - 1) : null,
+                icon: const Icon(Icons.chevron_left),
+              ),
+              IconButton(
+                tooltip: tr(context, 'Next videos'),
+                onPressed: _page < pages - 1 ? () => _move(_page + 1) : null,
+                icon: const Icon(Icons.chevron_right),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
 }
 
 class _VideoCard extends StatelessWidget {

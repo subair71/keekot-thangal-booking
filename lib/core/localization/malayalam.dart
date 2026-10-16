@@ -202,6 +202,8 @@ const malayalam = <String, String>{
   "Little moments, lasting meaning": "ചെറിയ നിമിഷങ്ങൾ, മായാത്ത ഓർമകൾ",
   "Watch, reflect and reconnect": "കാണൂ, ചിന്തിക്കൂ, അടുത്തറിയൂ",
   "Close video": "വീഡിയോ അടയ്ക്കുക",
+  "Previous videos": "മുമ്പത്തെ വീഡിയോകൾ",
+  "Next videos": "അടുത്ത വീഡിയോകൾ",
   "Watch on YouTube": "YouTube-ൽ കാണുക",
   "Shorts": "ഷോർട്സ്",
   "All Videos": "എല്ലാ വീഡിയോകളും",
