@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:keekot_thangal/core/localization/app_language.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -398,20 +400,15 @@ class _VideoCard extends StatelessWidget {
           'Keekkott Bungalow Online',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: Color(0xFF606060),
-            fontSize: 11,
-            height: 1.4,
-          ),
+          style: TextStyle(color: Color(0xFF606060), fontSize: 11, height: 1.4),
         ),
       ],
     ),
   );
 
   @override
-  Widget build(BuildContext context) => video.isShort
-      ? _shortVideoCard(context)
-      : _longVideoCard(context);
+  Widget build(BuildContext context) =>
+      video.isShort ? _shortVideoCard(context) : _longVideoCard(context);
 
   Widget _shortVideoCard(BuildContext context) => Material(
     color: Colors.white,
