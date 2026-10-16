@@ -99,64 +99,57 @@ class _ShortsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final videos = maqamVideos.where((video) => video.isShort).toList();
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const CustomPaint(
-                size: Size(28, 32),
-                painter: _ShortsLogoPainter(),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: AppText(
-                  'Shorts',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w700,
-                  ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            const CustomPaint(
+              size: Size(28, 32),
+              painter: _ShortsLogoPainter(),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: AppText(
+                'Shorts',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_horiz, color: Colors.black),
-                onSelected: (_) => _openYouTube(context, '$_channel/shorts'),
-                itemBuilder: (_) => [
-                  const PopupMenuItem(
-                    value: 'shorts',
-                    child: AppText('All Shorts'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
-              const gap = 10.0;
-              final width =
-                  (constraints.maxWidth - gap * (columns - 1)) / columns;
-              return SizedBox(
-                height: width * 1.5,
-                child: ListView.separated(
-                  primary: false,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: videos.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: gap),
-                  itemBuilder: (_, index) =>
-                      SizedBox(width: width, child: _VideoCard(videos[index])),
+            ),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_horiz, color: Colors.black),
+              onSelected: (_) => _openYouTube(context, '$_channel/shorts'),
+              itemBuilder: (_) => [
+                const PopupMenuItem(
+                  value: 'shorts',
+                  child: AppText('All Shorts'),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+            final gap = constraints.maxWidth < 600 ? 12.0 : 20.0;
+            final width =
+                (constraints.maxWidth - gap * (columns - 1)) / columns;
+            return SizedBox(
+              height: width * 1.5,
+              child: ListView.separated(
+                primary: false,
+                scrollDirection: Axis.horizontal,
+                itemCount: videos.length,
+                separatorBuilder: (_, _) => SizedBox(width: gap),
+                itemBuilder: (_, index) =>
+                    SizedBox(width: width, child: _VideoCard(videos[index])),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
