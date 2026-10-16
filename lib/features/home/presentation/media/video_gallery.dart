@@ -97,18 +97,10 @@ class _ShortsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const CustomPaint(
-              size: Size(28, 32),
-              painter: _ShortsLogoPainter(),
-            ),
-            const SizedBox(width: 12),
             Expanded(
               child: AppText(
                 'Shorts',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
             PopupMenuButton<String>(
@@ -146,39 +138,6 @@ class _ShortsSection extends StatelessWidget {
       ],
     );
   }
-}
-
-class _ShortsLogoPainter extends CustomPainter {
-  const _ShortsLogoPainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.save();
-    canvas.scale(size.width / 24, size.height / 28);
-    final shape = Path()
-      ..moveTo(15, 1)
-      ..cubicTo(21, -2, 26, 5, 20, 9)
-      ..lineTo(17, 11)
-      ..cubicTo(24, 12, 24, 19, 19, 22)
-      ..lineTo(9, 27)
-      ..cubicTo(2, 30, -2, 22, 4, 18)
-      ..lineTo(7, 16)
-      ..cubicTo(0, 15, 0, 8, 5, 6)
-      ..close();
-    canvas.drawPath(shape, Paint()..color = const Color(0xFFFF0033));
-    canvas.drawPath(
-      Path()
-        ..moveTo(9, 9)
-        ..lineTo(17, 14)
-        ..lineTo(9, 19)
-        ..close(),
-      Paint()..color = Colors.white,
-    );
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _ShortsLogoPainter oldDelegate) => false;
 }
 
 class _LongVideoCarousel extends StatefulWidget {
