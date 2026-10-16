@@ -349,7 +349,7 @@ class _MaqamHero extends StatelessWidget {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 480),
                     child: AppText(
-                      'Pause for remembrance. Make time for dua. Plan your ziyarat at Keekkott Sayyid Attakoya Thangal Maqam, Chavakkad.',
+                      'Plan for a visit with Mr. Sayyid Ali Noufal Thangal Al-Aidrose Keekkott for your spiritual advice and dua.',
                       style: TextStyle(
                         color: const Color(0xFFE7EEE7),
                         fontSize: compact ? 14 : 15,
