@@ -77,6 +77,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          TextButton.icon(
+            onPressed: () => context.go('/khadim-login'),
+            icon: const Icon(Icons.badge_outlined),
+            label: const Text('Khadim login'),
+          ),
           const Center(child: Emblem(size: 74)),
           const SizedBox(height: 28),
           PageHeading(

@@ -3,7 +3,7 @@ import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
 import {Firestore, FieldValue, Timestamp, Transaction} from 'firebase-admin/firestore';
 import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
 
-export interface Actor {uid: string; phone: string; admin?: boolean; gate?: boolean}
+export interface Actor {uid: string; phone: string; admin?: boolean; gate?: boolean; permissions?: string[]}
 export class BookingService {
   constructor(readonly db: Firestore, readonly clock = () => Date.now()) {}
   private async dailyBookings(tx: Transaction, actor: Actor, day: string) {
@@ -129,7 +129,7 @@ export class BookingService {
       const booking=await tx.get(this.db.doc(`bookings/${bookingId}`));
       if(!booking.exists)throw new DomainError('not-found','Booking not found.');
       const b=booking.data()!;
-      if(b.userId!==actor.uid && !actor.admin && !actor.gate)throw new DomainError('permission-denied','You cannot access this booking.');
+      if(b.userId!==actor.uid && !actor.admin && !actor.gate && !actor.permissions?.includes('bookings'))throw new DomainError('permission-denied','You cannot access this booking.');
       if(b.tokenStart != null && b.tokenEnd != null)return {tokenStart:b.tokenStart,tokenEnd:b.tokenEnd};
       const sequence=await readTokenSequence(this.db,tx,b.slotId);
       const assigned=sequence.assignments.find(a=>a.ref.id===bookingId);
@@ -145,14 +145,14 @@ export class BookingService {
       const ref=this.db.doc(`bookings/${bookingId}`), booking=await tx.get(ref);
       if(!booking.exists)throw new DomainError('not-found','Booking not found.');
       const b=booking.data()!;
-      if(b.userId!==actor.uid && !actor.admin)throw new DomainError('permission-denied','You cannot cancel this booking.');
+      if(b.userId!==actor.uid && !actor.admin && !actor.permissions?.includes('bookings'))throw new DomainError('permission-denied','You cannot cancel this booking.');
       if(b.status==='cancelled')return {cancelled:true};
-      if(b.status!=='confirmed' || (!actor.admin && b.startAt<=this.clock()))throw new DomainError('failed-precondition','This booking is no longer eligible for cancellation.');
+      if(b.status!=='confirmed' || (!actor.admin && !actor.permissions?.includes('bookings') && b.startAt<=this.clock()))throw new DomainError('failed-precondition','This booking is no longer eligible for cancellation.');
       const sr=this.db.doc(`visitSlots/${b.slotId}`), slot=await tx.get(sr);
       if(!slot.exists || slot.data()!.occupancy<b.visitorCount)throw new DomainError('failed-precondition','Capacity needs administrator review.');
       tx.update(sr,{occupancy:slot.data()!.occupancy-b.visitorCount});
       tx.update(ref,{status:'cancelled',cancelledAt:FieldValue.serverTimestamp(),cancellationReason:reason,updatedAt:FieldValue.serverTimestamp()});
-      if(actor.admin)tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'cancelBooking',bookingId,at:FieldValue.serverTimestamp()});
+      if(actor.admin || actor.permissions?.includes('bookings'))tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'cancelBooking',bookingId,at:FieldValue.serverTimestamp()});
       return {cancelled:true};
     });
   }
@@ -187,7 +187,7 @@ export class BookingService {
     }); return expired.size;
   }
   async adminUpdateSlots(actor: Actor, input: {visitDate: string; startTime?: string; endTime?: string; blocked: boolean; reason: string; capacity?: number; wholeDay?: boolean}) {
-    if(!actor.admin)throw new DomainError('permission-denied','Administrator access is required.');
+    if(!actor.admin && !actor.permissions?.includes('slots'))throw new DomainError('permission-denied','Administrator access is required.');
     validDate(input.visitDate); const reason=textValue(input.reason || 'Administrative closure',1,200,'block reason');
     if(typeof input.blocked!=='boolean')throw new DomainError('invalid-argument','Choose open or blocked.');
     return this.db.runTransaction(async tx=>{
@@ -212,7 +212,7 @@ export class BookingService {
     });
   }
   async adminSetDateHours(actor: Actor, input: {visitDate: string; openingTime?: string; closingTime?: string; reset?: boolean}) {
-    if(!actor.admin)throw new DomainError('permission-denied','Administrator access is required.');
+    if(!actor.admin && !actor.permissions?.includes('slots'))throw new DomainError('permission-denied','Administrator access is required.');
     validDate(input.visitDate);
     return this.db.runTransaction(async tx=>{
       const config=await tx.get(this.db.doc('settings/booking')), c=settingsFrom(config.data()), now=this.clock();
@@ -239,7 +239,7 @@ export class BookingService {
     });
   }
   async adminUpdateSettings(actor: Actor, input: BookingSettings) {
-    if(!actor.admin)throw new DomainError('permission-denied','Administrator access is required.');
+    if(!actor.admin && !actor.permissions?.includes('settings'))throw new DomainError('permission-denied','Administrator access is required.');
     const c=settingsFrom(input);
     const keys: (keyof BookingSettings)[]=['timezone','openingTime','closingTime','slotDurationMinutes','bookingWindowDays','allowSameDayBooking','maxVisitorsPerBooking','defaultSlotCapacity','reminderEnabled','reminderMinutes','bookingEnabled','locationUrl','contactPhone','arrivalMinutes'];
     return this.db.runTransaction(async tx=>{
