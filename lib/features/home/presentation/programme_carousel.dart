@@ -177,68 +177,41 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                   ),
                 ),
                 const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
-                  child: AspectRatio(
-                    aspectRatio: 3 / 2,
-                    child: PageView.builder(
-                      controller: _controller,
-                      itemCount: _slides.length,
-                      onPageChanged: (index) {
-                        setState(() => _index = index);
-                        _schedule();
-                      },
-                      itemBuilder: (context, index) {
-                        final slide = _slides[index];
-                        return Image.asset(
-                          slide.$1,
-                          fit: BoxFit.contain,
-                          excludeFromSemantics: true,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
                 Semantics(
                   container: true,
                   label: label(
-                    'Programme ${_index + 1} of ${_slides.length}',
-                    'പരിപാടി ${_index + 1}, ആകെ ${_slides.length}',
+                    'Programme ${_index + 1} of ${_slides.length}. ${_english[_index].$1}. ${_english[_index].$2}',
+                    'പരിപാടി ${_index + 1}, ആകെ ${_slides.length}. ${_slides[_index].$2}. ${_slides[_index].$3.join(" ")}',
                   ),
                   value: '${_index + 1}',
                   increasedValue: '${(_index + 1) % _slides.length + 1}',
                   decreasedValue: '${(_index - 1) % _slides.length + 1}',
                   onIncrease: () => manualSlide(1),
                   onDecrease: () => manualSlide(-1),
-                  // Keep the tallest caption's space so automatic slides do
-                  // not move the content below while the visitor scrolls.
-                  child: IndexedStack(
-                    index: _index,
-                    alignment: Alignment.topCenter,
-                    children: [
-                      for (var i = 0; i < _slides.length; i++)
-                        Column(
-                          children: [
-                            Semantics(
-                              header: true,
-                              child: Text(
-                                ml ? _slides[i].$2 : _english[i].$1,
-                                style: Theme.of(context).textTheme.titleMedium,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              ml ? _slides[i].$3.join('\n') : _english[i].$2,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ],
-                        ),
-                    ],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    child: AspectRatio(
+                      aspectRatio: 3 / 2,
+                      child: PageView.builder(
+                        controller: _controller,
+                        itemCount: _slides.length,
+                        onPageChanged: (index) {
+                          setState(() => _index = index);
+                          _schedule();
+                        },
+                        itemBuilder: (context, index) {
+                          final asset = _slides[index].$1;
+                          return Image.asset(
+                            ml ? asset : asset.replaceFirst('-small', '-en'),
+                            fit: BoxFit.contain,
+                            excludeFromSemantics: true,
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
