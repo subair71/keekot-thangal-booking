@@ -5,48 +5,68 @@ import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:keekot_thangal/features/home/presentation/programme_carousel.dart';
 
 void main() {
-  testWidgets('carousel dots select slides and expose bilingual live text', (
-    tester,
-  ) async {
-    final language = ValueNotifier('en');
-    addTearDown(language.dispose);
-    await tester.pumpWidget(
-      MaterialApp(
-        home: AppLanguage(
-          notifier: language,
-          child: const Scaffold(
-            body: SingleChildScrollView(child: ProgrammeCarousel()),
+  testWidgets(
+    'carousel dots select slides and use localized images without visible captions',
+    (tester) async {
+      final language = ValueNotifier('en');
+      addTearDown(language.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AppLanguage(
+            notifier: language,
+            child: const Scaffold(
+              body: SingleChildScrollView(child: ProgrammeCarousel()),
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Every Thursday after Maghrib.'), findsOneWidget);
-    expect(find.byKey(const ValueKey('carousel-pause')), findsNothing);
-    await tester.pump(const Duration(seconds: 6));
-    await tester.pumpAndSettle();
-    expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 1);
-    final dot = find.byKey(const ValueKey('carousel-dot-2'));
-    await tester.ensureVisible(dot);
-    await tester.tap(dot);
-    await tester.pumpAndSettle();
-    expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 2);
-    final selectedDot = tester.widget<IconButton>(dot).icon as Container;
-    final otherButton = tester.widget<IconButton>(
-      find.byKey(const ValueKey('carousel-dot-0')),
-    );
-    final otherDot = otherButton.icon as Container;
-    expect(
-      selectedDot.constraints!.maxWidth,
-      greaterThan(otherDot.constraints!.maxWidth),
-    );
-    await tester.pump(const Duration(seconds: 8));
-    expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 2);
-    language.value = 'ml';
-    await tester.pump();
-    expect(find.text('ആണ്ട് നേർച്ച'), findsOneWidget);
-    await tester.pumpWidget(const SizedBox());
-  });
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Every Thursday after Maghrib.'), findsNothing);
+      expect(
+        find.image(const AssetImage('assets/brand/programme-dhikr-en.webp')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('carousel-pause')), findsNothing);
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<PageView>(find.byType(PageView)).controller!.page,
+        1,
+      );
+      final dot = find.byKey(const ValueKey('carousel-dot-2'));
+      await tester.ensureVisible(dot);
+      await tester.tap(dot);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<PageView>(find.byType(PageView)).controller!.page,
+        2,
+      );
+      final selectedDot = tester.widget<IconButton>(dot).icon as Container;
+      final otherButton = tester.widget<IconButton>(
+        find.byKey(const ValueKey('carousel-dot-0')),
+      );
+      final otherDot = otherButton.icon as Container;
+      expect(
+        selectedDot.constraints!.maxWidth,
+        greaterThan(otherDot.constraints!.maxWidth),
+      );
+      await tester.pump(const Duration(seconds: 8));
+      expect(
+        tester.widget<PageView>(find.byType(PageView)).controller!.page,
+        2,
+      );
+      language.value = 'ml';
+      await tester.pump();
+      expect(find.text('ആണ്ട് നേർച്ച'), findsNothing);
+      expect(
+        find.image(
+          const AssetImage('assets/brand/programme-annual-small.webp'),
+        ),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets(
     'reduced motion prevents autoplay but keyboard can change slides',
@@ -63,9 +83,16 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 12));
-      expect(find.text('Every Thursday after Maghrib.'), findsOneWidget);
-      expect(tester.widget<IndexedStack>(find.byType(IndexedStack)).index, 0);
-      final captionSize = tester.getSize(find.byType(IndexedStack));
+      expect(find.text('Every Thursday after Maghrib.'), findsNothing);
+      expect(
+        find.image(const AssetImage('assets/brand/programme-dhikr-en.webp')),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<PageView>(find.byType(PageView)).controller!.page,
+        0,
+      );
+      final carouselSize = tester.getSize(find.byType(ProgrammeCarousel));
       // Keyboard navigation remains available when automatic sliding is off.
       final carouselFocus = find
           .descendant(
@@ -83,8 +110,11 @@ void main() {
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
       await tester.pumpAndSettle();
-      expect(find.text('Mawlid gathering'), findsOneWidget);
-      expect(tester.getSize(find.byType(IndexedStack)), captionSize);
+      expect(
+        find.image(const AssetImage('assets/brand/programme-mawlid-en.webp')),
+        findsOneWidget,
+      );
+      expect(tester.getSize(find.byType(ProgrammeCarousel)), carouselSize);
       await tester.pumpWidget(const SizedBox());
     },
   );
