@@ -33,7 +33,7 @@ class AppShell extends ConsumerWidget {
         : path == '/information'
         ? 3
         : 0;
-    final wide = MediaQuery.sizeOf(context).width > 1024;
+    final wide = MediaQuery.sizeOf(context).width > 1200;
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       endDrawer: Drawer(
@@ -45,9 +45,8 @@ class AppShell extends ConsumerWidget {
                 alignment: Alignment.centerRight,
                 child: Builder(
                   builder: (drawerContext) => IconButton(
-                    tooltip: MaterialLocalizations.of(
-                      context,
-                    ).closeButtonTooltip,
+                    tooltip: MaterialLocalizations.of(context)
+                        .closeButtonTooltip,
                     onPressed: () => Navigator.of(drawerContext).pop(),
                     icon: const Icon(Icons.close),
                   ),
@@ -81,7 +80,7 @@ class AppShell extends ConsumerWidget {
         ),
       ),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 136 : 108),
+        preferredSize: Size.fromHeight(wide ? 104 : 108),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
@@ -90,7 +89,7 @@ class AppShell extends ConsumerWidget {
           child: SafeArea(
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1400),
+                constraints: const BoxConstraints(maxWidth: 1320),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
@@ -185,9 +184,9 @@ class AppShell extends ConsumerWidget {
                                   tooltip: AppLanguage.of(context) == 'ml'
                                       ? 'മെനു'
                                       : 'Menu',
-                                  onPressed: () => Scaffold.of(
-                                    scaffoldContext,
-                                  ).openEndDrawer(),
+                                  onPressed: () =>
+                                      Scaffold.of(scaffoldContext)
+                                          .openEndDrawer(),
                                   icon: const Icon(Icons.menu),
                                 ),
                               ),

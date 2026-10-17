@@ -31,7 +31,7 @@ ThemeData buildTheme() {
     ),
   );
   const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(16)),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
   );
   return base.copyWith(
     textTheme: base.textTheme
@@ -109,15 +109,15 @@ ThemeData buildTheme() {
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.all(16),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.secondary, width: 2),
       ),
     ),
@@ -127,6 +127,19 @@ ThemeData buildTheme() {
       labelTextStyle: WidgetStatePropertyAll(
         TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11),
       ),
+    ),
+    tooltipTheme: const TooltipThemeData(
+      waitDuration: Duration(milliseconds: 400),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: AppColors.emerald,
+      contentTextStyle: const TextStyle(color: AppColors.white, fontSize: 14),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: AppColors.emerald,
+      linearTrackColor: AppColors.mint,
     ),
     dividerColor: AppColors.outline,
   );
