@@ -45,9 +45,8 @@ class AppShell extends ConsumerWidget {
                 alignment: Alignment.centerRight,
                 child: Builder(
                   builder: (drawerContext) => IconButton(
-                    tooltip: MaterialLocalizations.of(
-                      context,
-                    ).closeButtonTooltip,
+                    tooltip: MaterialLocalizations.of(context)
+                        .closeButtonTooltip,
                     onPressed: () => Navigator.of(drawerContext).pop(),
                     icon: const Icon(Icons.close),
                   ),
@@ -76,6 +75,68 @@ class AppShell extends ConsumerWidget {
                     },
                   ),
                 ),
+              const Divider(),
+              for (final item in [
+                ('Contact us', Icons.mail_outline, '/contact'),
+                if (user == null) ('Sign in with mobile', Icons.login, '/auth'),
+                if (user?.staff == true)
+                  (
+                    'Administration',
+                    Icons.admin_panel_settings_outlined,
+                    '/admin',
+                  ),
+                if (user?.gate == true && user?.admin != true)
+                  (
+                    'Validate visitor pass',
+                    Icons.qr_code_scanner,
+                    '/admin/gate',
+                  ),
+              ])
+                Builder(
+                  builder: (drawerContext) => ListTile(
+                    leading: Icon(item.$2, color: AppColors.emerald),
+                    title: AppText(
+                      item.$1,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    onTap: () {
+                      Navigator.of(drawerContext).pop();
+                      context.go(item.$3);
+                    },
+                  ),
+                ),
+              if (user != null) ...[
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.account_circle_outlined),
+                  title: Text(user.maskedPhone),
+                ),
+                Builder(
+                  builder: (drawerContext) => ListTile(
+                    leading: const Icon(Icons.logout, color: AppColors.emerald),
+                    title: const AppText('Sign out'),
+                    onTap: () async {
+                      Navigator.of(drawerContext).pop();
+                      try {
+                        try {
+                          await ref
+                              .read(notificationRepositoryProvider)
+                              .disable();
+                        } catch (_) {
+                          // Notification network failure must not prevent local sign-out.
+                        }
+                        await ref.read(authRepositoryProvider).signOut();
+                        ref.read(draftProvider.notifier).clear();
+                        if (context.mounted) context.go('/');
+                      } catch (e) {
+                        if (context.mounted) {
+                          showMessage(context, failureMessage(e));
+                        }
+                      }
+                    },
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -185,9 +246,9 @@ class AppShell extends ConsumerWidget {
                                   tooltip: AppLanguage.of(context) == 'ml'
                                       ? 'മെനു'
                                       : 'Menu',
-                                  onPressed: () => Scaffold.of(
-                                    scaffoldContext,
-                                  ).openEndDrawer(),
+                                  onPressed: () =>
+                                      Scaffold.of(scaffoldContext)
+                                          .openEndDrawer(),
                                   icon: const Icon(Icons.menu),
                                 ),
                               ),
@@ -195,70 +256,6 @@ class AppShell extends ConsumerWidget {
                                 tooltip: tr(context, 'Notifications'),
                                 onPressed: () => context.go('/notifications'),
                                 icon: const Icon(Icons.notifications_none),
-                              ),
-                              PopupMenuButton<String>(
-                                tooltip: tr(
-                                  context,
-                                  user == null ? 'Sign in' : 'Account',
-                                ),
-                                icon: const Icon(Icons.account_circle_outlined),
-                                onSelected: (value) async {
-                                  if (value == 'signout') {
-                                    try {
-                                      try {
-                                        await ref
-                                            .read(
-                                              notificationRepositoryProvider,
-                                            )
-                                            .disable();
-                                      } catch (_) {
-                                        // Notification network failure must not prevent local sign-out.
-                                      }
-                                      await ref
-                                          .read(authRepositoryProvider)
-                                          .signOut();
-                                      ref.read(draftProvider.notifier).clear();
-                                      if (context.mounted) context.go('/');
-                                    } catch (e) {
-                                      if (context.mounted) {
-                                        showMessage(context, failureMessage(e));
-                                      }
-                                    }
-                                  } else {
-                                    context.go(value);
-                                  }
-                                },
-                                itemBuilder: (_) => [
-                                  const PopupMenuItem(
-                                    value: '/contact',
-                                    child: AppText('Contact us'),
-                                  ),
-                                  if (user == null)
-                                    const PopupMenuItem(
-                                      value: '/auth',
-                                      child: AppText('Sign in with mobile'),
-                                    ),
-                                  if (user != null)
-                                    PopupMenuItem(
-                                      enabled: false,
-                                      child: Text(user.maskedPhone),
-                                    ),
-                                  if (user?.staff == true)
-                                    const PopupMenuItem(
-                                      value: '/admin',
-                                      child: AppText('Administration'),
-                                    ),
-                                  if (user?.gate == true && user?.admin != true)
-                                    const PopupMenuItem(
-                                      value: '/admin/gate',
-                                      child: AppText('Validate visitor pass'),
-                                    ),
-                                  if (user != null)
-                                    const PopupMenuItem(
-                                      value: 'signout',
-                                      child: AppText('Sign out'),
-                                    ),
-                                ],
                               ),
                             ],
                           ),
