@@ -81,7 +81,7 @@ class AppShell extends ConsumerWidget {
         ),
       ),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 104 : 108),
+        preferredSize: Size.fromHeight(wide ? 136 : 108),
         child: Container(
           decoration: const BoxDecoration(
             color: AppColors.white,
