@@ -95,7 +95,7 @@ void main() {
       ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
     await icons.load();
   });
-  for (final width in [375, 430, 768, 1024, 1280, 1440, 1920]) {
+  for (final width in [375, 430, 768, 1024, 1100, 1280, 1440, 1920]) {
     testWidgets('home and responsive navigation at ${width}px', (tester) async {
       tester.view.physicalSize = Size(width.toDouble(), 1100);
       tester.view.devicePixelRatio = 1;
@@ -120,7 +120,7 @@ void main() {
       );
       expect(
         find.byType(NavigationBar),
-        width <= 1024 ? findsOneWidget : findsNothing,
+        width <= 1200 ? findsOneWidget : findsNothing,
       );
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_$width');

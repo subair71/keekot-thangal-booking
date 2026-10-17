@@ -71,7 +71,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final config = ref.watch(configurationProvider);
     return PageContainer(
-      width: 1400,
+      width: 1320,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -96,8 +96,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Expanded(child: _MaqamHero()),
-                  const SizedBox(width: 24),
-                  SizedBox(width: 380, child: availability),
+                  const SizedBox(width: 28),
+                  SizedBox(width: 340, child: availability),
                 ],
               );
             },
@@ -137,7 +137,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
           const SizedBox(height: 18),
           const _HomeFeaturedVideo(),
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
           TwoColumn(
             main: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,11 +178,14 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             aside: const LocationCard(),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(
+              MediaQuery.sizeOf(context).width < 600 ? 24 : 36,
+            ),
             decoration: BoxDecoration(
-              color: AppColors.cream,
+              color: AppColors.mint,
+              border: Border.all(color: AppColors.outline),
               borderRadius: BorderRadius.circular(28),
             ),
             child: const Column(
@@ -215,9 +218,9 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
           KeyedSubtree(key: videosKey, child: const VideoGallery()),
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
           const _SectionTitle(
             'A CONSIDERATE ZIYARAT',
             'Small gestures. A peaceful atmosphere.',
@@ -230,7 +233,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               aside: LocationCard(),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 56),
           TwoColumn(
             main: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +280,7 @@ class _MaqamHero extends StatelessWidget {
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 650;
       return ClipRRect(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(28),
         child: Stack(
           children: [
             Positioned.fill(
@@ -306,7 +309,7 @@ class _MaqamHero extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(compact ? 18 : 26),
+              padding: EdgeInsets.all(compact ? 24 : 36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -339,8 +342,8 @@ class _MaqamHero extends StatelessWidget {
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
                         fontFamily: 'Newsreader',
-                        fontSize: compact ? 28 : 36,
-                        height: 1.05,
+                        fontSize: compact ? 32 : 44,
+                        height: 1.12,
                         color: Colors.white,
                       ),
                     ),
@@ -378,7 +381,7 @@ class _MaqamHero extends StatelessWidget {
                         onPressed: () => context.go('/book'),
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.mintStrong,
-                          minimumSize: const Size(48, 44),
+                          minimumSize: const Size(48, 48),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 10,
@@ -393,7 +396,7 @@ class _MaqamHero extends StatelessWidget {
                         onPressed: () => context.go('/information'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white,
-                          minimumSize: const Size(48, 44),
+                          minimumSize: const Size(48, 48),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 10,
@@ -405,7 +408,7 @@ class _MaqamHero extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 24),
                   const Divider(color: AppColors.secondary),
                   const SizedBox(height: 8),
                   const AppText(
@@ -486,22 +489,39 @@ class _VisitStep extends StatelessWidget {
   const _VisitStep(this.number, this.title, this.description);
   final String number, title, description;
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AppText(
-        number,
-        style: const TextStyle(
-          fontFamily: 'Newsreader',
-          fontSize: 28,
-          color: AppColors.gold,
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(24),
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: AppColors.outline),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: AppColors.mint,
+            shape: BoxShape.circle,
+          ),
+          child: AppText(
+            number,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppColors.emerald,
+            ),
+          ),
         ),
-      ),
-      const SizedBox(height: 14),
-      AppText(title, style: Theme.of(context).textTheme.titleLarge),
-      const SizedBox(height: 10),
-      AppText(description),
-    ],
+        const SizedBox(height: 20),
+        AppText(title, style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 10),
+        AppText(description),
+      ],
+    ),
   );
 }
 
@@ -580,7 +600,7 @@ class _LiveAvailability extends ConsumerWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600),
         child: SurfaceCard(
-          padding: 16,
+          padding: 24,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -594,13 +614,14 @@ class _LiveAvailability extends ConsumerWidget {
                   Expanded(
                     child: AppText(
                       'Plan your visit',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  const StatusBadge('Availability'),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 16),
               AppText(
                 '${VisitClock.dayLabel(day)} · ${config.hoursForDate(day)}',
                 style: const TextStyle(color: AppColors.muted),

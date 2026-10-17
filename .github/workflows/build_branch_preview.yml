@@ -1,7 +1,7 @@
 name: Build branch Site preview
 on:
   push:
-    branches: [feature/zip-inspired-enhancements]
+    branches: [feature/zip-inspired-enhancements, feature/international-design]
     paths:
       - '.github/workflows/build_branch_preview.yml'
       - 'lib/**'

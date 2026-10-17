@@ -33,7 +33,7 @@ class AppShell extends ConsumerWidget {
         : path == '/information'
         ? 3
         : 0;
-    final wide = MediaQuery.sizeOf(context).width > 1024;
+    final wide = MediaQuery.sizeOf(context).width > 1200;
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       endDrawer: Drawer(
@@ -90,7 +90,7 @@ class AppShell extends ConsumerWidget {
           child: SafeArea(
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1400),
+                constraints: const BoxConstraints(maxWidth: 1320),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,

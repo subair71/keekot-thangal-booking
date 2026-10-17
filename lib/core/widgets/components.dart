@@ -35,7 +35,7 @@ class PageContainer extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
-            vertical: 20,
+            vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 32,
           ),
           child: child,
         ),
@@ -57,11 +57,11 @@ class SurfaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: color,
-    elevation: 1,
+    elevation: 0,
     shadowColor: AppColors.emerald.withValues(alpha: .08),
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(24),
-      side: BorderSide(color: AppColors.outline.withValues(alpha: .7)),
+      borderRadius: BorderRadius.circular(20),
+      side: BorderSide(color: AppColors.outline),
     ),
     clipBehavior: Clip.antiAlias,
     child: Padding(padding: EdgeInsets.all(padding), child: child),
