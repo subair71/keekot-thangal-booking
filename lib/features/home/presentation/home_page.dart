@@ -296,10 +296,12 @@ class _MaqamHero extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color(0xFF082D25)
-                          .withValues(alpha: compact ? .93 : .96),
-                      const Color(0xFF082D25)
-                          .withValues(alpha: compact ? .72 : .16),
+                      const Color(
+                        0xFF082D25,
+                      ).withValues(alpha: compact ? .93 : .96),
+                      const Color(
+                        0xFF082D25,
+                      ).withValues(alpha: compact ? .72 : .16),
                     ],
                     stops: const [0, 1],
                   ),
@@ -730,7 +732,8 @@ class _HomeFeaturedVideo extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: 'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
+                  text:
+                      'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
                 ),
               ],
             ),
