@@ -59,22 +59,7 @@ class _PassCardState extends ConsumerState<PassCard> {
             ],
           ),
           const SizedBox(height: 20),
-          AppText(
-            b.visitors == 1 ? 'TOKEN NUMBER' : 'TOKEN NUMBERS',
-            style: const TextStyle(fontSize: 12, letterSpacing: 2),
-          ),
-          const SizedBox(height: 8),
-          SelectableText(
-            b.tokenLabel,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.emerald,
-            ),
-          ),
-          const SizedBox(height: 8),
           AppText('Booking reference: ${b.reference}'),
-          const AppText('Tokens are valid for this date and slot only.'),
           const SizedBox(height: 24),
           const InfoLine(
             Icons.location_on_outlined,

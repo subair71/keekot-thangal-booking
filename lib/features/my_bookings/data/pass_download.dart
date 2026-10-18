@@ -33,10 +33,6 @@ class PassDownload {
             pw.SizedBox(height: 16),
             pw.Text(booking.status.toUpperCase()),
             pw.SizedBox(height: 8),
-            pw.Text(
-              'Token${booking.visitors == 1 ? '' : 's'}: ${booking.tokenLabel}',
-              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-            ),
             pw.Text('Valid for the date and slot below only.'),
             pw.SizedBox(height: 8),
             pw.Text(
