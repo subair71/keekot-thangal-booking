@@ -1,0 +1,30 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - git clone https://github.com/flutter/flutter.git --depth 1 --branch stable /tmp/flutter
+        - export PATH="/tmp/flutter/bin:$PATH"
+        - flutter --version
+        - |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          # Public Firebase web identifiers, matching the GitHub Pages deployment.
+          config = json.loads(os.environ.get("FIREBASE_WEB_CONFIG") or "{\"ENVIRONMENT\":\"production\",\"USE_EMULATORS\":false,\"FIREBASE_API_KEY\":\"AIzaSyC5TBTuiJowU0Ja-cs_nsdl2oYIV80FMl8\",\"FIREBASE_APP_ID\":\"1:630053774074:web:e934ba0182414aad589f43\",\"FIREBASE_MESSAGING_SENDER_ID\":\"630053774074\",\"FIREBASE_PROJECT_ID\":\"keekot-thangal-booking\",\"FIREBASE_AUTH_DOMAIN\":\"keekot-thangal-booking.firebaseapp.com\",\"FIREBASE_STORAGE_BUCKET\":\"keekot-thangal-booking.firebasestorage.app\",\"FUNCTIONS_REGION\":\"asia-south1\",\"EMULATOR_HOST\":\"127.0.0.1\",\"VAPID_KEY\":\"BL4DcMmrIb8RA_Sr5zjdf-wb3oRfItNdTlwn_yNdBQWHxTlGNYOccs3yH_u3weKTRYHK7iL_i47dXc9eBj1M1zA\",\"APP_CHECK_SITE_KEY\":\"6LcJbbotAAAAAPm8eUd9IRKeRNlTpiuCiIBpnSDk\",\"ENABLE_ANALYTICS\":false}")
+          if config.get("ENVIRONMENT") != "production" or config.get("USE_EMULATORS") is not False:
+              raise ValueError("Amplify requires production Firebase configuration with emulators disabled")
+          Path("config").mkdir(exist_ok=True)
+          Path("config/production.json").write_text(json.dumps(config))
+          PY
+        - python3 tool/configure_web.py config/production.json
+        - flutter pub get --enforce-lockfile
+        - dart run build_runner build
+    build:
+      commands:
+        - export PATH="/tmp/flutter/bin:$PATH"
+        - flutter build web --release --base-href=/ --dart-define-from-file=config/production.json
+  artifacts:
+    baseDirectory: build/web
+    files:
+      - '**/*'
