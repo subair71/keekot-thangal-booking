@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/services.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
 
-/// Regenerated programme images with smaller lettering and accessible descriptions.
+/// Compact programme thumbnails, sized like the long-video gallery.
 class ProgrammeCarousel extends StatefulWidget {
   const ProgrammeCarousel({super.key});
 
@@ -16,31 +17,7 @@ class ProgrammeCarousel extends StatefulWidget {
 
 class _ProgrammeCarouselState extends State<ProgrammeCarousel>
     with WidgetsBindingObserver {
-  static const List<(String, String, List<String>)> _slides = [
-    (
-      'assets/brand/programme-dhikr-small.webp',
-      'ദിക്ർ ഹൽഖ',
-      ['എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'],
-    ),
-    (
-      'assets/brand/programme-mawlid-small.webp',
-      'മൗലിദ് സദസ്സ്',
-      [
-        'എല്ലാ അറബിമാസം 24ന്\nമഹാനായ കീക്കോട്ട് ആറ്റക്കോയ ഉപ്പാപ്പാടെയും',
-        'എല്ലാ അറബിമാസം 10ന്\nഅഹ്‌ലുൽ അബാഇന്റെയും',
-      ],
-    ),
-    (
-      'assets/brand/programme-annual-small.webp',
-      'ആണ്ട് നേർച്ച',
-      [
-        'റമദാൻ 8 ന് കീക്കോട്ട് വലിയ ഉപ്പാപ്പാടെ ആണ്ട്',
-        'സഫർ 24 ന് കീക്കോട്ട് ആറ്റക്കോയ ഉപ്പാപ്പാടെ ആണ്ട്',
-        'മുഹറം 10 ന് അഹ്‌ലുൽ അബാഇന്റെ ആണ്ട്',
-      ],
-    ),
-  ];
-
+  static const _assets = ['dhikr', 'mawlid', 'annual'];
   static const _english = [
     ('Dhikr gathering', 'Every Thursday after Maghrib.'),
     (
@@ -52,68 +29,87 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
       'Ramadan 8: Keekkott Valiya Uppappa.\nSafar 24: Keekkott Attakoya Uppappa.\nMuharram 10: Ahlul Aba.',
     ),
   ];
-  final _controller = PageController();
+  static const _malayalam = [
+    ('ദിക്ർ ഹൽഖ', 'എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'),
+    (
+      'മൗലിദ് സദസ്സ്',
+      'എല്ലാ അറബിമാസം 24ന് മഹാനായ കീക്കോട്ട് ആറ്റക്കോയ ഉപ്പാപ്പാടെയും\nഎല്ലാ അറബിമാസം 10ന് അഹ്‌ലുൽ അബാഇന്റെയും',
+    ),
+    (
+      'ആണ്ട് നേർച്ച',
+      'റമദാൻ 8 ന് കീക്കോട്ട് വലിയ ഉപ്പാപ്പാടെ ആണ്ട്\nസഫർ 24 ന് കീക്കോട്ട് ആറ്റക്കോയ ഉപ്പാപ്പാടെ ആണ്ട്\nമുഹറം 10 ന് അഹ്‌ലുൽ അബാഇന്റെ ആണ്ട്',
+    ),
+  ];
+  final _controller = ScrollController();
   Timer? _timer;
-  int _index = 0;
-  bool _paused = false;
   bool _hovered = false;
   bool _focused = false;
+  bool _touching = false;
   bool _active = true;
+  double _stride = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _schedule();
+    _timer = Timer.periodic(const Duration(seconds: 4), (_) => _advance());
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _active = state == AppLifecycleState.resumed;
-    _schedule();
   }
 
-  void _schedule() {
-    _timer?.cancel();
+  void _advance() {
     if (!mounted ||
-        _paused ||
+        !_controller.hasClients ||
+        !_active ||
         _hovered ||
         _focused ||
-        !_active ||
+        _touching ||
+        _controller.position.isScrollingNotifier.value ||
         MediaQuery.disableAnimationsOf(context) ||
-        MediaQuery.accessibleNavigationOf(context)) {
+        MediaQuery.accessibleNavigationOf(context) ||
+        ModalRoute.of(context)?.isCurrent == false) {
       return;
     }
-    _timer = Timer(const Duration(seconds: 6), () {
-      if (!mounted) return;
-      if (_controller.hasClients &&
-          !_controller.position.isScrollingNotifier.value &&
-          (ModalRoute.of(context)?.isCurrent ?? true)) {
-        _show(_index + 1);
-      } else {
-        _schedule();
-      }
-    });
+    _move(1);
   }
 
-  void _show(int index) {
+  void _move(int direction) {
     if (!_controller.hasClients) return;
-    final target = index % _slides.length;
+    final max = _controller.position.maxScrollExtent;
+    if (max <= 0) return;
+    final offset = _controller.offset;
+    final target = direction > 0 && offset >= max - 1
+        ? 0.0
+        : (offset + direction * _stride).clamp(0.0, max).toDouble();
     if (MediaQuery.disableAnimationsOf(context)) {
-      _controller.jumpToPage(target);
+      _controller.jumpTo(target);
     } else {
-      _controller.animateToPage(
+      _controller.animateTo(
         target,
-        duration: const Duration(milliseconds: 450),
+        duration: const Duration(milliseconds: 550),
         curve: Curves.easeInOut,
       );
     }
-    _schedule();
+  }
+
+  void _details(int index, bool ml) {
+    final programme = (ml ? _malayalam : _english)[index];
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(programme.$1),
+        content: SingleChildScrollView(child: Text(programme.$2)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(ml ? 'അടയ്ക്കുക' : 'Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -127,123 +123,137 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
   @override
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
-    String label(String english, String malayalam) => ml ? malayalam : english;
-    void manualSlide(int delta) {
-      setState(() => _paused = true);
-      _show(_index + delta);
-    }
-
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 680),
-        child: Focus(
-          onKeyEvent: (_, event) {
-            if (event is! KeyDownEvent) return KeyEventResult.ignored;
-            if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-              manualSlide(1);
-              return KeyEventResult.handled;
-            }
-            if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-              manualSlide(-1);
-              return KeyEventResult.handled;
-            }
-            return KeyEventResult.ignored;
-          },
-          onFocusChange: (focused) {
-            _focused = focused;
-            _schedule();
-          },
-          child: MouseRegion(
-            onEnter: (_) {
-              _hovered = true;
-              _schedule();
-            },
-            onExit: (_) {
-              _hovered = false;
-              _schedule();
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Semantics(
-                  header: true,
-                  child: Text(
-                    label('Programmes & gatherings', 'പരിപാടികളും സദസ്സുകളും'),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontFamily: ml ? 'Noto Sans Malayalam' : null,
-                      color: AppColors.emerald,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Semantics(
-                  container: true,
-                  label: label(
-                    'Programme ${_index + 1} of ${_slides.length}. ${_english[_index].$1}. ${_english[_index].$2}',
-                    'പരിപാടി ${_index + 1}, ആകെ ${_slides.length}. ${_slides[_index].$2}. ${_slides[_index].$3.join(" ")}',
-                  ),
-                  value: '${_index + 1}',
-                  increasedValue: '${(_index + 1) % _slides.length + 1}',
-                  decreasedValue: '${(_index - 1) % _slides.length + 1}',
-                  onIncrease: () => manualSlide(1),
-                  onDecrease: () => manualSlide(-1),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    child: AspectRatio(
-                      aspectRatio: 3 / 2,
-                      child: PageView.builder(
-                        controller: _controller,
-                        itemCount: _slides.length,
-                        onPageChanged: (index) {
-                          setState(() => _index = index);
-                          _schedule();
-                        },
-                        itemBuilder: (context, index) {
-                          final asset = _slides[index].$1;
-                          return Image.asset(
-                            ml ? asset : asset.replaceFirst('-small', '-en'),
-                            fit: BoxFit.contain,
-                            excludeFromSemantics: true,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < _slides.length; i++)
-                      Semantics(
-                        selected: i == _index,
-                        child: IconButton(
-                          key: ValueKey('carousel-dot-$i'),
-                          tooltip: label(
-                            'Show programme ${i + 1}',
-                            'പരിപാടി ${i + 1} കാണുക',
-                          ),
-                          onPressed: () => manualSlide(i - _index),
-                          icon: Container(
-                            width: i == _index ? 12 : 8,
-                            height: i == _index ? 12 : 8,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: i == _index
-                                  ? AppColors.emerald
-                                  : AppColors.outline,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+    final programmes = ml ? _malayalam : _english;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          header: true,
+          child: Text(
+            ml ? 'പരിപാടികളും സദസ്സുകളും' : 'Programmes & gatherings',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
-      ),
+        const SizedBox(height: 16),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+            final gap = constraints.maxWidth < 600 ? 12.0 : 20.0;
+            final width = math.max(
+              1.0,
+              (constraints.maxWidth - gap * columns) / (columns + 0.25),
+            );
+            _stride = width + gap;
+            final scaler = MediaQuery.textScalerOf(context);
+            final height =
+                width * 9 / 16 +
+                scaler.scale(12) * 3 +
+                scaler.scale(11) * 3.6 +
+                16;
+            return MouseRegion(
+              onEnter: (_) => _hovered = true,
+              onExit: (_) => _hovered = false,
+              child: Focus(
+                onFocusChange: (value) => _focused = value,
+                onKeyEvent: (_, event) {
+                  if (event is! KeyDownEvent) return KeyEventResult.ignored;
+                  if (event.logicalKey == LogicalKeyboardKey.arrowRight ||
+                      event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                    _move(
+                      event.logicalKey == LogicalKeyboardKey.arrowRight
+                          ? 1
+                          : -1,
+                    );
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: Listener(
+                  onPointerDown: (_) => _touching = true,
+                  onPointerUp: (_) => _touching = false,
+                  onPointerCancel: (_) => _touching = false,
+                  child: SizedBox(
+                    height: height,
+                    child: ListView.separated(
+                      key: const ValueKey('programme-thumbnail-list'),
+                      controller: _controller,
+                      primary: false,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: programmes.length,
+                      separatorBuilder: (_, _) => SizedBox(width: gap),
+                      itemBuilder: (context, index) {
+                        final programme = programmes[index];
+                        return SizedBox(
+                          width: width,
+                          child: Semantics(
+                            button: true,
+                            label: '${programme.$1}. ${programme.$2}',
+                            onTap: () => _details(index, ml),
+                            excludeSemantics: true,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                key: ValueKey('programme-thumbnail-$index'),
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: () => _details(index, ml),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: AspectRatio(
+                                        aspectRatio: 16 / 9,
+                                        child: Image.asset(
+                                          'assets/brand/programme-${_assets[index]}-thumbnail.webp',
+                                          fit: BoxFit.cover,
+                                          excludeFromSemantics: true,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      programme.$1,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: ml
+                                            ? 'Noto Sans Malayalam'
+                                            : null,
+                                        fontSize: 12,
+                                        height: 1.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.ink,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      programme.$2,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: ml
+                                            ? 'Noto Sans Malayalam'
+                                            : null,
+                                        fontSize: 11,
+                                        height: 1.8,
+                                        color: AppColors.ink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

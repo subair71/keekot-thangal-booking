@@ -13,6 +13,7 @@ import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
 import 'home_footer.dart';
+import 'programme_carousel.dart';
 import 'media/youtube_player.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -216,6 +217,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           const SizedBox(height: 56),
+          const ProgrammeCarousel(),
+          const SizedBox(height: 32),
           KeyedSubtree(key: videosKey, child: const VideoGallery()),
           const SizedBox(height: 56),
           const _SectionTitle(
