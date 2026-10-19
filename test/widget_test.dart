@@ -288,8 +288,13 @@ void main() {
       ),
     );
     expect(find.text('Download pass (PDF)'), findsOneWidget);
-    expect(find.text('TOKEN NUMBERS'), findsOneWidget);
-    expect(find.text('1–2'), findsOneWidget);
+    expect(find.text('TOKEN NUMBERS'), findsNothing);
+    expect(find.text('1–2'), findsNothing);
+    expect(find.text('Show this pass to entry staff'), findsOneWidget);
+    expect(
+      find.text('Booking reference: ${sampleBooking().reference}'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await capturePage(tester, 'pass_375');
   });
