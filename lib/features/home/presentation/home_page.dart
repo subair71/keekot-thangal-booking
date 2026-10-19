@@ -133,7 +133,9 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 24),
+          const ProgrammeCarousel(),
+          const SizedBox(height: 32),
           const _HomeFeaturedVideo(),
           const SizedBox(height: 56),
           TwoColumn(
@@ -217,8 +219,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
           ),
           const SizedBox(height: 56),
-          const ProgrammeCarousel(),
-          const SizedBox(height: 32),
           KeyedSubtree(key: videosKey, child: const VideoGallery()),
           const SizedBox(height: 56),
           const _SectionTitle(
