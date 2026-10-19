@@ -204,7 +204,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel>
                                       child: AspectRatio(
                                         aspectRatio: 16 / 9,
                                         child: Image.asset(
-                                          'assets/brand/programme-${_assets[index]}-thumbnail.webp',
+                                          'assets/brand/programme-${_assets[index]}-overlay-${ml ? 'ml' : 'en'}.webp',
                                           fit: BoxFit.cover,
                                           excludeFromSemantics: true,
                                         ),
