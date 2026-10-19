@@ -13,7 +13,6 @@ import '../../booking/domain/booking_models.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
 import 'home_footer.dart';
-import 'programme_carousel.dart';
 import 'media/youtube_player.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -103,8 +102,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             },
           ),
           const SizedBox(height: 20),
-          const ProgrammeCarousel(),
-          const SizedBox(height: 16),
           AsyncPanel(
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
