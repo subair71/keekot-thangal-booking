@@ -6,8 +6,10 @@ import 'package:keekot_thangal/features/home/presentation/programme_carousel.dar
 void main() {
   for (final viewportWidth in [360.0, 1280.0]) {
     testWidgets('wide banner strip at width $viewportWidth', (tester) async {
-      await tester.binding.setSurfaceSize(Size(viewportWidth, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+      tester.view.physicalSize = Size(viewportWidth, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       final language = ValueNotifier('en');
       addTearDown(language.dispose);
       await tester.pumpWidget(
