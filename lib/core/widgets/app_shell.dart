@@ -37,22 +37,48 @@ class AppShell extends ConsumerWidget {
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       endDrawer: Drawer(
+        width: (MediaQuery.sizeOf(context).width * 0.88)
+            .clamp(0.0, 360.0)
+            .toDouble(),
+        backgroundColor: AppColors.white,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(left: Radius.circular(24)),
+        ),
         child: SafeArea(
           child: ListView(
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: Builder(
-                  builder: (drawerContext) => IconButton(
-                    tooltip: MaterialLocalizations.of(
-                      context,
-                    ).closeButtonTooltip,
-                    onPressed: () => Navigator.of(drawerContext).pop(),
-                    icon: const Icon(Icons.close),
+              Row(
+                children: [
+                  const Emblem(size: 36),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: AppText(
+                      'KEEKKOTT SAYYID ATTAKOYA THANGAL',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        height: 1.4,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.emerald,
+                      ),
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Builder(
+                      builder: (drawerContext) => IconButton(
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
+                        onPressed: () => Navigator.of(drawerContext).pop(),
+                        icon: const Icon(Icons.close, size: 20),
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 24),
               for (final item in const [
                 ('Book a visit', Icons.calendar_month_outlined, '/book'),
                 ('Visitor guide', Icons.menu_book_outlined, '/?section=guide'),
@@ -64,19 +90,22 @@ class AppShell extends ConsumerWidget {
                 ),
               ])
                 Builder(
-                  builder: (drawerContext) => ListTile(
-                    leading: Icon(item.$2, color: AppColors.emerald),
-                    title: AppText(
-                      item.$1,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                  builder: (drawerContext) => _MenuItem(
+                    icon: item.$2,
+                    label: item.$1,
+                    primary: item.$3 == '/book',
+                    selected:
+                        GoRouterState.of(context).uri.toString() == item.$3,
                     onTap: () {
                       Navigator.of(drawerContext).pop();
                       context.go(item.$3);
                     },
                   ),
                 ),
-              const Divider(),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Divider(height: 1, color: AppColors.outline),
+              ),
               for (final item in [
                 ('Contact us', Icons.mail_outline, '/contact'),
                 if (user == null) ('Sign in with mobile', Icons.login, '/auth'),
@@ -94,12 +123,12 @@ class AppShell extends ConsumerWidget {
                   ),
               ])
                 Builder(
-                  builder: (drawerContext) => ListTile(
-                    leading: Icon(item.$2, color: AppColors.emerald),
-                    title: AppText(
-                      item.$1,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                  builder: (drawerContext) => _MenuItem(
+                    icon: item.$2,
+                    label: item.$1,
+                    primary: item.$3 == '/book',
+                    selected:
+                        GoRouterState.of(context).uri.toString() == item.$3,
                     onTap: () {
                       Navigator.of(drawerContext).pop();
                       context.go(item.$3);
@@ -107,7 +136,10 @@ class AppShell extends ConsumerWidget {
                   ),
                 ),
               if (user != null) ...[
-                const Divider(),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Divider(height: 1, color: AppColors.outline),
+                ),
                 ListTile(
                   leading: const Icon(Icons.account_circle_outlined),
                   title: Text(user.maskedPhone),
@@ -285,6 +317,64 @@ class AppShell extends ConsumerWidget {
                   ),
               ],
             ),
+    );
+  }
+}
+
+class _MenuItem extends StatelessWidget {
+  const _MenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.primary = false,
+    this.selected = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool primary;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = primary ? AppColors.white : AppColors.emerald;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Semantics(
+        selected: selected,
+        child: Material(
+          color: primary
+              ? AppColors.emerald
+              : selected
+              ? AppColors.mint
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 2,
+            ),
+            minLeadingWidth: 24,
+            horizontalTitleGap: 12,
+            leading: Icon(icon, size: 22, color: foreground),
+            title: AppText(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                fontWeight: primary || selected
+                    ? FontWeight.w600
+                    : FontWeight.w500,
+                color: foreground,
+              ),
+            ),
+            trailing: Icon(Icons.chevron_right, size: 18, color: foreground),
+            onTap: onTap,
+          ),
+        ),
+      ),
     );
   }
 }
