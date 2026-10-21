@@ -68,8 +68,9 @@ class AppShell extends ConsumerWidget {
                     alignment: Alignment.centerRight,
                     child: Builder(
                       builder: (drawerContext) => IconButton(
-                        tooltip: MaterialLocalizations.of(context)
-                            .closeButtonTooltip,
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
                         onPressed: () => Navigator.of(drawerContext).pop(),
                         icon: const Icon(Icons.close, size: 20),
                       ),
@@ -278,9 +279,9 @@ class AppShell extends ConsumerWidget {
                                   tooltip: AppLanguage.of(context) == 'ml'
                                       ? 'മെനു'
                                       : 'Menu',
-                                  onPressed: () =>
-                                      Scaffold.of(scaffoldContext)
-                                          .openEndDrawer(),
+                                  onPressed: () => Scaffold.of(
+                                    scaffoldContext,
+                                  ).openEndDrawer(),
                                   icon: const Icon(Icons.menu),
                                 ),
                               ),
