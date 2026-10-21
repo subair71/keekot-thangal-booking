@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_language.dart';
 
-/// Compact 16:9 thumbnails with two full banners and a preview of the next.
+/// Full artwork in auto-scrolling thumbnails sized to two-thirds of the screen.
 class ProgrammeCarousel extends StatefulWidget {
   const ProgrammeCarousel({super.key});
 
@@ -17,7 +17,6 @@ class ProgrammeCarousel extends StatefulWidget {
 class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
   final _controller = ScrollController();
   Timer? _timer;
-  bool _paused = false;
   bool _hovering = false;
   bool _touching = false;
   bool _reduceMotion = false;
@@ -27,7 +26,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
-      if (_paused || _hovering || _touching || _reduceMotion) return;
+      if (_hovering || _touching || _reduceMotion) return;
       if (!_controller.hasClients) return;
       final position = _controller.position;
       if (position.isScrollingNotifier.value || position.maxScrollExtent <= 0) {
@@ -77,16 +76,23 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
       ),
     ];
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 840),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final gap = constraints.maxWidth < 600 ? 8.0 : 12.0;
-            final width = (constraints.maxWidth - 2 * gap) / 2.3;
-            _step = width + gap;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = constraints.maxWidth < 600 ? 8.0 : 12.0;
+        final width = math.min(
+          MediaQuery.sizeOf(context).width * 2 / 3,
+          constraints.maxWidth,
+        );
+        _step = width + gap;
 
-            final strip = SizedBox(
+        return MouseRegion(
+          onEnter: (_) => _hovering = true,
+          onExit: (_) => _hovering = false,
+          child: Listener(
+            onPointerDown: (_) => _touching = true,
+            onPointerUp: (_) => _touching = false,
+            onPointerCancel: (_) => _touching = false,
+            child: SizedBox(
               height: width * 9 / 16,
               child: ScrollConfiguration(
                 behavior: ScrollConfiguration.of(context).copyWith(
@@ -123,42 +129,10 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
                   },
                 ),
               ),
-            );
-
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MouseRegion(
-                  onEnter: (_) => _hovering = true,
-                  onExit: (_) => _hovering = false,
-                  child: Listener(
-                    onPointerDown: (_) => _touching = true,
-                    onPointerUp: (_) => _touching = false,
-                    onPointerCancel: (_) => _touching = false,
-                    child: strip,
-                  ),
-                ),
-                if (!_reduceMotion)
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: TextButton.icon(
-                      onPressed: () => setState(() => _paused = !_paused),
-                      icon: Icon(
-                        _paused ? Icons.play_arrow : Icons.pause,
-                        size: 16,
-                      ),
-                      label: Text(
-                        _paused
-                            ? (ml ? 'തുടരുക' : 'Resume')
-                            : (ml ? 'നിർത്തുക' : 'Pause'),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:keekot_thangal/features/home/presentation/programme_carousel.dar
 
 void main() {
   for (final viewportWidth in [360.0, 1280.0]) {
-    testWidgets('compact banner strip at width $viewportWidth', (tester) async {
+    testWidgets('wide banner strip at width $viewportWidth', (tester) async {
       await tester.binding.setSurfaceSize(Size(viewportWidth, 800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       final language = ValueNotifier('en');
@@ -23,17 +23,16 @@ void main() {
       final strip = find.byKey(const ValueKey('programme-thumbnail-strip'));
       final viewport = tester.getRect(strip);
       final images = find.byType(Image);
-      expect(images, findsNWidgets(3));
+      expect(images, findsAtLeastNWidgets(2));
       final first = tester.getRect(images.at(0));
       final second = tester.getRect(images.at(1));
-      final third = tester.getRect(images.at(2));
 
       expect(first.left, closeTo(viewport.left, 0.1));
-      expect(second.right, lessThan(viewport.right));
-      expect(third.left, lessThan(viewport.right));
-      expect(third.right, greaterThan(viewport.right));
+      expect(first.width, closeTo(viewportWidth * 2 / 3, 0.1));
+      expect(second.left, lessThan(viewport.right));
+      expect(second.right, greaterThan(viewport.right));
+      expect(find.byType(TextButton), findsNothing);
       expect(first.width / first.height, closeTo(16 / 9, 0.01));
-      expect((viewport.right - third.left) / third.width, closeTo(0.3, 0.01));
       final image = tester.widget<Image>(images.first);
       expect(
         (image.image as AssetImage).assetName,
@@ -49,7 +48,7 @@ void main() {
         contains('വ്യാഴാഴ്ച'),
       );
 
-      await tester.drag(strip, const Offset(-600, 0));
+      await tester.drag(strip, Offset(-viewportWidth * 2, 0));
       await tester.pumpAndSettle();
       final last = tester.getRect(find.byType(Image).last);
       expect(last.right, lessThanOrEqualTo(viewport.right + 0.1));
@@ -58,14 +57,15 @@ void main() {
     });
   }
 
-  testWidgets('auto scroll can pause, resume and respects reduced motion', (
-    tester,
-  ) async {
+  testWidgets('auto scroll loops and respects reduced motion', (tester) async {
     final language = ValueNotifier('en');
     addTearDown(language.dispose);
     Widget app({bool reducedMotion = false}) => MaterialApp(
       home: MediaQuery(
-        data: MediaQueryData(disableAnimations: reducedMotion),
+        data: MediaQueryData(
+          size: const Size(800, 600),
+          disableAnimations: reducedMotion,
+        ),
         child: AppLanguage(
           notifier: language,
           child: const Scaffold(body: ProgrammeCarousel()),
@@ -80,19 +80,13 @@ void main() {
     );
     final controller = list.controller!;
     expect(controller.offset, 0);
+    expect(find.byType(TextButton), findsNothing);
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
     expect(controller.offset, greaterThan(0));
-
-    await tester.tap(find.text('Pause'));
+    await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
-    final pausedOffset = controller.offset;
-    await tester.pump(const Duration(seconds: 5));
-    await tester.pumpAndSettle();
-    expect(controller.offset, pausedOffset);
-
-    await tester.tap(find.text('Resume'));
-    await tester.pumpAndSettle();
+    expect(controller.offset, controller.position.maxScrollExtent);
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
     expect(controller.offset, 0);
@@ -103,7 +97,6 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
     expect(controller.offset, reducedOffset);
-    expect(find.text('Pause'), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
     expect(tester.takeException(), isNull);
   });
