@@ -33,10 +33,7 @@ void main() {
       expect(third.left, lessThan(viewport.right));
       expect(third.right, greaterThan(viewport.right));
       expect(first.width / first.height, closeTo(16 / 9, 0.01));
-      expect(
-        (viewport.right - third.left) / third.width,
-        closeTo(0.3, 0.01),
-      );
+      expect((viewport.right - third.left) / third.width, closeTo(0.3, 0.01));
       final image = tester.widget<Image>(images.first);
       expect(
         (image.image as AssetImage).assetName,
