@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
@@ -689,133 +687,117 @@ class _HomeFeaturedVideo extends StatelessWidget {
   const _HomeFeaturedVideo();
 
   static const _videoId = 'xrsTvpbTsO0';
-  static const _videoUrl = 'https://www.youtube.com/watch?v=$_videoId';
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final compact = constraints.maxWidth < 760;
+      final compact = constraints.maxWidth < 800;
+      final ml = AppLanguage.of(context) == 'ml';
       final content = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const AppText(
-            'A GLIMPSE OF KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
-            style: TextStyle(
+          Container(
+            width: 36,
+            height: 3,
+            decoration: BoxDecoration(
+              color: AppColors.gold,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+          AppText(
+            ml ? 'മഖാമിനെ അടുത്തറിയാം' : 'EXPLORE THE MAQAM',
+            style: const TextStyle(
               color: AppColors.emerald,
-              letterSpacing: 1.8,
-              fontSize: 11,
+              letterSpacing: 1.6,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 10),
-          AppText(
-            'A quiet moment before your visit.',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 8),
-          const AppText(
-            'കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം',
-            style: TextStyle(
-              color: AppColors.emerald,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
           const SizedBox(height: 12),
-          AppText.rich(
-            const TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Discover Keekkott Sayyid Attakoya Thangal Maqam. ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.ink,
-                  ),
-                ),
-                TextSpan(
-                  text:
-                      'Take a glimpse of the Maqam and its green surroundings through our channel’s featured video. A moment to pause, reflect and feel connected before your journey.',
-                ),
-              ],
+          Semantics(
+            header: true,
+            child: AppText(
+              ml
+                  ? 'സന്ദർശനത്തിന് മുമ്പ് ഒരു ശാന്ത നിമിഷം.'
+                  : 'A quiet moment before your visit.',
+              style: TextStyle(
+                fontFamily: 'Newsreader',
+                fontSize: compact ? 26 : 34,
+                height: 1.2,
+                fontWeight: FontWeight.w500,
+                color: AppColors.ink,
+              ),
             ),
+          ),
+          const SizedBox(height: 14),
+          AppText(
+            ml
+                ? 'ചാവക്കാട്ടെ കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാമും അതിന്റെ ശാന്തമായ പരിസരവും അടുത്തറിയാം.'
+                : 'Discover the Maqam and its peaceful surroundings in Chavakkad. A moment for reflection before your journey.',
             style: const TextStyle(
               color: AppColors.muted,
               height: 1.65,
               fontSize: 14,
             ),
           ),
-          const SizedBox(height: 10),
-          const AppText(
-            'Planning a ziyarat? Check available visit times, reserve your slot and keep your booking pass ready before travelling.',
-            style: TextStyle(
-              color: AppColors.muted,
-              height: 1.65,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextButton.icon(
-            onPressed: () => launchUrl(
-              Uri.parse(_videoUrl),
-              mode: LaunchMode.externalApplication,
-            ),
-            icon: const Icon(Icons.open_in_new, size: 16),
-            label: const AppText('Watch the full video with sound'),
-          ),
-        ],
-      );
-      final video = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: ColoredBox(
-                color: Colors.black,
-                child: youtubePlayer(
-                  _videoId,
-                  autoplay: true,
-                  controls: false,
-                  loop: true,
-                  mute: true,
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              const Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: AppColors.emerald,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: AppText(
+                  ml ? 'ചാവക്കാട്, കേരളം' : 'Chavakkad, Kerala',
+                  style: const TextStyle(
+                    color: AppColors.emerald,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const AppText(
-            'Keekkott Bungalow Online · Silent video preview',
-            style: TextStyle(fontSize: 11, color: AppColors.muted),
+            ],
           ),
         ],
       );
+      final video = ClipRRect(
+        borderRadius: BorderRadius.circular(compact ? 14 : 18),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: ColoredBox(
+            color: AppColors.emerald,
+            child: youtubePlayer(
+              _videoId,
+              autoplay: !MediaQuery.disableAnimationsOf(context),
+              controls: false,
+              loop: true,
+              mute: true,
+            ),
+          ),
+        ),
+      );
       return Container(
-        padding: EdgeInsets.all(compact ? 16 : 20),
+        padding: EdgeInsets.all(compact ? 20 : 32),
         decoration: BoxDecoration(
-          color: AppColors.cream,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppColors.outline),
         ),
         child: compact
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  content,
-                  const SizedBox(height: 14),
-                  Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: video,
-                    ),
-                  ),
-                ],
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [video, const SizedBox(height: 24), content],
               )
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(child: content),
-                  const SizedBox(width: 32),
-                  SizedBox(width: constraints.maxWidth * .38, child: video),
+                  Expanded(flex: 4, child: content),
+                  const SizedBox(width: 40),
+                  Expanded(flex: 6, child: video),
                 ],
               ),
       );
