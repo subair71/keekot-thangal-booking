@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && node --test lib/test/*.test.js",
-    "test:emulator": "npm run build && node --test lib/test/emulator.integration.js",
+    "test:emulator": "npm run build && node --test --test-concurrency=1 lib/test/emulator.integration.js lib/test/assignments.integration.js",
     "seed": "npm run build && node lib/scripts/seed.js",
     "admin": "npm run build && node lib/scripts/admin.js"
   },

@@ -1,15 +1,16 @@
+import '../../../core/localization/app_language.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../app/bootstrap/providers.dart';
 import '../../../core/widgets/components.dart';
 
 const _permissions = {
-  'dashboard': 'Overview',
-  'bookings': 'Bookings and reports',
   'slots': 'Slots, closures and date hours',
   'settings': 'Booking settings',
   'gate': 'Scan and confirm visitor passes',
@@ -61,6 +62,8 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const Center(child: Emblem(size: 64)),
+        const SizedBox(height: 24),
         const PageHeading(
           'Khadim login',
           subtitle:
@@ -74,9 +77,12 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
                 controller: phone,
                 enabled: !busy,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Phone number',
-                  helperText: 'Include country code, for example +91',
+                decoration: InputDecoration(
+                  labelText: tr(context, 'Phone number'),
+                  helperText: tr(
+                    context,
+                    'Include country code, for example +91',
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -88,8 +94,8 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
                 maxLength: 6,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onSubmitted: (_) => login(),
-                decoration: const InputDecoration(
-                  labelText: 'Six-digit password',
+                decoration: InputDecoration(
+                  labelText: tr(context, 'Six-digit password'),
                 ),
               ),
               if (error != null)
@@ -100,11 +106,11 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: busy ? null : login,
-                child: Text(busy ? 'Signing in…' : 'Sign in'),
+                child: AppText(busy ? 'Signing in…' : 'Sign in'),
               ),
               TextButton(
-                onPressed: () => context.go('/auth'),
-                child: const Text('Visitor / administrator SMS login'),
+                onPressed: () => context.go('/login'),
+                child: const AppText('Visitor login'),
               ),
             ],
           ),
@@ -183,7 +189,7 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
         const PageHeading(
           'Khadim accounts',
           subtitle:
-              'Choose exactly which sections each Khadim can use. Only administrators can manage these accounts.',
+              'Every enabled Khadim can view their own visits. Choose additional operational permissions below. Booking reports and assignments are administrator-only.',
         ),
         SurfaceCard(
           child: Form(

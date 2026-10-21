@@ -57,8 +57,8 @@ class SurfaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: color,
-    elevation: 0,
-    shadowColor: AppColors.emerald.withValues(alpha: .08),
+    elevation: 1,
+    shadowColor: AppColors.emerald.withValues(alpha: .04),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
       side: BorderSide(color: AppColors.outline),

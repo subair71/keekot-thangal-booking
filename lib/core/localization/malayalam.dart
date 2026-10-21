@@ -1,5 +1,82 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Your schedule': 'നിങ്ങളുടെ സമയക്രമം',
+  'Khadim': 'ഖാദിം',
+  'Token': 'ടോക്കൺ',
+  'Khadim login': 'ഖാദിം ലോഗിൻ',
+  'Six-digit password': 'ആറക്ക പാസ്‌വേഡ്',
+  'Visitor login': 'സന്ദർശക ലോഗിൻ',
+  'Use the phone number and six-digit password provided by the administrator.':
+      'അഡ്മിനിസ്ട്രേറ്റർ നൽകിയ ഫോൺ നമ്പറും ആറക്ക പാസ്‌വേഡും ഉപയോഗിക്കുക.',
+
+  'Available now': 'ഇപ്പോഴത്തെ ലഭ്യത',
+  'in progress': 'പുരോഗമിക്കുന്നു',
+  'visits': 'സന്ദർശനങ്ങൾ',
+  'active visits': 'സജീവ സന്ദർശനങ്ങൾ',
+  'Account disabled': 'അക്കൗണ്ട് പ്രവർത്തനരഹിതമാണ്',
+  'Capacity is full': 'പരിധി നിറഞ്ഞു',
+  'Break or unavailable period': 'വിശ്രമ സമയമോ ലഭ്യമല്ലാത്ത സമയമോ',
+  'Marked unavailable': 'ലഭ്യമല്ലെന്ന് രേഖപ്പെടുത്തി',
+  'Outside working hours': 'ജോലി സമയത്തിന് പുറത്താണ്',
+  'Capacity': 'പരിധി',
+  'Edit schedule': 'സമയക്രമം തിരുത്തുക',
+  'Ask an administrator to configure your schedule first.':
+      'ആദ്യം ജോലി സമയം ക്രമീകരിക്കാൻ അഡ്മിനിസ്ട്രേറ്ററോട് ആവശ്യപ്പെടുക.',
+  'No working schedule configured': 'ജോലി സമയക്രമം സജ്ജമാക്കിയിട്ടില്ല',
+  'Save availability': 'ലഭ്യത സംരക്ഷിക്കുക',
+  'Existing assignments stay assigned. Inform the administrator before changing availability.':
+      'നിലവിലെ നിയോഗങ്ങൾ തുടരും. ലഭ്യത മാറ്റുന്നതിന് മുമ്പ് അഡ്മിനിസ്ട്രേറ്ററെ അറിയിക്കുക.',
+  'Flag affected visits for admin review':
+      'ബാധിക്കപ്പെടുന്ന സന്ദർശനങ്ങൾ അഡ്മിൻ പരിശോധനയ്ക്ക് അടയാളപ്പെടുത്തുക',
+  'This does not extend your permitted schedule.':
+      'ഇത് അനുവദിച്ച ജോലി സമയം നീട്ടുന്നില്ല.',
+  'Available within working hours': 'ജോലി സമയത്തിനുള്ളിൽ ലഭ്യമാണ്',
+  'HH:mm-HH:mm, separated by commas':
+      'HH:mm-HH:mm, കോമ ഉപയോഗിച്ച് വേർതിരിക്കുക',
+  'Default: one overlapping visit': 'സാധാരണ പരിധി: ഒരേ സമയം ഒരു സന്ദർശനം',
+  'Concurrent visit capacity': 'ഒരേ സമയത്തെ സന്ദർശന പരിധി',
+  'Unavailable periods': 'ലഭ്യമല്ലാത്ത സമയങ്ങൾ',
+  'Breaks': 'വിശ്രമ സമയം',
+  'Working hours': 'ജോലി സമയം',
+  'Back to visits': 'സന്ദർശനങ്ങളിലേക്ക് മടങ്ങുക',
+  'Availability is checked for each visit. No schedule means off duty.':
+      'ഓരോ സന്ദർശനത്തിനും ലഭ്യത പരിശോധിക്കുന്നു. സമയക്രമമില്ലെങ്കിൽ ഡ്യൂട്ടിയിലില്ല.',
+  'WORKING SCHEDULE': 'ജോലി സമയക്രമം',
+  'Khadim availability': 'ഖാദിമിന്റെ ലഭ്യത',
+  'Confirm assignment': 'നിയോഗം സ്ഥിരീകരിക്കുക',
+  'Remove assignment': 'നിയോഗം നീക്കുക',
+  'Required for reassignment or removal':
+      'നിയോഗം മാറ്റുന്നതിനോ നീക്കുന്നതിനോ നിർബന്ധമാണ്',
+  'Reason for change': 'മാറ്റത്തിനുള്ള കാരണം',
+  'Off duty': 'ഡ്യൂട്ടിയിലില്ല',
+  'Busy': 'തിരക്കിലാണ്',
+  'No khadim available for this time': 'ഈ സമയത്ത് ഖാദിം ലഭ്യമല്ല',
+  'Availability for the selected booking time':
+      'തിരഞ്ഞെടുത്ത സന്ദർശന സമയത്തെ ലഭ്യത',
+  'Reassign Khadim': 'മറ്റൊരു ഖാദിമിനെ നിയോഗിക്കുക',
+  'Complete visit': 'സന്ദർശനം പൂർത്തിയാക്കുക',
+  'Start visit': 'സന്ദർശനം ആരംഭിക്കുക',
+  'Review assignment': 'നിയോഗം പരിശോധിക്കുക',
+  'Assign Khadim': 'ഖാദിമിനെ നിയോഗിക്കുക',
+  'Khadim assignment pending': 'ഖാദിമിനെ നിയോഗിക്കാനുണ്ട്',
+  'Needs review': 'പരിശോധന ആവശ്യമാണ്',
+  'Try another date or filter.': 'മറ്റൊരു തീയതിയോ ഫിൽട്ടറോ തിരഞ്ഞെടുക്കുക.',
+  'No visits to show': 'സന്ദർശനങ്ങൾ ഇല്ല',
+  'Time (HH:mm)': 'സമയം (HH:mm)',
+  'In progress': 'പുരോഗമിക്കുന്നു',
+  'Assigned': 'നിയോഗിച്ചു',
+  'Unassigned': 'നിയോഗിച്ചിട്ടില്ല',
+  'All': 'എല്ലാം',
+  'Service status': 'സേവന നില',
+  'Search visitor or booking': 'സന്ദർശകനെയോ ബുക്കിംഗോ തിരയുക',
+  'Manage availability': 'ലഭ്യത ക്രമീകരിക്കുക',
+  'Scheduled in India Standard Time · Asia/Kolkata':
+      'ഇന്ത്യൻ സമയപ്രകാരം · Asia/Kolkata',
+  'VISITOR CARE': 'സന്ദർശക സേവനം',
+  'Khadim Assignments': 'ഖാദിം നിയോഗങ്ങൾ',
+  'Sign in with your authorized administrator mobile number.':
+      'അനുമതിയുള്ള അഡ്മിനിസ്ട്രേറ്റർ മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് പ്രവേശിക്കുക.',
+  'Administrator login': 'അഡ്മിനിസ്ട്രേറ്റർ ലോഗിൻ',
   "Not enough places for this group": "ഈ സംഘത്തിന് ആവശ്യമായ സ്ഥലങ്ങൾ ലഭ്യമല്ല",
   "Your selected time is no longer available for this group. Choose another time.":
       "തിരഞ്ഞെടുത്ത സമയത്ത് ഈ സംഘത്തിന് ആവശ്യമായ സ്ഥലങ്ങൾ ഇപ്പോൾ ലഭ്യമല്ല. മറ്റൊരു സമയം തിരഞ്ഞെടുക്കുക.",

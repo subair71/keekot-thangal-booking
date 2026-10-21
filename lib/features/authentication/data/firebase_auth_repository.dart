@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,6 +52,7 @@ class FirebaseAuthRepository implements AuthRepository {
                       AppUser(
                         user.uid,
                         data?['phone'] as String? ?? '',
+                        khadim: true,
                         permissions: List<String>.from(
                           data?['permissions'] ?? [],
                         ),

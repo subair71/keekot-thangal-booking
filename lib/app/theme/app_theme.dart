@@ -31,7 +31,7 @@ ThemeData buildTheme() {
     ),
   );
   const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12)),
+    borderRadius: BorderRadius.all(Radius.circular(14)),
   );
   return base.copyWith(
     textTheme: base.textTheme
@@ -109,15 +109,15 @@ ThemeData buildTheme() {
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.all(16),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: AppColors.outline),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: AppColors.secondary, width: 2),
       ),
     ),
@@ -135,11 +135,22 @@ ThemeData buildTheme() {
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.emerald,
       contentTextStyle: const TextStyle(color: AppColors.white, fontSize: 14),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: AppColors.emerald,
       linearTrackColor: AppColors.mint,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.white,
+      selectedColor: AppColors.mintStrong,
+      side: const BorderSide(color: AppColors.outline),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: AppColors.ivory,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
     dividerColor: AppColors.outline,
   );

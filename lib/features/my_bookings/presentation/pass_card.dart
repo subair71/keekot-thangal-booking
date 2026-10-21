@@ -60,6 +60,18 @@ class _PassCardState extends ConsumerState<PassCard> {
           ),
           const SizedBox(height: 20),
           AppText('Booking reference: ${b.reference}'),
+          const SizedBox(height: 16),
+          InfoLine(
+            Icons.support_agent,
+            b.khadimName ?? 'Khadim assignment pending',
+            switch (b.serviceStatus) {
+              'assigned' => 'Assigned',
+              'inProgress' => 'In progress',
+              'completed' => 'Completed',
+              'cancelled' => 'Cancelled',
+              _ => 'Unassigned',
+            },
+          ),
           const SizedBox(height: 24),
           const InfoLine(
             Icons.location_on_outlined,

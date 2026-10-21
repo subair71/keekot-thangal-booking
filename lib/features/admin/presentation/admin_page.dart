@@ -38,9 +38,17 @@ class AdminPage extends ConsumerWidget {
                   ('slots', 'Slots & closures'),
                   ('settings', 'Settings'),
                   ('gate', 'Scan visitor pass'),
-                  if (user?.admin == true) ('khadims', 'Khadim accounts'),
+                  if (user?.admin == true) ...[
+                    ('khadims', 'Khadim accounts'),
+                    ('assignments', 'Khadim Assignments'),
+                    ('availability', 'Khadim availability'),
+                  ],
                 ])
-                  if (item.$1 == 'khadims'
+                  if ([
+                        'khadims',
+                        'assignments',
+                        'availability',
+                      ].contains(item.$1)
                       ? user?.admin == true
                       : user?.can(item.$1) == true)
                     OutlinedButton(

@@ -1,3 +1,4 @@
+import {AssignmentService} from './assignments.js';
 import {getAuth} from 'firebase-admin/auth';
 import {randomBytes, scryptSync, timingSafeEqual} from 'node:crypto';
 import {initializeApp} from 'firebase-admin/app';
@@ -23,6 +24,7 @@ async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
     if(!d.enabled || r.auth.token.khadimVersion!==d.version)throw new HttpsError('permission-denied','Access changed. Please sign in again.');
     a.phone=d.phone; a.permissions=d.permissions; a.admin=false; a.gate=d.permissions.includes('gate');
   }
+  if(['bookings','dashboard'].includes(role) && !a.admin)throw new HttpsError('permission-denied','Administrator access required.');
   if(role!=='visitor' && !a.admin && !(role==='gate' && a.gate) && !a.permissions?.includes(role))
     throw new HttpsError('permission-denied','You do not have access to this area.');
   if(role==='visitor'&&!a.phone)throw new HttpsError('failed-precondition','A verified phone number is required.');
@@ -125,6 +127,8 @@ export const adminSaveKhadim=callable(async r=>{
     if(r.data?.uid && !old.exists)throw new HttpsError('not-found','Khadim not found.');
     if(!old.exists&&!credentials)throw new HttpsError('invalid-argument','A six-digit password is required.');
     if(existing.exists && existing.data()!.uid!==uid)throw new HttpsError('already-exists','This phone number already has a Khadim account.');
+    const affected=r.data?.enabled===false?await tx.get(db.collection('bookings').where('assignment.khadimId','==',uid)):null;
+    if(affected)for(const b of affected.docs)if(['assigned','inProgress'].includes(b.data().assignment?.status))tx.update(b.ref,{'assignment.conflict':true});
     if(old.exists && old.data()!.phone!==phone)tx.delete(db.doc(`khadimPhones/${old.data()!.phone}`));
     tx.set(phoneRef,{uid});
     tx.set(ref,{name,phone,permissions:[...new Set(permissions)],enabled:r.data?.enabled!==false,version:(old.data()?.version ?? 0)+1,updatedAt:FieldValue.serverTimestamp()});
@@ -158,3 +162,16 @@ export const khadimLogin=callable(async r=>{
   const token=await getAuth().createCustomToken(uid,{khadimVersion:d.version});
   return {token};
 });
+
+const assignments=new AssignmentService(db);
+export const assignmentCandidates=callable(async r=>{await actor(r,'admin');return assignments.candidates(id(r.data?.bookingId));});
+export const adminAssignKhadim=callable(async r=>{const a=await actor(r,'admin');return assignments.change(a.uid,id(r.data?.bookingId),r.data?.khadimId?id(r.data.khadimId):null,String(r.data?.reason ?? ''),Number(r.data?.revision ?? 0));});
+export const adminSaveKhadimSchedule=callable(async r=>{const a=await actor(r,'admin');return assignments.saveSchedule(a.uid,id(r.data?.khadimId),validDate(r.data?.visitDate),r.data);});
+async function assignmentStaff(r:CallableRequest){
+  const a=await actor(r);const staff=await db.doc(`khadims/${a.uid}`).get();
+  if(!staff.exists||!staff.data()!.enabled)throw new HttpsError('permission-denied','Khadim access required.');return a;
+}
+export const khadimSetAvailability=callable(async r=>{const a=await assignmentStaff(r);return assignments.saveSchedule(a.uid,a.uid,validDate(r.data?.visitDate),r.data,true);});
+export const khadimVisitStatus=callable(async r=>{const a=await assignmentStaff(r);return assignments.transition(a.uid,id(r.data?.bookingId),String(r.data?.status));});
+// Re-read the current document in the transaction: trigger events can arrive out of order.
+export const reconcileAssignment=onDocumentWritten('bookings/{bookingId}',async event=>{if(event.data?.after.exists)await assignments.reconcile(event.params.bookingId);});
