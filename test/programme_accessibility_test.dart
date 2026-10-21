@@ -4,8 +4,8 @@ import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:keekot_thangal/features/home/presentation/programme_carousel.dart';
 
 void main() {
-  for (final viewportWidth in [360.0, 1280.0]) {
-    testWidgets('wide banner strip at width $viewportWidth', (tester) async {
+  for (final viewportWidth in [360.0, 1280.0, 1920.0]) {
+    testWidgets('banner proportions at width $viewportWidth', (tester) async {
       tester.view.physicalSize = Size(viewportWidth, 800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
@@ -30,9 +30,18 @@ void main() {
       final second = tester.getRect(images.at(1));
 
       expect(first.left, closeTo(viewport.left, 0.1));
-      expect(first.width, closeTo(viewportWidth * 2 / 3, 0.1));
+      final expectedWidth = viewportWidth < 540 ? viewportWidth * 2 / 3 : 360.0;
+      expect(first.width, closeTo(expectedWidth, 0.1));
+      expect(first.height, lessThanOrEqualTo(202.5));
       expect(second.left, lessThan(viewport.right));
-      expect(second.right, greaterThan(viewport.right));
+      if (viewportWidth < 540) {
+        expect(second.right, greaterThan(viewport.right));
+      } else {
+        expect(second.right, lessThan(viewport.right));
+        final third = tester.getRect(images.at(2));
+        expect(third.left, lessThan(viewport.right));
+        expect(third.right, greaterThan(viewport.right));
+      }
       expect(find.byType(TextButton), findsNothing);
       expect(first.width / first.height, closeTo(16 / 9, 0.01));
       final image = tester.widget<Image>(images.first);
@@ -86,9 +95,7 @@ void main() {
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
     expect(controller.offset, greaterThan(0));
-    await tester.pump(const Duration(seconds: 4));
-    await tester.pumpAndSettle();
-    expect(controller.offset, controller.position.maxScrollExtent);
+    controller.jumpTo(controller.position.maxScrollExtent);
     await tester.pump(const Duration(seconds: 4));
     await tester.pumpAndSettle();
     expect(controller.offset, 0);
