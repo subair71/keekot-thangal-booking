@@ -40,6 +40,7 @@ void main() {
         'assets/brand/programme-dhikr.webp',
       );
       expect(image.semanticLabel, contains('Thursday'));
+      expect(image.fit, BoxFit.contain);
 
       language.value = 'ml';
       await tester.pumpAndSettle();
@@ -53,6 +54,57 @@ void main() {
       final last = tester.getRect(find.byType(Image).last);
       expect(last.right, lessThanOrEqualTo(viewport.right + 0.1));
       expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
     });
   }
+
+  testWidgets('auto scroll can pause, resume and respects reduced motion', (
+    tester,
+  ) async {
+    final language = ValueNotifier('en');
+    addTearDown(language.dispose);
+    Widget app({bool reducedMotion = false}) => MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: reducedMotion),
+        child: AppLanguage(
+          notifier: language,
+          child: const Scaffold(body: ProgrammeCarousel()),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    final list = tester.widget<ListView>(
+      find.byKey(const ValueKey('programme-thumbnail-strip')),
+    );
+    final controller = list.controller!;
+    expect(controller.offset, 0);
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
+    expect(controller.offset, greaterThan(0));
+
+    await tester.tap(find.text('Pause'));
+    await tester.pumpAndSettle();
+    final pausedOffset = controller.offset;
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    expect(controller.offset, pausedOffset);
+
+    await tester.tap(find.text('Resume'));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
+    expect(controller.offset, 0);
+
+    await tester.pumpWidget(app(reducedMotion: true));
+    await tester.pumpAndSettle();
+    final reducedOffset = controller.offset;
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    expect(controller.offset, reducedOffset);
+    expect(find.text('Pause'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(tester.takeException(), isNull);
+  });
 }
