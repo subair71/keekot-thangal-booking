@@ -199,8 +199,9 @@ class LocationCard extends ConsumerWidget {
                 if (config?.contactPhone.isNotEmpty == true) ...[
                   const SizedBox(height: 12),
                   TextButton.icon(
-                    onPressed: () =>
-                        launchUrl(Uri(scheme: 'tel', path: config.contactPhone)),
+                    onPressed: () => launchUrl(
+                      Uri(scheme: 'tel', path: config.contactPhone),
+                    ),
                     icon: const Icon(Icons.call_outlined),
                     label: AppText(config!.contactPhone),
                   ),
