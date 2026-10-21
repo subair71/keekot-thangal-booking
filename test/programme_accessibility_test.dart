@@ -66,7 +66,8 @@ void main() {
       );
 
       for (final item in tester.widgetList<Image>(images)) {
-        expect((item.image as AssetImage).assetName, isNot(endsWith('-en.webp')));
+        final asset = (item.image as AssetImage).assetName;
+        expect(asset, isNot(endsWith('-en.webp')));
       }
 
       await tester.drag(strip, Offset(-viewportWidth * 10, 0));
