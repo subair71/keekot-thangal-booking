@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
@@ -76,11 +75,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextButton.icon(
-            onPressed: () => context.go('/khadim/login'),
-            icon: const Icon(Icons.badge_outlined),
-            label: const Text('Khadim login'),
-          ),
           Center(
             child: Container(
               padding: const EdgeInsets.all(20),
