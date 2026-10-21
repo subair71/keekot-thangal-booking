@@ -67,7 +67,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
             : 'Dhikr gathering. Every Thursday after Maghrib.',
       ),
       (
-        asset: 'assets/brand/programme-mawlid-compact.webp',
+        asset: 'assets/brand/programme-mawlid-corrected.webp',
         label: ml ? 'മൗലിദ് പരിപാടി' : 'Mawlid programme.',
       ),
       (
