@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="540" viewBox="0 0 600 540">
+<rect width="600" height="540" fill="#eef1e6"/>
+<g fill="#dce5d2"><path d="M18 18h152v114H18zM205 20h110v90H205zM355 10h200v125H355zM18 190h120v112H18zM190 168h128v125H190zM360 195h220v100H360zM20 355h160v160H20zM225 350h110v160H225zM385 360h190v160H385z"/></g>
+<path d="M570-30C470 70 560 160 480 245S485 415 410 570" fill="none" stroke="#ccdfdb" stroke-width="48"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M-30 150L200 140 370 170 640 130M155-20L170 190 150 320 205 570M-30 330L210 315 390 340 640 310M330-20L345 180 320 360 360 560" stroke="#d0d8c9" stroke-width="22"/>
+<path d="M-30 150L200 140 370 170 640 130M155-20L170 190 150 320 205 570M-30 330L210 315 390 340 640 310M330-20L345 180 320 360 360 560" stroke="#fffdf4" stroke-width="16"/>
+<path d="M-20 450L170 420 310 450 620 410M60-10L80 140M240 150L250 310M400 160L415 325M240 330L270 550M80 330L75 550M350 70L630 55" stroke="#faf9ef" stroke-width="8"/>
+<path d="M-20 520C100 380 210 270 310 220S500 60 630-20" stroke="#d7bc7f" stroke-width="11"/>
+<path d="M-20 520C100 380 210 270 310 220S500 60 630-20" stroke="#f5e7c5" stroke-width="7"/>
+</g>
+</svg>

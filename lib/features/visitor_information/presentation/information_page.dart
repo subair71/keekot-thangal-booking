@@ -1,6 +1,7 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -128,53 +129,85 @@ class LocationCard extends ConsumerWidget {
     final config = ref.watch(configurationProvider).asData?.value;
     return SurfaceCard(
       color: AppColors.cream,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      padding: 0,
+      child: Stack(
         children: [
-          const Icon(
-            Icons.location_on_outlined,
-            size: 40,
-            color: AppColors.secondary,
-          ),
-          const SizedBox(height: 20),
-          AppText(
-            'Keekkott Sayyid Attakoya Thangal Maqam',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 8),
-          const AppText('Chavakkad, Kerala, India'),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () async {
-              final opened = await launchUrl(
-                Uri.parse('https://maps.app.goo.gl/EeBuXUcd7LHgeig17?g_st=ic'),
-                mode: LaunchMode.externalApplication,
-              );
-              if (!opened && context.mounted) {
-                showMessage(
-                  context,
-                  'Directions could not be opened. Please try again.',
-                );
-              }
-            },
-            icon: const Icon(Icons.directions_outlined),
-            label: const AppText('Get directions'),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton.icon(
-            onPressed: () => context.go('/contact'),
-            icon: const Icon(Icons.mail_outline),
-            label: const AppText('Contact us'),
-          ),
-          if (config?.contactPhone.isNotEmpty == true) ...[
-            const SizedBox(height: 12),
-            TextButton.icon(
-              onPressed: () =>
-                  launchUrl(Uri(scheme: 'tel', path: config.contactPhone)),
-              icon: const Icon(Icons.call_outlined),
-              label: AppText(config!.contactPhone),
+          Positioned.fill(
+            child: ExcludeSemantics(
+              child: SvgPicture.asset(
+                'assets/brand/location-map-background.svg',
+                fit: BoxFit.cover,
+              ),
             ),
-          ],
+          ),
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    AppColors.cream.withValues(alpha: .35),
+                    AppColors.cream.withValues(alpha: .94),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 40,
+                  color: AppColors.secondary,
+                ),
+                const SizedBox(height: 20),
+                AppText(
+                  'Keekkott Sayyid Attakoya Thangal Maqam',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 8),
+                const AppText('Chavakkad, Kerala, India'),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    final opened = await launchUrl(
+                      Uri.parse(
+                        'https://maps.app.goo.gl/EeBuXUcd7LHgeig17?g_st=ic',
+                      ),
+                      mode: LaunchMode.externalApplication,
+                    );
+                    if (!opened && context.mounted) {
+                      showMessage(
+                        context,
+                        'Directions could not be opened. Please try again.',
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.directions_outlined),
+                  label: const AppText('Get directions'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.go('/contact'),
+                  icon: const Icon(Icons.mail_outline),
+                  label: const AppText('Contact us'),
+                ),
+                if (config?.contactPhone.isNotEmpty == true) ...[
+                  const SizedBox(height: 12),
+                  TextButton.icon(
+                    onPressed: () =>
+                        launchUrl(Uri(scheme: 'tel', path: config.contactPhone)),
+                    icon: const Icon(Icons.call_outlined),
+                    label: AppText(config!.contactPhone),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
