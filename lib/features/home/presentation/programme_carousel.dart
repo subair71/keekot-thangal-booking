@@ -192,7 +192,8 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
                     style: TextStyle(
                       fontFamily: 'Newsreader',
                       color: AppColors.ink,
-                      fontSize: MediaQuery.sizeOf(context).width < 600 ? 22 : 26,
+                      fontSize:
+                          MediaQuery.sizeOf(context).width < 600 ? 22 : 26,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
