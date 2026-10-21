@@ -112,7 +112,8 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
                       scrollDirection: Axis.horizontal,
                       padding: EdgeInsets.zero,
                       itemCount: banners.length,
-                      separatorBuilder: (context, index) => SizedBox(width: gap),
+                      separatorBuilder: (context, index) =>
+                          SizedBox(width: gap),
                       itemBuilder: (context, index) {
                         final banner = banners[index];
                         return SizedBox(
