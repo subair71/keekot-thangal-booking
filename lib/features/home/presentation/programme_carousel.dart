@@ -61,84 +61,78 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
     final ml = AppLanguage.of(context) == 'ml';
     final banners = [
       (
-        asset: 'assets/brand/programme-dhikr.webp',
+        asset: 'assets/brand/programme-dhikr-compact.webp',
         label: ml
             ? 'ദിക്ർ ഹൽഖ. എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'
             : 'Dhikr gathering. Every Thursday after Maghrib.',
       ),
       (
-        asset: 'assets/brand/programme-mawlid.webp',
+        asset: 'assets/brand/programme-mawlid-compact.webp',
         label: ml ? 'മൗലിദ് പരിപാടി' : 'Mawlid programme.',
       ),
       (
-        asset: 'assets/brand/programme-annual.webp',
+        asset: 'assets/brand/programme-annual-compact.webp',
         label: ml ? 'വാർഷിക പരിപാടി' : 'Annual programme.',
       ),
     ];
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 840),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final gap = constraints.maxWidth < 600 ? 8.0 : 12.0;
-            final width = math.min(
-              math.min(MediaQuery.sizeOf(context).width * 2 / 3, 360.0),
-              constraints.maxWidth,
-            );
-            _step = width + gap;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final gap = constraints.maxWidth < 600 ? 8.0 : 12.0;
+        final width = math.min(
+          math.min(MediaQuery.sizeOf(context).width * 2 / 3, 360.0),
+          constraints.maxWidth,
+        );
+        _step = width + gap;
 
-            return MouseRegion(
-              onEnter: (_) => _hovering = true,
-              onExit: (_) => _hovering = false,
-              child: Listener(
-                onPointerDown: (_) => _touching = true,
-                onPointerUp: (_) => _touching = false,
-                onPointerCancel: (_) => _touching = false,
-                child: SizedBox(
-                  height: width * 9 / 16,
-                  child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context).copyWith(
-                      dragDevices: {
-                        PointerDeviceKind.touch,
-                        PointerDeviceKind.mouse,
-                        PointerDeviceKind.trackpad,
-                        PointerDeviceKind.stylus,
-                      },
-                    ),
-                    child: ListView.separated(
-                      key: const ValueKey('programme-thumbnail-strip'),
-                      controller: _controller,
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.zero,
-                      itemCount: banners.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(width: gap),
-                      itemBuilder: (context, index) {
-                        final banner = banners[index];
-                        return SizedBox(
-                          width: width,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: Image.asset(
-                                banner.asset,
-                                fit: BoxFit.contain,
-                                semanticLabel: banner.label,
-                              ),
-                            ),
+        return MouseRegion(
+          onEnter: (_) => _hovering = true,
+          onExit: (_) => _hovering = false,
+          child: Listener(
+            onPointerDown: (_) => _touching = true,
+            onPointerUp: (_) => _touching = false,
+            onPointerCancel: (_) => _touching = false,
+            child: SizedBox(
+              height: width * 9 / 16,
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                    PointerDeviceKind.stylus,
+                  },
+                ),
+                child: ListView.separated(
+                  key: const ValueKey('programme-thumbnail-strip'),
+                  controller: _controller,
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.zero,
+                  itemCount: banners.length * 2,
+                  separatorBuilder: (context, index) => SizedBox(width: gap),
+                  itemBuilder: (context, index) {
+                    final banner = banners[index % banners.length];
+                    return SizedBox(
+                      width: width,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Image.asset(
+                            banner.asset,
+                            fit: BoxFit.contain,
+                            semanticLabel: banner.label,
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

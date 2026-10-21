@@ -29,6 +29,8 @@ void main() {
       final first = tester.getRect(images.at(0));
       final second = tester.getRect(images.at(1));
 
+      expect(viewport.left, 0);
+      expect(viewport.width, viewportWidth);
       expect(first.left, closeTo(viewport.left, 0.1));
       final expectedWidth = viewportWidth < 540 ? viewportWidth * 2 / 3 : 360.0;
       expect(first.width, closeTo(expectedWidth, 0.1));
@@ -40,14 +42,14 @@ void main() {
         expect(second.right, lessThan(viewport.right));
         final third = tester.getRect(images.at(2));
         expect(third.left, lessThan(viewport.right));
-        expect(third.right, greaterThan(viewport.right));
+        expect(third.right, lessThan(viewport.right));
       }
       expect(find.byType(TextButton), findsNothing);
       expect(first.width / first.height, closeTo(16 / 9, 0.01));
       final image = tester.widget<Image>(images.first);
       expect(
         (image.image as AssetImage).assetName,
-        'assets/brand/programme-dhikr.webp',
+        'assets/brand/programme-dhikr-compact.webp',
       );
       expect(image.semanticLabel, contains('Thursday'));
       expect(image.fit, BoxFit.contain);
@@ -59,7 +61,7 @@ void main() {
         contains('വ്യാഴാഴ്ച'),
       );
 
-      await tester.drag(strip, Offset(-viewportWidth * 2, 0));
+      await tester.drag(strip, Offset(-viewportWidth * 10, 0));
       await tester.pumpAndSettle();
       final last = tester.getRect(find.byType(Image).last);
       expect(last.right, lessThanOrEqualTo(viewport.right + 0.1));

@@ -103,8 +103,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             },
           ),
           const SizedBox(height: 20),
-          const ProgrammeCarousel(),
-          const SizedBox(height: 16),
           AsyncPanel(
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
@@ -135,6 +133,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
+          const SizedBox(height: 20),
+          const ProgrammeCarousel(),
           const SizedBox(height: 32),
           const _HomeFeaturedVideo(),
           const SizedBox(height: 56),
