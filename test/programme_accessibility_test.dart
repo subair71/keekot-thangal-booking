@@ -49,10 +49,14 @@ void main() {
       final image = tester.widget<Image>(images.first);
       expect(
         (image.image as AssetImage).assetName,
-        'assets/brand/programme-dhikr-compact.webp',
+        'assets/brand/programme-dhikr-compact-en.webp',
       );
       expect(image.semanticLabel, contains('Thursday'));
       expect(image.fit, BoxFit.contain);
+
+      for (final item in tester.widgetList<Image>(images)) {
+        expect((item.image as AssetImage).assetName, endsWith('-en.webp'));
+      }
 
       language.value = 'ml';
       await tester.pumpAndSettle();
@@ -60,6 +64,10 @@ void main() {
         tester.widget<Image>(images.first).semanticLabel,
         contains('വ്യാഴാഴ്ച'),
       );
+
+      for (final item in tester.widgetList<Image>(images)) {
+        expect((item.image as AssetImage).assetName, isNot(endsWith('-en.webp')));
+      }
 
       await tester.drag(strip, Offset(-viewportWidth * 10, 0));
       await tester.pumpAndSettle();

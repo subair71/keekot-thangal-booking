@@ -63,19 +63,25 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
     final headingSize = MediaQuery.sizeOf(context).width < 600 ? 22.0 : 26.0;
     final banners = [
       (
-        asset: 'assets/brand/programme-dhikr-compact.webp',
+        asset: ml
+            ? 'assets/brand/programme-dhikr-compact.webp'
+            : 'assets/brand/programme-dhikr-compact-en.webp',
         title: ml ? 'ദിക്ർ ഹൽഖ' : 'Weekly Dhikr',
         label: ml
             ? 'ദിക്ർ ഹൽഖ. എല്ലാ വ്യാഴാഴ്ചയും മഗ്‌രിബിന് ശേഷം'
             : 'Dhikr gathering. Every Thursday after Maghrib.',
       ),
       (
-        asset: 'assets/brand/programme-mawlid-corrected.webp',
+        asset: ml
+            ? 'assets/brand/programme-mawlid-corrected.webp'
+            : 'assets/brand/programme-mawlid-compact-en.webp',
         title: ml ? 'മൗലിദ് സദസ്സ്' : 'Mawlid gathering',
         label: ml ? 'മൗലിദ് പരിപാടി' : 'Mawlid programme.',
       ),
       (
-        asset: 'assets/brand/programme-annual-compact.webp',
+        asset: ml
+            ? 'assets/brand/programme-annual-compact.webp'
+            : 'assets/brand/programme-annual-compact-en.webp',
         title: ml ? 'ആണ്ട് നേർച്ച' : 'Annual remembrance',
         label: ml ? 'വാർഷിക പരിപാടി' : 'Annual programme.',
       ),
