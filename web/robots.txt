@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /auth
+Disallow: /admin
+Disallow: /khadim
+Disallow: /my-bookings
+Disallow: /booking/
+Disallow: /pass/
+Disallow: /notifications
+Disallow: /book/confirmation
+Disallow: /book/success/
 
 Sitemap: https://www.keekkottbungalow.com/sitemap.xml

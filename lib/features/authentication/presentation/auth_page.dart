@@ -1,4 +1,5 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,8 +12,9 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
-  const AuthPage({super.key, this.next = '/my-bookings'});
+  const AuthPage({super.key, this.next = '/my-bookings', this.admin = false});
   final String next;
+  final bool admin;
   @override
   ConsumerState<AuthPage> createState() => _AuthPageState();
 }
@@ -69,25 +71,37 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(authProvider, (_, next) {
-      if (next.asData?.value != null) context.go(widget.next);
-    });
     return PageContainer(
       width: 560,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextButton.icon(
-            onPressed: () => context.go('/khadim-login'),
+            onPressed: () => context.go('/khadim/login'),
             icon: const Icon(Icons.badge_outlined),
             label: const Text('Khadim login'),
           ),
-          const Center(child: Emblem(size: 74)),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.mint,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: const Emblem(size: 64),
+            ),
+          ),
           const SizedBox(height: 28),
           PageHeading(
-            sent ? 'Verify your mobile' : 'Welcome to your visit',
+            sent
+                ? 'Verify your mobile'
+                : widget.admin
+                ? 'Administrator login'
+                : 'Welcome to your visit',
             subtitle: sent
                 ? 'Enter the 6-digit code sent to your mobile.'
+                : widget.admin
+                ? 'Sign in with your authorized administrator mobile number.'
                 : 'Sign in with your mobile number to reserve a visit and keep your pass.',
           ),
           SurfaceCard(

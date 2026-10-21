@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    if (/^\/(login|auth|admin|khadim|my-bookings|booking|pass|notifications)(\/|$)|^\/book\/(confirmation|success)/.test(location.pathname)) {
+      const tag = document.createElement('meta'); tag.name = 'robots'; tag.content = 'noindex,nofollow'; document.head.appendChild(tag);
+    }
+  </script>
   <base href="$FLUTTER_BASE_HREF">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

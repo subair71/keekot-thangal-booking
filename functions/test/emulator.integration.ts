@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {initializeApp,deleteApp} from 'firebase-admin/app';
 import {getFirestore, Timestamp} from 'firebase-admin/firestore';
 import {initializeTestEnvironment,assertFails,assertSucceeds} from '@firebase/rules-unit-testing';
-import {doc,getDoc,setDoc,collection,query,where,getDocs} from 'firebase/firestore';
+import {doc,getDoc,setDoc,collection,query,where,getDocs,onSnapshot} from 'firebase/firestore';
 import {BookingService} from '../src/booking_service.js';
 import {BookingSettings, generateSlots} from '../src/domain.js';
 import {queueNotice,deliverNotice} from '../src/notifications.js';
@@ -188,7 +188,10 @@ test('Firestore transactions and rules',async t=>{
       await db.doc('khadims/limited-staff').set({name:'Test Khadim',phone:'+919888888888',enabled:true,version:1,permissions:['bookings']});
       await db.doc('khadimSecrets/limited-staff').set({hash:'private',salt:'private'});
       const staff=env.authenticatedContext('limited-staff',{khadimVersion:1}).firestore();
-      await assertSucceeds(getDocs(collection(staff,'bookings')));
+      await assertFails(getDocs(collection(staff,'bookings')));
+      await db.doc('bookings/staff-assigned').set({userId:'someone',assignment:{khadimId:'limited-staff'}});
+      await assertSucceeds(getDocs(query(collection(staff,'bookings'),where('assignment.khadimId','==','limited-staff'))));
+      await assertFails(getDoc(doc(staff,'bookings',bookingId)));
       await assertSucceeds(getDoc(doc(staff,'khadims','limited-staff')));
       await assertFails(getDocs(collection(staff,'khadims')));
       await assertFails(getDoc(doc(staff,'khadimSecrets','limited-staff')));
@@ -197,10 +200,20 @@ test('Firestore transactions and rules',async t=>{
       await db.doc('khadims/limited-staff').update({version:2});
       await assertFails(getDocs(collection(staff,'bookings')));
       const refreshed=env.authenticatedContext('limited-staff',{khadimVersion:2}).firestore();
-      await assertSucceeds(getDocs(collection(refreshed,'bookings')));
+      await assertSucceeds(getDocs(query(collection(refreshed,'bookings'),where('assignment.khadimId','==','limited-staff'))));
       await db.doc('khadims/limited-staff').update({enabled:false});
       await assertFails(getDocs(collection(refreshed,'bookings')));
       await db.doc('khadims/limited-staff').update({enabled:true,permissions:['gate']});
+      await db.doc('bookings/staff-assigned').update({userId:owner.uid});
+      const streams=[own,admin,refreshed].map(client=>new Promise<void>((resolve,reject)=>{
+        const timer=setTimeout(()=>{unsubscribe();reject(new Error('Realtime assignment update timed out'));},10000);
+        const unsubscribe=onSnapshot(doc(client,'bookings','staff-assigned'),snapshot=>{
+          if(snapshot.data()?.assignment?.status==='inProgress'){clearTimeout(timer);unsubscribe();resolve();}
+        },error=>{clearTimeout(timer);reject(error);});
+      }));
+      await db.doc('bookings/staff-assigned').update({'assignment.status':'inProgress'});
+      await Promise.all(streams);
+
       await assertFails(getDocs(collection(refreshed,'bookings')));
 
     }finally{await env.cleanup();}

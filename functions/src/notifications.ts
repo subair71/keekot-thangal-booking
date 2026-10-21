@@ -33,7 +33,7 @@ export async function deliverNotice(db: Firestore, id: string) {
     const d=(await tx.get(ref)).data(); const now=Date.now();
     if(!d || ['sent','no-device','failed','superseded'].includes(d.delivery) || d.nextAttemptAt>now)return null;
     const b=(await tx.get(db.doc(`bookings/${d.bookingId}`))).data();
-    if(!b || (d.kind==='cancelled'?b.status!=='cancelled':b.status!=='confirmed') || (d.kind==='reminder' && b.startAt<=now)) {
+    if(!b || (d.kind==='cancelled'?b.status!=='cancelled':d.kind==='assignment'?b.status==='cancelled':b.status!=='confirmed') || (d.kind==='reminder' && b.startAt<=now)) {
       tx.update(ref,{delivery:'superseded'});return null;
     }
     tx.update(ref,{delivery:'pending',nextAttemptAt:now+120_000,attempts:d.attempts+1}); return d;

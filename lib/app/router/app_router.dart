@@ -1,3 +1,5 @@
+import '../../features/assignments/assignment_pages.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,7 +27,9 @@ String safeNext(String? next) {
       !next.startsWith('/') ||
       next.startsWith('//') ||
       next.contains('://') ||
-      next.startsWith('/auth')) {
+      next.startsWith('/auth') ||
+      next.split('?').first.endsWith('/login') ||
+      next.startsWith('/khadim-login')) {
     return '/my-bookings';
   }
   return next;
@@ -38,8 +42,29 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final user = ref.read(authProvider).asData?.value, path = state.uri.path;
+      final login = ['/login', '/admin/login', '/khadim/login'].contains(path);
+      if (path == '/auth') {
+        return '/login${state.uri.hasQuery ? '?${state.uri.query}' : ''}';
+      }
+      if (path == '/khadim-login') {
+        return '/khadim/login${state.uri.hasQuery ? '?${state.uri.query}' : ''}';
+      }
+      if (login) {
+        if (user == null) return null;
+        if (path == '/admin/login' && !user.admin) return '/access-denied';
+        if (path == '/khadim/login' && !user.khadim) return '/access-denied';
+        final next = state.uri.queryParameters['next'];
+        return next == null
+            ? (user.admin
+                  ? '/admin'
+                  : user.khadim
+                  ? '/khadim'
+                  : '/my-bookings')
+            : safeNext(next);
+      }
       final protected =
           path.startsWith('/admin') ||
+          path.startsWith('/khadim') ||
           path == '/book/confirmation' ||
           path.startsWith('/book/success/') ||
           path == '/my-bookings' ||
@@ -47,22 +72,32 @@ final routerProvider = Provider<GoRouter>((ref) {
           path.startsWith('/pass/') ||
           path == '/notifications';
       if (protected && user == null) {
-        return '/auth?next=${Uri.encodeComponent(state.uri.toString())}';
+        final entry = path.startsWith('/admin')
+            ? '/admin/login'
+            : path.startsWith('/khadim')
+            ? '/khadim/login'
+            : '/login';
+        return '$entry?next=${Uri.encodeComponent(state.uri.toString())}';
+      }
+      if (path.startsWith('/khadim') && user?.khadim != true) {
+        return '/access-denied';
       }
       if (path.startsWith('/admin') && user != null) {
         final section = path == '/admin' ? 'dashboard' : path.split('/').last;
-        if (path == '/admin' && user.staff && !user.can('dashboard')) {
-          return user.staffHome;
-        }
-        if (!(section == 'khadims' ? user.admin : user.can(section))) {
+        if ([
+              'khadims',
+              'assignments',
+              'availability',
+              'bookings',
+              'dashboard',
+            ].contains(section) &&
+            !user.admin) {
           return '/access-denied';
         }
-      }
-      if (path == '/khadim-login' && user != null) {
-        return user.staff ? user.staffHome : '/access-denied';
-      }
-      if (path == '/auth' && user != null) {
-        return safeNext(state.uri.queryParameters['next']);
+        if (!['khadims', 'assignments', 'availability'].contains(section) &&
+            !user.can(section)) {
+          return '/access-denied';
+        }
       }
       return null;
     },
@@ -76,16 +111,45 @@ final routerProvider = Provider<GoRouter>((ref) {
                 HomePage(section: state.uri.queryParameters['section']),
           ),
           GoRoute(
-            path: '/khadim-login',
+            path: '/khadim/login',
             builder: (_, _) => const KhadimLoginPage(),
           ),
           GoRoute(
             path: '/admin/khadims',
             builder: (_, _) => const KhadimManagementPage(),
           ),
-          GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
           GoRoute(
             path: '/auth',
+            redirect: (_, s) =>
+                '/login${s.uri.hasQuery ? '?${s.uri.query}' : ''}',
+          ),
+          GoRoute(path: '/khadim-login', redirect: (_, _) => '/khadim/login'),
+          GoRoute(
+            path: '/admin/login',
+            builder: (_, s) => AuthPage(
+              admin: true,
+              next: safeNext(s.uri.queryParameters['next'] ?? '/admin'),
+            ),
+          ),
+          GoRoute(
+            path: '/admin/assignments',
+            builder: (_, _) => const AssignmentPage(),
+          ),
+          GoRoute(
+            path: '/admin/availability',
+            builder: (_, _) => const AvailabilityPage(),
+          ),
+          GoRoute(
+            path: '/khadim',
+            builder: (_, _) => const AssignmentPage(staff: true),
+          ),
+          GoRoute(
+            path: '/khadim/availability',
+            builder: (_, _) => const AvailabilityPage(staff: true),
+          ),
+          GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
+          GoRoute(
+            path: '/login',
             builder: (_, s) =>
                 AuthPage(next: safeNext(s.uri.queryParameters['next'])),
           ),

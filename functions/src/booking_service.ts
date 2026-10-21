@@ -129,7 +129,7 @@ export class BookingService {
       const booking=await tx.get(this.db.doc(`bookings/${bookingId}`));
       if(!booking.exists)throw new DomainError('not-found','Booking not found.');
       const b=booking.data()!;
-      if(b.userId!==actor.uid && !actor.admin && !actor.gate && !actor.permissions?.includes('bookings'))throw new DomainError('permission-denied','You cannot access this booking.');
+      if(b.userId!==actor.uid && !actor.admin && !actor.gate && b.assignment?.khadimId!==actor.uid)throw new DomainError('permission-denied','You cannot access this booking.');
       if(b.tokenStart != null && b.tokenEnd != null)return {tokenStart:b.tokenStart,tokenEnd:b.tokenEnd};
       const sequence=await readTokenSequence(this.db,tx,b.slotId);
       const assigned=sequence.assignments.find(a=>a.ref.id===bookingId);
@@ -145,13 +145,14 @@ export class BookingService {
       const ref=this.db.doc(`bookings/${bookingId}`), booking=await tx.get(ref);
       if(!booking.exists)throw new DomainError('not-found','Booking not found.');
       const b=booking.data()!;
-      if(b.userId!==actor.uid && !actor.admin && !actor.permissions?.includes('bookings'))throw new DomainError('permission-denied','You cannot cancel this booking.');
+      if(b.userId!==actor.uid && !actor.admin)throw new DomainError('permission-denied','You cannot cancel this booking.');
       if(b.status==='cancelled')return {cancelled:true};
       if(b.status!=='confirmed' || (!actor.admin && !actor.permissions?.includes('bookings') && b.startAt<=this.clock()))throw new DomainError('failed-precondition','This booking is no longer eligible for cancellation.');
       const sr=this.db.doc(`visitSlots/${b.slotId}`), slot=await tx.get(sr);
       if(!slot.exists || slot.data()!.occupancy<b.visitorCount)throw new DomainError('failed-precondition','Capacity needs administrator review.');
       tx.update(sr,{occupancy:slot.data()!.occupancy-b.visitorCount});
-      tx.update(ref,{status:'cancelled',cancelledAt:FieldValue.serverTimestamp(),cancellationReason:reason,updatedAt:FieldValue.serverTimestamp()});
+      tx.update(ref,{...(b.assignment?.khadimId?{assignment:{...b.assignment,status:'cancelled',revision:(b.assignment.revision ?? 0)+1}}:{}),status:'cancelled',cancelledAt:FieldValue.serverTimestamp(),cancellationReason:reason,updatedAt:FieldValue.serverTimestamp()});
+      if(b.assignment?.khadimId)tx.create(this.db.collection('assignmentHistory').doc(),{actor:actor.uid,action:'bookingCancelled',bookingId,at:FieldValue.serverTimestamp()});
       if(actor.admin || actor.permissions?.includes('bookings'))tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'cancelBooking',bookingId,at:FieldValue.serverTimestamp()});
       return {cancelled:true};
     });

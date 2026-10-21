@@ -171,6 +171,8 @@ class VisitBooking {
     required this.reference,
     required this.visitorName,
     this.visitorAddress = '',
+    this.khadimName,
+    this.serviceStatus = 'unassigned',
     this.tokenStart,
     this.tokenEnd,
     required this.phoneMasked,
@@ -193,6 +195,8 @@ class VisitBooking {
       endTime,
       status,
       qrToken;
+  final String? khadimName;
+  final String serviceStatus;
   final int startAt, endAt, visitors;
   final int? tokenStart, tokenEnd;
   String get tokenLabel => tokenStart == null || tokenEnd == null
@@ -205,6 +209,9 @@ class VisitBooking {
     reference: m['bookingReference'] as String,
     visitorName: m['visitorName'] as String,
     visitorAddress: m['visitorAddress'] as String? ?? '',
+    khadimName: (m['assignment'] as Map?)?['displayName'] as String?,
+    serviceStatus:
+        (m['assignment'] as Map?)?['status'] as String? ?? 'unassigned',
     tokenStart: (m['tokenStart'] as num?)?.toInt(),
     tokenEnd: (m['tokenEnd'] as num?)?.toInt(),
     phoneMasked: m['phoneNumberMasked'] as String? ?? '',
