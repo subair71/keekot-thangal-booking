@@ -60,6 +60,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
   @override
   Widget build(BuildContext context) {
     final ml = AppLanguage.of(context) == 'ml';
+    final headingSize = MediaQuery.sizeOf(context).width < 600 ? 22.0 : 26.0;
     final banners = [
       (
         asset: 'assets/brand/programme-dhikr-compact.webp',
@@ -192,8 +193,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
                     style: TextStyle(
                       fontFamily: 'Newsreader',
                       color: AppColors.ink,
-                      fontSize:
-                          MediaQuery.sizeOf(context).width < 600 ? 22 : 26,
+                      fontSize: headingSize,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
