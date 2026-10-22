@@ -175,3 +175,31 @@ export const khadimSetAvailability=callable(async r=>{const a=await assignmentSt
 export const khadimVisitStatus=callable(async r=>{const a=await assignmentStaff(r);return assignments.transition(a.uid,id(r.data?.bookingId),String(r.data?.status));});
 // Re-read the current document in the transaction: trigger events can arrive out of order.
 export const reconcileAssignment=onDocumentWritten('bookings/{bookingId}',async event=>{if(event.data?.after.exists)await assignments.reconcile(event.params.bookingId);});
+
+// Administrator credentials are provisioned with the privileged admin-account script.
+// Firestore rules deny all client access to credentials and login counters.
+export const adminLogin=callable(async r=>{
+  const username=String(r.data?.username ?? '').trim().toLowerCase();
+  const password=String(r.data?.password ?? '');
+  const denied=()=>new HttpsError('unauthenticated','Invalid username or password.');
+  if(!/^[a-z0-9_]{3,64}$/.test(username)||password.length<1||password.length>256)throw denied();
+  const keys=['username:'+username,'ip:'+String(r.rawRequest.ip ?? 'unknown')];
+  await db.runTransaction(async tx=>{
+    const refs=keys.map(k=>db.doc(`adminLoginLimits/${tokenHash(k)}`));
+    const snaps=await Promise.all(refs.map(ref=>tx.get(ref)));
+    const now=Date.now();
+    for(let i=0;i<refs.length;i++){
+      const d=snaps[i].data(),active=d && d.until>now;
+      if(active && d.count >= (i===0?5:30))throw new HttpsError('resource-exhausted','Too many attempts. Try again in 15 minutes.');
+      tx.set(refs[i],{count:active?d.count+1:1,until:active?d.until:now+15*60*1000});
+    }
+  });
+  const secret=(await db.doc(`adminCredentials/${username}`).get()).data();
+  const salt=typeof secret?.salt==='string'?secret.salt:'unconfigured-admin';
+  const actual=scryptSync(password,salt,32);
+  const expected=Buffer.from(typeof secret?.hash==='string'?secret.hash:'00'.repeat(32),'hex');
+  if(expected.length!==actual.length||!timingSafeEqual(actual,expected)||!secret?.enabled)throw denied();
+  const user=await getAuth().getUser(secret.uid);
+  if(user.disabled||user.customClaims?.admin!==true)throw denied();
+  return {token:await getAuth().createCustomToken(user.uid)};
+});

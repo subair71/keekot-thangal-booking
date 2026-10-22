@@ -4,6 +4,7 @@ import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/app/router/app_router.dart';
 import 'package:keekot_thangal/features/authentication/domain/auth_repository.dart';
+
 import 'fixtures.dart';
 
 void main() {
@@ -46,6 +47,11 @@ void main() {
         user == null ? '/admin/login' : '/access-denied',
       );
       if (user == null) {
+        expect(find.text('Username'), findsOneWidget);
+        expect(find.text('Password'), findsOneWidget);
+        expect(find.text('Sign in'), findsOneWidget);
+        expect(find.text('Send verification code'), findsNothing);
+        expect(find.text('Send me a verification SMS'), findsNothing);
         expect(
           router.routeInformationProvider.value.uri.queryParameters['next'],
           '/admin/assignments',
@@ -56,6 +62,8 @@ void main() {
         router.go('/my-bookings');
         await tester.pumpAndSettle();
         expect(router.routeInformationProvider.value.uri.path, '/login');
+        expect(find.text('Send verification code'), findsOneWidget);
+        expect(find.text('Username'), findsNothing);
         router.go('/auth');
         await tester.pumpAndSettle();
         expect(router.routeInformationProvider.value.uri.path, '/login');
