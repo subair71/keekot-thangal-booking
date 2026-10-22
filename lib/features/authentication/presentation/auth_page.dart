@@ -2,6 +2,8 @@ import 'package:keekot_thangal/core/localization/app_language.dart';
 
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,12 +23,16 @@ class AuthPage extends ConsumerStatefulWidget {
 class _AuthPageState extends ConsumerState<AuthPage> {
   final phone = TextEditingController(text: '+91 '),
       code = TextEditingController();
+  final username = TextEditingController(), password = TextEditingController();
+  bool hidePassword = true;
   bool sent = false, busy = false, consent = false;
   String? error;
   int seconds = 0;
   Timer? timer;
   @override
   void dispose() {
+    username.dispose();
+    password.dispose();
     phone.dispose();
     code.dispose();
     timer?.cancel();
@@ -35,7 +41,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
   Future<void> submit() async {
     if (busy) return;
-    if (!consent) {
+    if (!widget.admin && !consent) {
       setState(() => error = 'Please agree to receive the verification SMS.');
       return;
     }
@@ -44,6 +50,17 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       error = null;
     });
     try {
+      if (widget.admin) {
+        final result = await ref.read(firebaseBookingProvider).call(
+          'adminLogin',
+          {'username': username.text.trim(), 'password': password.text},
+        );
+        await FirebaseAuth.instance.signInWithCustomToken(
+          result['token'] as String,
+        );
+        password.clear();
+        return;
+      }
       final auth = ref.read(authRepositoryProvider);
       if (!sent) {
         await auth.sendCode(phone.text.replaceAll(RegExp(r'\s'), ''));
@@ -95,7 +112,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             subtitle: sent
                 ? 'Enter the 6-digit code sent to your mobile.'
                 : widget.admin
-                ? 'Sign in with your authorized administrator mobile number.'
+                ? 'Sign in with your administrator username and password.'
                 : 'Sign in with your mobile number to reserve a visit and keep your pass.',
           ),
           SurfaceCard(
@@ -103,65 +120,103 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  TextField(
-                    controller: phone,
-                    enabled: !sent && !busy,
-                    keyboardType: TextInputType.phone,
-                    autofillHints: const [AutofillHints.telephoneNumber],
-                    decoration: InputDecoration(
-                      labelText: tr(context, 'Mobile number'),
-                      helperText: tr(
-                        context,
-                        'Include country code, for example +91',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  if (!sent)
-                    CheckboxListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: consent,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      onChanged: busy
-                          ? null
-                          : (v) => setState(() => consent = v ?? false),
-                      title: const AppText(
-                        'Send me a verification SMS',
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      subtitle: const AppText(
-                        'Google processes your number for verification and abuse prevention.',
-                        style: TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  if (sent) ...[
+                  if (widget.admin) ...[
                     TextField(
-                      controller: code,
-                      autofocus: true,
+                      controller: username,
                       enabled: !busy,
-                      keyboardType: TextInputType.number,
-                      autofillHints: const [AutofillHints.oneTimeCode],
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(6),
-                      ],
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => busy ? null : submit(),
-                      style: const TextStyle(fontSize: 26, letterSpacing: 10),
-                      decoration: InputDecoration(
-                        labelText: tr(context, 'SMS verification code'),
-                        hintText: tr(context, '000000'),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                  if (busy && !sent) ...[
-                    const AppText(
-                      'Waiting for phone verification. Complete the security '
-                      'check if it appears. This can take up to 90 seconds.',
+                      autocorrect: false,
+                      autofillHints: const [AutofillHints.username],
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(labelText: 'Username'),
                     ),
                     const SizedBox(height: 16),
+                    TextField(
+                      controller: password,
+                      enabled: !busy,
+                      obscureText: hidePassword,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      autofillHints: const [AutofillHints.password],
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => submit(),
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          tooltip: hidePassword
+                              ? 'Show password'
+                              : 'Hide password',
+                          onPressed: () =>
+                              setState(() => hidePassword = !hidePassword),
+                          icon: Icon(
+                            hidePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    TextField(
+                      controller: phone,
+                      enabled: !sent && !busy,
+                      keyboardType: TextInputType.phone,
+                      autofillHints: const [AutofillHints.telephoneNumber],
+                      decoration: InputDecoration(
+                        labelText: tr(context, 'Mobile number'),
+                        helperText: tr(
+                          context,
+                          'Include country code, for example +91',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    if (!sent)
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: consent,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: busy
+                            ? null
+                            : (v) => setState(() => consent = v ?? false),
+                        title: const AppText(
+                          'Send me a verification SMS',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        subtitle: const AppText(
+                          'Google processes your number for verification and abuse prevention.',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    if (sent) ...[
+                      TextField(
+                        controller: code,
+                        autofocus: true,
+                        enabled: !busy,
+                        keyboardType: TextInputType.number,
+                        autofillHints: const [AutofillHints.oneTimeCode],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(6),
+                        ],
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => busy ? null : submit(),
+                        style: const TextStyle(fontSize: 26, letterSpacing: 10),
+                        decoration: InputDecoration(
+                          labelText: tr(context, 'SMS verification code'),
+                          hintText: tr(context, '000000'),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                    if (busy && !sent) ...[
+                      const AppText(
+                        'Waiting for phone verification. Complete the security '
+                        'check if it appears. This can take up to 90 seconds.',
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ],
+                  const SizedBox(height: 16),
                   if (error != null) ...[
                     Semantics(
                       liveRegion: true,
@@ -181,7 +236,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : AppText(
-                            sent
+                            widget.admin
+                                ? 'Sign in'
+                                : sent
                                 ? 'Verify and continue'
                                 : 'Send verification code',
                           ),
@@ -207,10 +264,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             ),
           ),
           const SizedBox(height: 24),
-          const AppText(
-            'Your number stays with your account. It is never included in the QR code.',
-            textAlign: TextAlign.center,
-          ),
+          if (!widget.admin)
+            const AppText(
+              'Your number stays with your account. It is never included in the QR code.',
+              textAlign: TextAlign.center,
+            ),
         ],
       ),
     );
