@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Report Firebase deployment gate
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_FIREBASE != 'true'
+        run: echo 'Firebase deployment is disabled. Successful validation does not verify the deployed backend. Set repository variable DEPLOY_FIREBASE=true only after checking docs/firebase-date-hours-release.md.' >> "$GITHUB_STEP_SUMMARY"
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.4'
@@ -54,11 +57,21 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_FIREBASE == 'true'
     runs-on: ubuntu-latest
     environment: production
+    concurrency:
+      group: firebase-production
+      cancel-in-progress: false
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      - name: Validate production release inputs
+        env:
+          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          DEPLOY_SERVICE_ACCOUNT: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
+          WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG || vars.FIREBASE_WEB_CONFIG }}
+        run: python3 tool/check_firebase_release.py
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.47.4'
@@ -75,7 +88,7 @@ jobs:
           service_account: ${{ vars.DEPLOY_SERVICE_ACCOUNT }}
       - name: Write public Firebase web configuration
         env:
-          WEB_CONFIG: ${{ vars.FIREBASE_WEB_CONFIG }}
+          WEB_CONFIG: ${{ secrets.FIREBASE_WEB_CONFIG || vars.FIREBASE_WEB_CONFIG }}
         run: python3 -c 'import os,pathlib; pathlib.Path("config/production.json").write_text(os.environ["WEB_CONFIG"])'
       - run: flutter pub get --enforce-lockfile
       - run: dart run build_runner build
