@@ -31,7 +31,9 @@ class FirebaseAdminRepository implements AdminRepository {
       if ((data['tokenStart'] == null || data['tokenEnd'] == null) &&
           slots.add(data['slotId'] as String)) {
         final tokens = await source.ensureTokens(doc.id);
-        if (tokens == null) break;
+        if (tokens == null) {
+          throw StateError('Could not prepare booking tokens for export. Please retry.');
+        }
       }
     }
     if (slots.isNotEmpty) {
