@@ -215,6 +215,7 @@ class VisitBooking {
     if (role.isEmpty) return '';
     return bookedByName.isEmpty ? role : '$bookedByName ($role)';
   }
+
   final String serviceStatus;
   final int startAt, endAt, visitors;
   final int? tokenStart, tokenEnd;

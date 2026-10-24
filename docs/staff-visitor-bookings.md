@@ -6,6 +6,11 @@ international numbers with `+` and country code; spaces, parentheses and hyphens
 are removed before storage. Ordinary visitors continue booking with the phone
 number from their authenticated token.
 
+In Admin → Khadim management, enable **Book visits for visitors** for each
+Khadim who should use this flow. Saving permissions invalidates their previous
+session; they sign in again with the updated access. This permission does not
+grant access to the administrator's full booking list.
+
 ## Data and access
 
 - `visitorPhone` contains the normalized visitor contact. `phoneNumberMasked`

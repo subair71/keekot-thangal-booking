@@ -97,8 +97,7 @@ class FakeBookings implements BookingRepository {
     String name,
     String address, {
     String? visitorPhone,
-  }) async =>
-      'sample';
+  }) async => 'sample';
   @override
   Stream<List<VisitBooking>> bookings(String uid) => Stream.value(items);
   @override

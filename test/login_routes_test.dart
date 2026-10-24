@@ -71,7 +71,10 @@ void main() {
       if (user?.khadim == true) {
         router.go('/book/confirmation');
         await tester.pumpAndSettle();
-        expect(router.routeInformationProvider.value.uri.path, '/access-denied');
+        expect(
+          router.routeInformationProvider.value.uri.path,
+          '/access-denied',
+        );
       }
       expect(tester.takeException(), isNull);
     });

@@ -98,11 +98,7 @@ class _PassCardState extends ConsumerState<PassCard> {
           ),
           if (b.bookedByLabel.isNotEmpty) ...[
             const SizedBox(height: 22),
-            InfoLine(
-              Icons.support_agent,
-              'Booked by',
-              b.bookedByLabel,
-            ),
+            InfoLine(Icons.support_agent, 'Booked by', b.bookedByLabel),
           ],
           const SizedBox(height: 28),
           const Divider(),
