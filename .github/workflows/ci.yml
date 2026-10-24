@@ -27,7 +27,10 @@ jobs:
           java-version: '21'
       - run: flutter pub get --enforce-lockfile
       - run: dart run build_runner build
-      - run: dart format --output=none --set-exit-if-changed lib test
+      - name: Verify Dart formatting
+        run: |
+          dart format lib test
+          git diff --exit-code -- lib test
       - run: flutter analyze
       - run: flutter test --coverage --dart-define=CAPTURE_QA=true
       - name: Save responsive UI previews
