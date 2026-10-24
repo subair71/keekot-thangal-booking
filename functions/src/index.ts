@@ -137,6 +137,31 @@ export const adminSaveKhadim=callable(async r=>{
   });
   return {uid};
 });
+export const adminDeleteKhadim=callable(async r=>{
+  const admin=await actor(r,'admin');
+  const uid=id(r.data?.uid);
+  const ref=db.doc(`khadims/${uid}`);
+  const profile=await ref.get();
+  if(!profile.exists)throw new HttpsError('not-found','Khadim account not found.');
+  const active=await db.collection('bookings').where('assignment.khadimId','==',uid).get();
+  if(active.docs.some(b=>['assigned','inProgress'].includes(b.data().assignment?.status)))
+    throw new HttpsError('failed-precondition','Reassign active visits before deleting this Khadim.');
+  // Disable the profile first, so new logins cannot succeed during cleanup.
+  await ref.update({enabled:false,version:FieldValue.increment(1)});
+  await getAuth().revokeRefreshTokens(uid).catch(e=>{
+    if(e?.code!=='auth/user-not-found')throw e;
+  });
+  await getAuth().deleteUser(uid).catch(e=>{
+    if(e?.code!=='auth/user-not-found')throw e;
+  });
+  const batch=db.batch();
+  batch.delete(ref);
+  batch.delete(db.doc(`khadimPhones/${profile.data()!.phone}`));
+  batch.delete(db.doc(`khadimSecrets/${uid}`));
+  batch.set(db.collection('auditLog').doc(),{actor:admin.uid,action:'deleteKhadim',target:uid,at:FieldValue.serverTimestamp()});
+  await batch.commit();
+  return {deleted:true};
+});
 export const khadimLogin=callable(async r=>{
   const phone=staffPhone(r.data?.phone),password=String(r.data?.password ?? '');
   const denied=()=>new HttpsError('unauthenticated','Invalid phone number or password.');
