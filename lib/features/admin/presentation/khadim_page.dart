@@ -176,6 +176,34 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
     }
   }
 
+  Future<void> deleteKhadim(String targetUid, String targetName) async {
+    if (busy) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Khadim?'),
+        content: Text('Delete $targetName permanently? Reassign active visits first. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => busy = true);
+    try {
+      await ref.read(firebaseBookingProvider).call('adminDeleteKhadim', {'uid': targetUid});
+      if (mounted) {
+        if (uid == targetUid) reset();
+        showMessage(context, 'Khadim account deleted.');
+      }
+    } catch (e) {
+      if (mounted) showMessage(context, failureMessage(e));
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => PageContainer(
     width: 800,
@@ -315,7 +343,15 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                       '${doc.data()['phone']} · ${doc.data()['enabled'] == true ? 'Enabled' : 'Disabled'}\n${(doc.data()['permissions'] as List).map((p) => _permissions[p] ?? p).join(', ')}',
                     ),
                     isThreeLine: true,
-                    trailing: IconButton(
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                      IconButton(
+                      tooltip: 'Delete Khadim',
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: busy ? null : () => deleteKhadim(doc.id, doc.data()['name'] as String),
+                      ),
+                      IconButton(
                       tooltip: 'Edit access or reset password',
                       icon: const Icon(Icons.edit_outlined),
                       onPressed: busy
@@ -330,6 +366,7 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                                 doc.data()['permissions'],
                               );
                             }),
+                      ],
                     ),
                   ),
               ],
