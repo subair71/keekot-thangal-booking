@@ -346,26 +346,35 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                      IconButton(
-                      tooltip: 'Delete Khadim',
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: busy ? null : () => deleteKhadim(doc.id, doc.data()['name'] as String),
-                      ),
-                      IconButton(
-                      tooltip: 'Edit access or reset password',
-                      icon: const Icon(Icons.edit_outlined),
-                      onPressed: busy
-                          ? null
-                          : () => setState(() {
-                              uid = doc.id;
-                              name.text = doc.data()['name'];
-                              phone.text = doc.data()['phone'];
-                              password.clear();
-                              enabled = doc.data()['enabled'] == true;
-                              selected = Set<String>.from(
-                                doc.data()['permissions'],
-                              );
-                            }),
+                        IconButton(
+                          tooltip: 'Delete Khadim',
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          onPressed: busy
+                              ? null
+                              : () => deleteKhadim(
+                                  doc.id,
+                                  doc.data()['name'] as String,
+                                ),
+                        ),
+                        IconButton(
+                          tooltip: 'Edit access or reset password',
+                          icon: const Icon(Icons.edit_outlined),
+                          onPressed: busy
+                              ? null
+                              : () => setState(() {
+                                  uid = doc.id;
+                                  name.text = doc.data()['name'];
+                                  phone.text = doc.data()['phone'];
+                                  password.clear();
+                                  enabled = doc.data()['enabled'] == true;
+                                  selected = Set<String>.from(
+                                    doc.data()['permissions'],
+                                  );
+                                }),
+                        ),
                       ],
                     ),
                   ),
