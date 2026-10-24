@@ -7,7 +7,12 @@ abstract interface class BookingRepository {
   Future<SlotHold?> activeHold();
   Future<SlotHold> createHold(VisitSlot slot, int visitors, String requestId);
   Future<void> releaseHold(String id);
-  Future<String> confirm(String holdId, String name, String address);
+  Future<String> confirm(
+    String holdId,
+    String name,
+    String address, {
+    String? visitorPhone,
+  });
   Stream<List<VisitBooking>> bookings(String uid);
   Stream<VisitBooking?> booking(String id);
   Future<void> cancel(String id, String reason);

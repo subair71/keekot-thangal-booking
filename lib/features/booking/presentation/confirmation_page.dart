@@ -10,6 +10,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
 import '../domain/booking_models.dart';
+import '../domain/visitor_phone.dart';
 import '../../notifications/presentation/notifications_page.dart';
 
 class ConfirmationPage extends ConsumerStatefulWidget {
@@ -19,7 +20,9 @@ class ConfirmationPage extends ConsumerStatefulWidget {
 }
 
 class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
-  final name = TextEditingController(), address = TextEditingController();
+  final name = TextEditingController(),
+      address = TextEditingController(),
+      phone = TextEditingController();
   final form = GlobalKey<FormState>();
   final elapsed = Stopwatch();
   SlotHold? hold;
@@ -86,7 +89,15 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
     try {
       final id = await ref
           .read(bookingRepositoryProvider)
-          .confirm(hold!.id, name.text.trim(), address.text.trim());
+          .confirm(
+            hold!.id,
+            name.text.trim(),
+            address.text.trim(),
+            visitorPhone:
+                ref.read(authProvider).asData?.value?.canBookForVisitor == true
+                ? normalizeVisitorPhone(phone.text)
+                : null,
+          );
       ref.read(draftProvider.notifier).clear();
       if (mounted) context.go('/book/success/$id');
     } catch (e) {
@@ -116,6 +127,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   void dispose() {
     name.dispose();
     address.dispose();
+    phone.dispose();
     timer?.cancel();
     elapsed.stop();
     super.dispose();
@@ -124,6 +136,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).asData?.value;
+    final assisted = user?.canBookForVisitor == true;
     final content = loading
         ? const Center(
             child: Padding(
@@ -244,11 +257,45 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                           : null,
                     ),
                     const SizedBox(height: 18),
-                    InfoLine(
-                      Icons.verified_user_outlined,
-                      'Mobile verified',
-                      user?.maskedPhone ?? 'Signed in',
-                    ),
+                    if (assisted) ...[
+                      TextFormField(
+                        key: const ValueKey('visitor-phone'),
+                        controller: phone,
+                        enabled: !busy,
+                        maxLength: 40,
+                        keyboardType: TextInputType.phone,
+                        textDirection: TextDirection.ltr,
+                        autofillHints: null,
+                        decoration: InputDecoration(
+                          labelText: tr(context, 'Visitor Phone Number'),
+                          hintText: '+91 9876543210',
+                          helperText: tr(
+                            context,
+                            'Enter the phone number of the visitor you are booking for.',
+                          ),
+                          helperMaxLines: 3,
+                          prefixIcon: const Icon(Icons.phone_outlined),
+                        ),
+                        validator: (value) =>
+                            normalizeVisitorPhone(value ?? '') == null
+                            ? tr(
+                                context,
+                                'Enter a valid phone number with country code.',
+                              )
+                            : null,
+                      ),
+                      const SizedBox(height: 18),
+                      InfoLine(
+                        Icons.support_agent,
+                        'Booked by',
+                        user!.admin ? 'Administrator' : 'Khadim',
+                      ),
+                    ] else
+                      InfoLine(
+                        Icons.verified_user_outlined,
+                        'Mobile verified',
+                        user?.maskedPhone ?? 'Signed in',
+                      ),
                     const SizedBox(height: 24),
                     if (error != null) ...[
                       Semantics(
@@ -290,10 +337,12 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const PageHeading(
+          PageHeading(
             'Confirm your visit',
             eyebrow: 'Step 2 of 2',
-            subtitle: 'Check your time and enter your name and address.',
+            subtitle: assisted
+                ? 'Check the visit time and enter the visitor’s name, phone number and address.'
+                : 'Check your time and enter your name and address.',
           ),
           const BookingProgress(current: 1),
           const SizedBox(height: 24),

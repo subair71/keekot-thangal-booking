@@ -75,11 +75,17 @@ class FirebaseBookingRepository implements BookingRepository {
   }
 
   @override
-  Future<String> confirm(String holdId, String name, String address) async =>
+  Future<String> confirm(
+    String holdId,
+    String name,
+    String address, {
+    String? visitorPhone,
+  }) async =>
       (await call('createBooking', {
             'holdId': holdId,
             'visitorName': name,
             'visitorAddress': address,
+            if (visitorPhone != null) 'visitorPhone': visitorPhone,
           }))['bookingId']
           as String;
   @override

@@ -6,8 +6,13 @@ export function noticeData(bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
   const time=new Intl.DateTimeFormat('en-IN',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(b.startAt);
   const date=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'}).format(b.startAt);
-  const body=kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekkott Sayyid Attakoya Thangal Maqam visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
-  return {userId:b.userId,bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()};
+  const assisted=b.bookingSource==='staff';
+  const body=assisted
+    ? (kind==='cancelled'?'The visit you booked for a visitor has been cancelled.':`The visit you booked for a visitor ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`)
+    : kind==='cancelled'?'Your visit has been cancelled. Your places have been released.':`Your Keekkott Sayyid Attakoya Thangal Maqam visit ${kind==='reminder'?'begins':'is confirmed'} at ${time} on ${date}.`;
+  // Notify the booking creator's account. Never resolve a user or send SMS from
+  // the manually entered (unverified) visitor phone number.
+  return {userId:assisted?(b.bookedByUid || b.userId):b.userId,recipientRole:assisted?'booker':'visitor',bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()};
 }
 
 export function pushWebOptions(id: string, bookingId: string, appUrl = process.env.APP_ORIGIN || 'https://subair71.github.io/keekot-thangal-booking/') {

@@ -13,6 +13,7 @@ class AppUser {
   bool can(String section) =>
       admin || permissions.contains(section) || (section == 'gate' && gate);
   bool get staff => admin || khadim || gate || permissions.isNotEmpty;
+  bool get canBookForVisitor => admin || (khadim && can('bookings'));
   String get staffHome => khadim
       ? '/khadim'
       : can('dashboard')

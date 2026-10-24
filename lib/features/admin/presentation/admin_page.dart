@@ -175,7 +175,7 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
             child: TextField(
               onChanged: (v) => setState(() => search = v.toLowerCase().trim()),
               decoration: const InputDecoration(
-                labelText: 'Reference or visitor on selected date',
+                labelText: 'Reference, visitor or phone on selected date',
                 prefixIcon: Icon(Icons.search),
               ),
             ),
@@ -189,9 +189,9 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
         builder: (all) {
           final bookings = all
               .where(
-                (b) => '${b.reference} ${b.visitorName}'.toLowerCase().contains(
-                  search,
-                ),
+                (b) => '${b.reference} ${b.visitorName} ${b.visitorPhone}'
+                    .toLowerCase()
+                    .contains(search),
               )
               .toList();
           if (bookings.isEmpty) {
@@ -220,8 +220,22 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel} · ${b.phoneMasked}',
+                          '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel}',
                         ),
+                        const SizedBox(height: 16),
+                        InfoLine(
+                          Icons.phone_outlined,
+                          'Visitor Phone Number',
+                          b.visitorPhoneDisplay,
+                        ),
+                        if (b.bookedByLabel.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          InfoLine(
+                            Icons.support_agent,
+                            'Booked by',
+                            b.bookedByLabel,
+                          ),
+                        ],
                         const SizedBox(height: 16),
                         if (b.visitorAddress.isNotEmpty) ...[
                           InfoLine(

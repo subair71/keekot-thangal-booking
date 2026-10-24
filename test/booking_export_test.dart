@@ -17,6 +17,9 @@ VisitBooking example(
   visitorName: name,
   visitorAddress: '12 Test Street, Chavakkad',
   phoneMasked: '+91 ••••• 1234',
+  visitorPhone: '+919876541234',
+  bookedByRole: 'khadim',
+  bookedByName: 'Test Khadim',
   visitDate: day,
   startTime: start,
   endTime: '07:30',
@@ -49,6 +52,12 @@ void main() {
     expect(sheet, isNot(contains('private-token')));
     expect(sheet, contains('12 Test Street'));
     expect(sheet, contains('Token numbers'));
+    expect(sheet, contains('Visitor Phone Number'));
+    expect(sheet, contains('+919876541234'));
+    expect(sheet, contains('Booked by'));
+    expect(sheet, contains('Test Khadim (Khadim)'));
+    expect(sheet, isNot(contains('+91 ••••• 1234')));
+    expect(sheet, contains('autoFilter ref="A1:J2"'));
     expect(sheet, contains('3–4'));
     await Directory('build/export-qa').create(recursive: true);
     await File('build/export-qa/bookings.xlsx').writeAsBytes(bytes);

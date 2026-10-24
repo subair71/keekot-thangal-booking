@@ -88,8 +88,22 @@ class _PassCardState extends ConsumerState<PassCard> {
           InfoLine(
             Icons.person_outline,
             b.visitorName,
-            '${b.phoneMasked} · ${b.visitors} ${b.visitors == 1 ? 'visitor' : 'visitors'}',
+            '${b.visitors} ${b.visitors == 1 ? 'visitor' : 'visitors'}',
           ),
+          const SizedBox(height: 22),
+          InfoLine(
+            Icons.phone_outlined,
+            'Visitor Phone Number',
+            b.visitorPhoneDisplay,
+          ),
+          if (b.bookedByLabel.isNotEmpty) ...[
+            const SizedBox(height: 22),
+            InfoLine(
+              Icons.support_agent,
+              'Booked by',
+              b.bookedByLabel,
+            ),
+          ],
           const SizedBox(height: 28),
           const Divider(),
           const SizedBox(height: 24),

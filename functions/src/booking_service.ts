@@ -1,22 +1,25 @@
 import {noticeData} from './notifications.js';
 import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
+import {Actor, assertCanBook, bookingIdentity} from './booking_identity.js';
 import {Firestore, FieldValue, Timestamp, Transaction} from 'firebase-admin/firestore';
 import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
 
-export interface Actor {uid: string; phone: string; admin?: boolean; gate?: boolean; permissions?: string[]}
+export type {Actor} from './booking_identity.js';
 export class BookingService {
   constructor(readonly db: Firestore, readonly clock = () => Date.now()) {}
-  private async dailyBookings(tx: Transaction, actor: Actor, day: string) {
-    // Identity comes from the verified authentication token, never request data.
-    const phone = actor.phone.trim();
-    if (!/^\+[1-9]\d{7,14}$/.test(phone)) throw new DomainError('failed-precondition', 'A verified phone number is required.');
+  private async dailyBookings(tx: Transaction, actor: Actor, day: string, phone: string) {
     const ref = this.db.doc(`phoneDailyBookings/${tokenHash(phone)}_${day}`);
     const saved = await tx.get(ref);
     let count = saved.data()?.count as number | undefined;
     if (count === undefined) {
-      // Include bookings made before this limit was introduced, including cancellations.
-      const previous = await tx.get(this.db.collection('bookings').where('userId', '==', actor.uid));
+      // Count the visitor across creators, including cancellations. Old masked-only
+      // records can only be attributed to a verified self-booking account.
+      const previous = await tx.get(this.db.collection('bookings').where('visitorPhone', '==', phone));
       count = previous.docs.filter(d => d.data().visitDate === day).length;
+      if (!actor.admin && !actor.khadim) {
+        const legacy = await tx.get(this.db.collection('bookings').where('userId', '==', actor.uid));
+        count += legacy.docs.filter(d => !d.data().visitorPhone && d.data().visitDate === day).length;
+      }
     }
     if (!actor.admin && count >= 2) throw new DomainError('failed-precondition', 'You can make a maximum of 2 bookings per phone number per visit date. Cancelled bookings also count toward this limit.');
     return {ref, count};
@@ -34,6 +37,7 @@ export class BookingService {
       slots: generateSlots(day, c).map(s => publicSlot(byId.get(s.slotId) || s, state.get(s.slotId) || {}, now, closure.data()))};
   }
   async createHold(actor: Actor, input: {visitDate: string; slotId: string; visitorCount: number; requestId: string}) {
+    assertCanBook(actor);
     validDate(input.visitDate); const holdId = textValue(input.requestId, 20, 100, 'request ID');
     if (!/^[\w-]+$/.test(holdId)) throw new DomainError('invalid-argument', 'Invalid request ID.');
     const holdRef = this.db.doc(`slotHolds/${actor.uid}_${holdId}`), uidRef = this.db.doc(`activeUserHolds/${actor.uid}`);
@@ -49,7 +53,9 @@ export class BookingService {
       }
       if (existing.exists) throw new DomainError('failed-precondition', 'This hold has expired. Select your slot again.');
       if (uidHold.exists && uidHold.data()!.expiresAt > now) throw new DomainError('failed-precondition', 'You already have a held slot. Continue or release it first.');
-      await this.dailyBookings(tx, actor, input.visitDate);
+      // Staff enter visitor details after selecting a slot; enforce their visitor's
+      // daily limit atomically at confirmation, never against the staff number.
+      if (!actor.admin && !actor.khadim) await this.dailyBookings(tx, actor, input.visitDate, actor.phone);
       const base = generateSlots(input.visitDate, c).find(s => s.slotId === input.slotId);
       if (!base) throw new DomainError('invalid-argument', 'Choose a valid slot.');
       const slotRef = this.db.doc(`visitSlots/${base.slotId}`), stateRef = this.db.doc(`slotState/${base.slotId}`);
@@ -83,7 +89,8 @@ export class BookingService {
       if(user.data()?.holdId===holdId)tx.delete(ur);
     }); return {released:true};
   }
-  async createBooking(actor: Actor, holdId: string, visitorName: string, visitorAddress?: string) {
+  async createBooking(actor: Actor, holdId: string, visitorName: string, visitorAddress?: string, visitorPhone?: unknown) {
+    const identity = bookingIdentity(actor, visitorPhone);
     textValue(holdId,1,240,'hold ID'); visitorName=textValue(visitorName,2,100,'visitor name');
     const address=visitorAddress === undefined ? '' : textValue(visitorAddress,5,500,'visitor address');
     const holdRef=this.db.doc(`slotHolds/${holdId}`), bookingRef=this.db.collection('bookings').doc();
@@ -103,11 +110,13 @@ export class BookingService {
       const slot=s.data() as Slot, holds=activeHolds(state.data()?.holds || {},now);
       if(!holds[holdId]) throw new DomainError('failed-precondition','Your hold has expired.');
       delete holds[holdId]; requireCapacity(slot,holds,hold.visitorCount,now);
-      const daily=await this.dailyBookings(tx,actor,slot.visitDate);
+      const daily=await this.dailyBookings(tx,actor,slot.visitDate,identity.visitorPhone);
       const sequence=await readTokenSequence(this.db,tx,slot.slotId);
       const tokenStart=sequence.nextToken, tokenEnd=tokenStart+hold.visitorCount-1;
       const bookingReference=referenceFor(hold.visitDate);
-      const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,visitorName,visitorAddress:address,phoneNumberMasked:maskPhone(actor.phone),
+      // userId remains the access owner/creator; an entered phone never grants
+      // ownership to a different Firebase account.
+      const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,...identity,visitorName,visitorAddress:address,phoneNumberMasked:maskPhone(identity.visitorPhone),
         visitDate:slot.visitDate,slotId:slot.slotId,startTime:slot.startTime,endTime:slot.endTime,startAt:slot.startAt,endAt:slot.endAt,
         timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
         reminderAt:slot.startAt-c.reminderMinutes*60_000,reminderQueued:false,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()};

@@ -20,3 +20,11 @@ test('push links and logo resolve under GitHub Pages base path',()=>{
 test('push links also support root hosting',()=>{
   assert.equal(new URL(pushWebOptions('n','b','https://example.com/').fcmOptions.link).pathname,'/');
 });
+test('staff notices go to the creator account and never use a visitor contact as an account or SMS recipient',()=>{
+  for(const kind of ['confirmed','cancelled','reminder']) {
+    const n=noticeData('booking-2',kind,{userId:'creator',bookedByUid:'creator',bookingSource:'staff',visitorPhone:'+919876543210',startAt:Date.parse('2030-01-10T04:30:00Z')});
+    assert.equal(n.userId,'creator');assert.equal(n.recipientRole,'booker');
+    assert.match(n.body,/you booked for a visitor/);
+    assert.doesNotMatch(n.body,/9876543210|Your.*visit/);
+  }
+});

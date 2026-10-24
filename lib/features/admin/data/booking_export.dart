@@ -15,11 +15,12 @@ class BookingExport {
     'Booking reference',
     'Visitor name',
     'Address',
-    'Mobile (masked)',
+    'Visitor Phone Number',
     'Time slot (IST)',
     'Visitors',
     'Status',
     'Token numbers',
+    'Booked by',
   ];
 
   static void validatePeriod(int startMinute, int endMinute) {
@@ -69,11 +70,12 @@ class BookingExport {
             b.reference,
             b.visitorName,
             b.visitorAddress,
-            b.phoneMasked,
+            b.visitorPhoneDisplay,
             '${b.startTime} - ${b.endTime}',
             '${b.visitors}',
             b.status,
             b.tokenLabel,
+            b.bookedByLabel,
           ],
         )
         .toList();
@@ -99,7 +101,7 @@ class BookingExport {
     ];
     final sheet = StringBuffer(
       '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/><col min="5" max="6" width="24" customWidth="1"/><col min="7" max="9" width="16" customWidth="1"/></cols><sheetData>''',
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="18" customWidth="1"/><col min="2" max="2" width="34" customWidth="1"/><col min="3" max="3" width="28" customWidth="1"/><col min="4" max="4" width="48" customWidth="1"/><col min="5" max="6" width="24" customWidth="1"/><col min="7" max="9" width="16" customWidth="1"/><col min="10" max="10" width="28" customWidth="1"/></cols><sheetData>''',
     );
     for (var r = 0; r < data.length; r++) {
       sheet.write('<row r="${r + 1}">');
@@ -122,7 +124,7 @@ class BookingExport {
       '<row r="${data.length + 2}"><c r="A${data.length + 2}" t="inlineStr"><is><t>${xml(summary)}</t></is></c></row>',
     );
     sheet.write(
-      '</sheetData><autoFilter ref="A1:I${data.length}"/></worksheet>',
+      '</sheetData><autoFilter ref="A1:J${data.length}"/></worksheet>',
     );
     final files = <String, String>{
       '[Content_Types].xml':
@@ -225,6 +227,7 @@ class BookingExport {
                 6: pw.FlexColumnWidth(.6),
                 7: pw.FlexColumnWidth(1),
                 8: pw.FlexColumnWidth(.8),
+                9: pw.FlexColumnWidth(1.3),
               },
             ),
         ],

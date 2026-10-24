@@ -92,7 +92,12 @@ class FakeBookings implements BookingRepository {
   @override
   Future<void> releaseHold(String id) async {}
   @override
-  Future<String> confirm(String holdId, String name, String address) async =>
+  Future<String> confirm(
+    String holdId,
+    String name,
+    String address, {
+    String? visitorPhone,
+  }) async =>
       'sample';
   @override
   Stream<List<VisitBooking>> bookings(String uid) => Stream.value(items);
