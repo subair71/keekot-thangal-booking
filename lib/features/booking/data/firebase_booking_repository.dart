@@ -85,7 +85,7 @@ class FirebaseBookingRepository implements BookingRepository {
             'holdId': holdId,
             'visitorName': name,
             'visitorAddress': address,
-            if (visitorPhone != null) 'visitorPhone': visitorPhone,
+            'visitorPhone': ?visitorPhone,
           }))['bookingId']
           as String;
   @override
