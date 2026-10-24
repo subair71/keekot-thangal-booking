@@ -57,8 +57,9 @@ npm test --prefix functions
 node functions/node_modules/firebase-tools/lib/bin/firebase.js deploy --project keekot-thangal-booking --only functions,firestore:rules --non-interactive
 ```
 
-The full functions deployment includes the previously missing staff functions.
-It also requires the existing `CONTACT_GMAIL_APP_PASSWORD` Secret Manager value
+The full functions deployment includes staff management and login functions as
+well as the updated booking functions. It requires the existing
+`CONTACT_GMAIL_APP_PASSWORD` Secret Manager value
 for `submitContact`; do not substitute a fake secret if it is not configured.
 For an isolated release of this feature, deploy the following changed functions
 and the rules (all functions that use the shared actor resolver are included):
@@ -87,7 +88,15 @@ configuration used in CI.
   ordinary visitor booking. Confirm stored creator UID/role and unchanged staff
   account details. These are live checks, not proof supplied by unit tests.
 
-At implementation time, the TypeScript build and 28 unit tests passed. Local
-Flutter validation and emulator integration were blocked by missing Flutter and
-Java 21 runtimes respectively. Firebase deployment remained blocked by missing
-authenticated deployment access. Check the PR's latest CI results before release.
+Validation on the feature branch passed in GitHub Actions with Flutter 3.47.4,
+Node 22 and Java 21: Dart code generation, formatting, Flutter analysis, the full
+Flutter test suite, the TypeScript build and 28 backend unit tests, and Firebase
+emulator transaction/rules tests. Generated admin, Khadim and long-name passes
+were rendered and visually inspected: each fits on one page with the entered
+visitor number and a separate Booked by field. CI retains pass PDFs, report
+exports and responsive UI previews for review.
+
+Firebase deployment and live function inventory remain unverified because no
+authenticated deployment access is available. The CI release build uses test
+configuration and is not a production deployment. See [PR #60](https://github.com/subair71/keekot-thangal-booking/pull/60)
+for the latest build results before release.

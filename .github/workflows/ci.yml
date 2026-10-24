@@ -38,7 +38,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: responsive-ui-previews
-          path: build/qa
+          path: |
+            build/qa
+            build/export-qa
           if-no-files-found: ignore
       - run: npm ci --prefix functions
       - run: npm test --prefix functions
