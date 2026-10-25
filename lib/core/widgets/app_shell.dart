@@ -322,7 +322,7 @@ class AppShell extends ConsumerWidget {
       bottomNavigationBar: wide
           ? null
           : NavigationBar(
-              height: 64,
+              height: textScale > 1.3 ? 88 : 64,
               labelTextStyle: AppLanguage.of(context) == 'ml'
                   ? WidgetStateProperty.resolveWith(
                       (states) => Theme.of(context)
