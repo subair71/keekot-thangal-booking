@@ -353,6 +353,7 @@ class _MaqamHero extends StatelessWidget {
                     backgroundColor: AppColors.mintStrong,
                     foregroundColor: AppColors.emerald,
                     textStyle: const TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -371,7 +372,10 @@ class _MaqamHero extends StatelessWidget {
                     side: BorderSide(
                       color: AppColors.ivory.withValues(alpha: .35),
                     ),
-                    textStyle: const TextStyle(fontSize: 13),
+                    textStyle: const TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 13,
+                    ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
@@ -442,7 +446,7 @@ class _MaqamHero extends StatelessWidget {
                                 AppColors.emerald,
                                 AppColors.emerald.withValues(alpha: 0),
                               ],
-                              stops: const [0, .42, .82],
+                              stops: const [0, .5, .9],
                             ),
                           ),
                         ),

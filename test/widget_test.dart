@@ -86,6 +86,7 @@ void main() {
     for (final font in {
       'Newsreader': 'Newsreader.ttf',
       'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
     }.entries) {
       final loader = FontLoader(font.key)
         ..addFont(rootBundle.load('assets/fonts/${font.value}'));
@@ -193,9 +194,6 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    final font = FontLoader('Noto Sans Malayalam')
-      ..addFont(rootBundle.load('assets/fonts/NotoSansMalayalam.ttf'));
-    await font.load();
     await tester.pumpWidget(
       RepaintBoundary(
         key: captureKey,

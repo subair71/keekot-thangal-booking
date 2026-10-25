@@ -177,7 +177,7 @@ class AppShell extends ConsumerWidget {
       ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
-          (wide ? 104 : 108) * textScale.clamp(1.0, 1.5),
+          (wide ? 120 : 108) * textScale.clamp(1.0, 1.5),
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -198,7 +198,7 @@ class AppShell extends ConsumerWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
-                    vertical: wide ? 10 : 4,
+                    vertical: wide ? 6 : 4,
                   ),
                   child: Row(
                     children: [
@@ -225,7 +225,7 @@ class AppShell extends ConsumerWidget {
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w700,
-                                          fontSize: wide ? 24 : 16,
+                                          fontSize: wide ? 22 : 16,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
