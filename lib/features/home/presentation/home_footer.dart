@@ -24,7 +24,9 @@ class HomeFooter extends StatelessWidget {
       children: [
         Container(
           color: AppColors.cream,
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(
+            MediaQuery.sizeOf(context).width < 600 ? 28 : 44,
+          ),
           child: Column(
             children: [
               const Icon(Icons.spa_outlined, color: AppColors.gold, size: 32),
@@ -176,7 +178,7 @@ class HomeFooter extends StatelessWidget {
               ],
             );
             return Padding(
-              padding: EdgeInsets.all(wide ? 24 : 18),
+              padding: EdgeInsets.all(wide ? 36 : 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

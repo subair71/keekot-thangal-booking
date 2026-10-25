@@ -91,7 +91,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 );
               }
               return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Expanded(child: _MaqamHero()),
                   const SizedBox(width: 28),
@@ -105,6 +105,8 @@ class _HomePageState extends ConsumerState<HomePage> {
             value: config,
             onRetry: () => ref.invalidate(configurationProvider),
             builder: (c) => SurfaceCard(
+              color: AppColors.cream,
+              padding: 24,
               child: _FeatureGrid(
                 children: [
                   InfoLine(
@@ -277,155 +279,204 @@ class _MaqamHero extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 650;
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Stack(
+      final artwork = Image.asset(
+        'assets/brand/maqam-hero.png',
+        fit: BoxFit.cover,
+        alignment: const Alignment(.45, 0),
+        excludeFromSemantics: true,
+      );
+      final content = Padding(
+        padding: EdgeInsets.all(compact ? 24 : 36),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: Image.asset(
-                'assets/brand/maqam-hero.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.centerRight,
-                excludeFromSemantics: true,
+            Container(
+              width: 36,
+              height: 3,
+              margin: const EdgeInsets.only(bottom: 18),
+              decoration: BoxDecoration(
+                color: AppColors.mintStrong,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(
-                        0xFF082D25,
-                      ).withValues(alpha: compact ? .93 : .96),
-                      const Color(
-                        0xFF082D25,
-                      ).withValues(alpha: compact ? .72 : .16),
-                    ],
-                    stops: const [0, 1],
-                  ),
+            const AppText(
+              'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
+              style: TextStyle(
+                color: AppColors.mintStrong,
+                fontSize: 10,
+                height: 1.6,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Semantics(
+              header: true,
+              child: AppText(
+                'A peaceful place.\nA heartfelt visit.',
+                style: TextStyle(
+                  fontFamily: 'Newsreader',
+                  fontSize: compact ? 32 : 44,
+                  height: 1.1,
+                  color: AppColors.ivory,
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(compact ? 24 : 36),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(height: 14),
+            AppText.rich(
+              const TextSpan(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.emerald.withValues(alpha: .7),
-                      border: Border.all(
-                        color: AppColors.mintStrong.withValues(alpha: .3),
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: const AppText(
-                      'KEEKKOTT SAYYID ATTAKOYA THANGAL MAQAM',
-                      style: TextStyle(
-                        color: AppColors.mintStrong,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1,
-                      ),
-                    ),
+                  TextSpan(text: 'Plan for a visit with '),
+                  TextSpan(
+                    text: 'Mr. Sayyid Ali Noufal Thangal Al-Aidrose',
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 14),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 650),
-                    child: AppText(
-                      'A peaceful place.\nA heartfelt visit.',
-                      style: TextStyle(
-                        fontFamily: 'Newsreader',
-                        fontSize: compact ? 32 : 44,
-                        height: 1.12,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 480),
-                    child: AppText.rich(
-                      const TextSpan(
-                        children: [
-                          TextSpan(text: 'Plan for a visit with '),
-                          TextSpan(
-                            text: 'Mr. Sayyid Ali Noufal Thangal Al-Aidrose',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          TextSpan(
-                            text:
-                                ' Keekkott for your spiritual advice and dua.',
-                          ),
-                        ],
-                      ),
-                      style: TextStyle(
-                        color: const Color(0xFFE7EEE7),
-                        fontSize: compact ? 14 : 15,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      FilledButton.icon(
-                        onPressed: () => context.go('/book'),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.mintStrong,
-                          minimumSize: const Size(48, 48),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          textStyle: const TextStyle(fontSize: 13),
-                          foregroundColor: AppColors.emerald,
-                        ),
-                        icon: const Icon(Icons.calendar_month_outlined),
-                        label: const AppText('Book a visit'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () => context.go('/information'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(48, 48),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          textStyle: const TextStyle(fontSize: 13),
-                          side: const BorderSide(color: Color(0xFFB7C9BE)),
-                        ),
-                        child: const AppText('Visitor guide'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Divider(color: AppColors.secondary),
-                  const SizedBox(height: 8),
-                  const AppText(
-                    'CHAVAKKAD  /  KERALA  /  INDIA',
-                    style: TextStyle(
-                      color: AppColors.mintStrong,
-                      fontSize: 11,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const AppText(
-                    'Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph',
-                    style: TextStyle(color: Color(0xFFD9E6DF), fontSize: 11),
+                  TextSpan(
+                    text: ' Keekkott for your spiritual advice and dua.',
                   ),
                 ],
               ),
+              style: const TextStyle(
+                color: AppColors.ivory,
+                fontSize: 14,
+                height: 1.65,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                FilledButton.icon(
+                  onPressed: () => context.go('/book'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.mintStrong,
+                    foregroundColor: AppColors.emerald,
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                  icon: const Icon(Icons.calendar_month_outlined, size: 18),
+                  label: const AppText('Book a visit'),
+                ),
+                OutlinedButton(
+                  onPressed: () => context.go('/information'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.ivory,
+                    side: BorderSide(
+                      color: AppColors.ivory.withValues(alpha: .35),
+                    ),
+                    textStyle: const TextStyle(fontSize: 13),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const AppText('Visitor guide'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 26),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on_outlined,
+                  size: 15,
+                  color: AppColors.mintStrong,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: AppText(
+                    'CHAVAKKAD  /  KERALA  /  INDIA',
+                    style: TextStyle(
+                      color: AppColors.mintStrong,
+                      fontSize: 10,
+                      letterSpacing: 1.3,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
+        ),
+      );
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.emerald.withValues(alpha: .12),
+              blurRadius: 32,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: ColoredBox(
+            color: AppColors.emerald,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (compact) SizedBox(height: 140, child: artwork),
+                if (compact)
+                  content
+                else
+                  Stack(
+                    children: [
+                      Positioned.fill(
+                        left: constraints.maxWidth * .42,
+                        child: artwork,
+                      ),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.emerald,
+                                AppColors.emerald,
+                                AppColors.emerald.withValues(alpha: 0),
+                              ],
+                              stops: const [0, .42, .82],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: constraints.maxWidth * .65,
+                        child: content,
+                      ),
+                    ],
+                  ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: AppColors.ivory.withValues(alpha: .15),
+                      ),
+                    ),
+                  ),
+                  child: const AppText(
+                    'Oil painting inspired by the Keekkott Sayyid Attakoya Thangal Maqam photograph',
+                    style: TextStyle(
+                      color: AppColors.ivory,
+                      fontSize: 10,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     },
@@ -439,6 +490,12 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      Container(
+        width: 30,
+        height: 2,
+        margin: const EdgeInsets.only(bottom: 14),
+        color: AppColors.gold,
+      ),
       AppText(
         eyebrow,
         style: const TextStyle(
@@ -502,15 +559,16 @@ class _VisitStep extends StatelessWidget {
           height: 48,
           alignment: Alignment.center,
           decoration: const BoxDecoration(
-            color: AppColors.mint,
+            color: AppColors.emerald,
             shape: BoxShape.circle,
           ),
           child: AppText(
             number,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.emerald,
+              fontFamily: 'Newsreader',
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              color: AppColors.mintStrong,
             ),
           ),
         ),
@@ -604,15 +662,23 @@ class _LiveAvailability extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
-                    Icons.event_available_outlined,
-                    color: AppColors.secondary,
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.mint,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.event_available_outlined,
+                      color: AppColors.emerald,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: AppText(
                       'Plan your visit',
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
                 ],
@@ -622,9 +688,13 @@ class _LiveAvailability extends ConsumerWidget {
               const SizedBox(height: 16),
               AppText(
                 '${VisitClock.dayLabel(day)} · ${config.hoursForDate(day)}',
-                style: const TextStyle(color: AppColors.muted),
+                style: const TextStyle(
+                  color: AppColors.muted,
+                  fontSize: 13,
+                  height: 1.7,
+                ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               AsyncPanel(
                 value: ref.watch(availabilityProvider(day)),
                 onRetry: () => ref.invalidate(availabilityProvider(day)),
@@ -637,9 +707,11 @@ class _LiveAvailability extends ConsumerWidget {
                     children: [
                       AppText(
                         '${available.length} available time slots',
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: AppColors.emerald,
+                        ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 16),
                       if (a.closed) AppText(a.reason),
                       if (available.isEmpty && !a.closed)
                         const AppText(
@@ -652,6 +724,8 @@ class _LiveAvailability extends ConsumerWidget {
                             .take(3)
                             .map(
                               (s) => Chip(
+                                backgroundColor: AppColors.mint,
+                                side: BorderSide.none,
                                 visualDensity: VisualDensity.compact,
                                 label: AppText(
                                   VisitClock.timeLabel(s.startTime),
@@ -664,15 +738,16 @@ class _LiveAvailability extends ConsumerWidget {
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () => context.go('/book'),
                 icon: const Icon(Icons.calendar_month_outlined),
                 label: const AppText('Choose a time'),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               const AppText(
                 'Availability updates every 20 seconds.',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 12, color: AppColors.muted),
               ),
             ],

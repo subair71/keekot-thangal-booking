@@ -31,7 +31,7 @@ ThemeData buildTheme() {
     ),
   );
   const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(14)),
+    borderRadius: BorderRadius.all(Radius.circular(12)),
   );
   return base.copyWith(
     textTheme: base.textTheme
@@ -46,7 +46,7 @@ ThemeData buildTheme() {
           ),
           headlineLarge: const TextStyle(
             fontFamily: 'Newsreader',
-            fontSize: 28,
+            fontSize: 32,
             height: 1.18,
             fontWeight: FontWeight.w500,
             color: AppColors.emerald,
@@ -85,16 +85,21 @@ ThemeData buildTheme() {
         ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size(48, 48),
+        minimumSize: const Size(48, 52),
         shape: shape,
         backgroundColor: AppColors.emerald,
         foregroundColor: AppColors.white,
+        textStyle: const TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        minimumSize: const Size(48, 48),
+        minimumSize: const Size(48, 52),
         shape: shape,
         side: const BorderSide(color: AppColors.outline),
         foregroundColor: AppColors.emerald,
@@ -102,12 +107,21 @@ ThemeData buildTheme() {
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(minimumSize: const Size(48, 48)),
+      style: TextButton.styleFrom(
+        minimumSize: const Size(48, 48),
+        shape: shape,
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.all(16),
+      floatingLabelStyle: const TextStyle(
+        color: AppColors.emerald,
+        fontWeight: FontWeight.w600,
+      ),
+      helperMaxLines: 3,
+      errorMaxLines: 3,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: AppColors.outline),
@@ -121,11 +135,28 @@ ThemeData buildTheme() {
         borderSide: const BorderSide(color: AppColors.secondary, width: 2),
       ),
     ),
-    navigationBarTheme: const NavigationBarThemeData(
-      backgroundColor: AppColors.ivory,
+    navigationBarTheme: NavigationBarThemeData(
+      elevation: 0,
+      backgroundColor: AppColors.white,
+      surfaceTintColor: Colors.transparent,
       indicatorColor: AppColors.mintStrong,
-      labelTextStyle: WidgetStatePropertyAll(
-        TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11),
+      indicatorShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          fontFamily: 'Plus Jakarta Sans',
+          fontSize: 11,
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
+          color: states.contains(WidgetState.selected)
+              ? AppColors.emerald
+              : AppColors.muted,
+        ),
+      ),
+      iconTheme: const WidgetStatePropertyAll(
+        IconThemeData(color: AppColors.emerald, size: 21),
       ),
     ),
     tooltipTheme: const TooltipThemeData(
@@ -151,6 +182,23 @@ ThemeData buildTheme() {
     dialogTheme: DialogThemeData(
       backgroundColor: AppColors.ivory,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.white,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: const BorderSide(color: AppColors.outline),
+      ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: AppColors.ivory,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
     ),
     dividerColor: AppColors.outline,
   );
