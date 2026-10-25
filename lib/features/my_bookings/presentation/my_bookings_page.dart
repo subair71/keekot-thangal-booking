@@ -89,6 +89,14 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
                           ),
                           const SizedBox(height: 8),
                           AppText('${b.timeLabel} · ${b.visitors} visitors'),
+                          const SizedBox(height: 8),
+                          Text(b.visitorName),
+                          const SizedBox(height: 8),
+                          InfoLine(
+                            Icons.phone_outlined,
+                            'Visitor Phone Number',
+                            b.visitorPhoneDisplay,
+                          ),
                           const SizedBox(height: 18),
                           OutlinedButton.icon(
                             onPressed: () => context.go('/pass/${b.id}'),

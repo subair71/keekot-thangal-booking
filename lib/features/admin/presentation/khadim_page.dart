@@ -11,6 +11,7 @@ import '../../../app/bootstrap/providers.dart';
 import '../../../core/widgets/components.dart';
 
 const _permissions = {
+  'bookings': 'Book visits for visitors',
   'slots': 'Slots, closures and date hours',
   'settings': 'Booking settings',
   'gate': 'Scan and confirm visitor passes',
@@ -182,17 +183,27 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete Khadim?'),
-        content: Text('Delete $targetName permanently? Reassign active visits first. This cannot be undone.'),
+        content: Text(
+          'Delete $targetName permanently? Reassign active visits first. This cannot be undone.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: const Text('Delete')),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Delete'),
+          ),
         ],
       ),
     );
     if (confirmed != true || !mounted) return;
     setState(() => busy = true);
     try {
-      await ref.read(firebaseBookingProvider).call('adminDeleteKhadim', {'uid': targetUid});
+      await ref.read(firebaseBookingProvider).call('adminDeleteKhadim', {
+        'uid': targetUid,
+      });
       if (mounted) {
         if (uid == targetUid) reset();
         showMessage(context, 'Khadim account deleted.');
@@ -346,26 +357,35 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                      IconButton(
-                      tooltip: 'Delete Khadim',
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: busy ? null : () => deleteKhadim(doc.id, doc.data()['name'] as String),
-                      ),
-                      IconButton(
-                      tooltip: 'Edit access or reset password',
-                      icon: const Icon(Icons.edit_outlined),
-                      onPressed: busy
-                          ? null
-                          : () => setState(() {
-                              uid = doc.id;
-                              name.text = doc.data()['name'];
-                              phone.text = doc.data()['phone'];
-                              password.clear();
-                              enabled = doc.data()['enabled'] == true;
-                              selected = Set<String>.from(
-                                doc.data()['permissions'],
-                              );
-                            }),
+                        IconButton(
+                          tooltip: 'Delete Khadim',
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          onPressed: busy
+                              ? null
+                              : () => deleteKhadim(
+                                  doc.id,
+                                  doc.data()['name'] as String,
+                                ),
+                        ),
+                        IconButton(
+                          tooltip: 'Edit access or reset password',
+                          icon: const Icon(Icons.edit_outlined),
+                          onPressed: busy
+                              ? null
+                              : () => setState(() {
+                                  uid = doc.id;
+                                  name.text = doc.data()['name'];
+                                  phone.text = doc.data()['phone'];
+                                  password.clear();
+                                  enabled = doc.data()['enabled'] == true;
+                                  selected = Set<String>.from(
+                                    doc.data()['permissions'],
+                                  );
+                                }),
+                        ),
                       ],
                     ),
                   ),

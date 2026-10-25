@@ -50,16 +50,57 @@ test('Firestore transactions and rules',async t=>{
     await service.cancelBooking(actors[winner],result.value.bookingId,'Changed plans');
     await assert.rejects(()=>service.createHold({...actor(904),phone},{visitDate:date,slotId:`${date}_0830`,visitorCount:1,requestId:'phone-limit-fourth-request'}),/maximum of 2/);
     const failed=results.findIndex(r=>r.status==='rejected');
-    await service.createBooking({...actors[failed],admin:true},holds[failed].holdId,'Admin Visitor');
+    await service.createBooking({...actors[failed],admin:true},holds[failed].holdId,'Admin Visitor',undefined,phone);
     const admin={...actor(905),phone,admin:true};
     const extra=await service.createHold(admin,{visitDate:date,slotId:`${date}_0900`,visitorCount:1,requestId:'phone-limit-admin-extra-request'});
-    await service.createBooking(admin,extra.holdId,'Admin Extra');
+    await service.createBooking(admin,extra.holdId,'Admin Extra',undefined,phone);
     const nextDate='2030-01-14';
     const next=await service.createHold(actors[0],{visitDate:nextDate,slotId:`${nextDate}_0700`,visitorCount:1,requestId:'phone-limit-other-date-request'});
     await service.createBooking(actors[0],next.holdId,'Other Date Visitor');
     const legacy=actor(906);
     for(let i=0;i<2;i++)await db.doc(`bookings/limit-legacy-${i}`).set({userId:legacy.uid,visitDate:date,status:'confirmed'});
     await assert.rejects(()=>service.createHold(legacy,{visitDate:date,slotId:`${date}_0930`,visitorCount:1,requestId:'phone-limit-legacy-request'}),/maximum of 2/);
+  });
+  await t.test('staff book for different visitors with atomic phone limits, creator ownership and safe retries',async()=>{
+    const date='2030-01-12', visitorPhone='+442079460958';
+    const staff=[1001,1002,1003].map(i=>({...actor(i),khadim:true,permissions:['bookings'],name:`Staff ${i}`}));
+    const request=(a:typeof staff[0],slot:string,key:string)=>service.createHold(a,{visitDate:date,slotId:`${date}_${slot}`,visitorCount:1,requestId:`staff-visitor-request-${key}`});
+    const held=await Promise.all(staff.map((a,i)=>request(a,['0700','0730','0800'][i],`${i}`)));
+    const results=await Promise.allSettled(staff.map((a,i)=>service.createBooking(a,held[i].holdId,'Called Visitor','12 Visitor Street','+44 20 7946 0958')));
+    assert.equal(results.filter(r=>r.status==='fulfilled').length,2);
+    assert.equal(results.filter(r=>r.status==='rejected').length,1);
+    const first=results.findIndex(r=>r.status==='fulfilled'), result=results[first];
+    if(result.status!=='fulfilled')throw new Error('Expected a booking');
+    const b=(await db.doc(`bookings/${result.value.bookingId}`).get()).data()!;
+    assert.equal(b.visitorPhone,visitorPhone);assert.equal(b.visitorPhoneVerified,false);
+    assert.equal(b.phoneNumberMasked,'+44 ••••• 0958');assert.equal(b.userId,staff[first].uid);
+    assert.equal(b.bookedByUid,staff[first].uid);assert.equal(b.bookedByRole,'khadim');
+    assert.equal(b.bookedByName,staff[first].name);assert.equal(b.visitorAddress,'12 Visitor Street');
+    const notice=(await db.doc(`notifications/${b.bookingId}_confirmed`).get()).data()!;
+    assert.equal(notice.userId,staff[first].uid);assert.equal(notice.recipientRole,'booker');
+    assert.equal((await service.createBooking(staff[first],held[first].holdId,'Retry','12 Visitor Street',visitorPhone)).bookingId,b.bookingId);
+    await assert.rejects(()=>service.createHold({...actor(1004),phone:visitorPhone},{visitDate:date,slotId:`${date}_0830`,visitorCount:1,requestId:'self-after-staff-limit-request'}),/maximum of 2/);
+    await service.cancelBooking(staff[first],b.bookingId,'Cancelled assisted visit');
+    const failed=results.findIndex(r=>r.status==='rejected');
+    await assert.rejects(()=>service.createBooking(staff[failed],held[failed].holdId,'Still Limited',undefined,visitorPhone),/maximum of 2/);
+    await service.createBooking({...staff[failed],admin:true,phone:''},held[failed].holdId,'Admin Guest',undefined,visitorPhone);
+    // One Khadim can serve more than two distinct visitor numbers; their own
+    // phone counter and profile must never be changed by assisted bookings.
+    for(let i=0;i<3;i++) {
+      const next=await request(staff[first],['0900','0930','1000'][i],`distinct-${i}`);
+      await service.createBooking(staff[first],next.holdId,'Different Guest',undefined,`+1202555012${i}`);
+    }
+    const invalid=await request(staff[first],'1030','invalid');
+    await assert.rejects(()=>service.createBooking(staff[first],invalid.holdId,'Missing Phone'),/visitor phone number/);
+    await assert.rejects(()=>service.createBooking(staff[first],invalid.holdId,'Bad Phone',undefined,'123'),/visitor phone number/);
+    await assert.rejects(()=>service.createBooking({...actor(1005)},invalid.holdId,'Spoofed',undefined,visitorPhone),/Only authorized staff/);
+    await assert.rejects(()=>request({...staff[first],permissions:['gate']},'1100','unauthorized'),/Booking permission/);
+    await service.releaseHold(staff[first],invalid.holdId);
+    const admin={...actor(1006),phone:'',admin:true};
+    const adminHold=await service.createHold(admin,{visitDate:date,slotId:`${date}_1130`,visitorCount:1,requestId:'admin-without-phone-request'});
+    const adminBooking=await service.createBooking(admin,adminHold.holdId,'Admin Guest',undefined,visitorPhone);
+    assert.equal((await db.doc(`bookings/${adminBooking.bookingId}`).get()).data()!.bookedByRole,'admin');
+    assert.equal((await db.doc(`users/${staff[first].uid}`).get()).exists,false);
   });
   let bookingId='',owner=actor(0),holdId='';
   await t.test('12 simultaneous requests cannot exceed 3 places',async()=>{
@@ -188,6 +229,11 @@ test('Firestore transactions and rules',async t=>{
       await db.doc('khadims/limited-staff').set({name:'Test Khadim',phone:'+919888888888',enabled:true,version:1,permissions:['bookings']});
       await db.doc('khadimSecrets/limited-staff').set({hash:'private',salt:'private'});
       const staff=env.authenticatedContext('limited-staff',{khadimVersion:1}).firestore();
+      await db.doc('bookings/staff-created').set({userId:'limited-staff',bookedByUid:'limited-staff',bookedByRole:'khadim',visitorPhone:'+919555555555'});
+      await assertSucceeds(getDoc(doc(staff,'bookings','staff-created')));
+      const matchingPhone=env.authenticatedContext('guest-account',{phone_number:'+919555555555'}).firestore();
+      await assertFails(getDoc(doc(matchingPhone,'bookings','staff-created')));
+      await assertFails(setDoc(doc(staff,'bookings','staff-created'),{visitorPhone:'+919000000000'},{merge:true}));
       await assertFails(getDocs(collection(staff,'bookings')));
       await db.doc('bookings/staff-assigned').set({userId:'someone',assignment:{khadimId:'limited-staff'}});
       await assertSucceeds(getDocs(query(collection(staff,'bookings'),where('assignment.khadimId','==','limited-staff'))));
@@ -198,10 +244,12 @@ test('Firestore transactions and rules',async t=>{
       await assertFails(getDoc(doc(admin,'khadimSecrets','limited-staff')));
       await assertFails(setDoc(doc(staff,'khadims','limited-staff'),{permissions:['settings'],enabled:true,version:1}));
       await db.doc('khadims/limited-staff').update({version:2});
+      await assertFails(getDoc(doc(staff,'bookings','staff-created')));
       await assertFails(getDocs(collection(staff,'bookings')));
       const refreshed=env.authenticatedContext('limited-staff',{khadimVersion:2}).firestore();
       await assertSucceeds(getDocs(query(collection(refreshed,'bookings'),where('assignment.khadimId','==','limited-staff'))));
       await db.doc('khadims/limited-staff').update({enabled:false});
+      await assertFails(getDoc(doc(refreshed,'bookings','staff-created')));
       await assertFails(getDocs(collection(refreshed,'bookings')));
       await db.doc('khadims/limited-staff').update({enabled:true,permissions:['gate']});
       await db.doc('bookings/staff-assigned').update({userId:owner.uid});

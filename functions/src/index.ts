@@ -17,17 +17,18 @@ setGlobalOptions({region:'asia-south1',maxInstances:20,memory:'256MiB',timeoutSe
 const emulator=process.env.FUNCTIONS_EMULATOR==='true';
 async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
   if(!r.auth)throw new HttpsError('unauthenticated','Please sign in.');
-  const a: Actor={uid:r.auth.uid,phone:String(r.auth.token.phone_number || ''),admin:r.auth.token.admin===true,gate:r.auth.token.gate===true};
+  const a: Actor={uid:r.auth.uid,phone:String(r.auth.token.phone_number || ''),name:String(r.auth.token.name || ''),admin:r.auth.token.admin===true,gate:r.auth.token.gate===true};
   const staff=await db.doc(`khadims/${a.uid}`).get();
+  if(!staff.exists && r.auth.token.khadimVersion!==undefined)throw new HttpsError('permission-denied','Access changed. Please sign in again.');
   if(staff.exists){
     const d=staff.data()!;
     if(!d.enabled || r.auth.token.khadimVersion!==d.version)throw new HttpsError('permission-denied','Access changed. Please sign in again.');
-    a.phone=d.phone; a.permissions=d.permissions; a.admin=false; a.gate=d.permissions.includes('gate');
+    a.phone=d.phone; a.name=d.name; a.khadim=true; a.permissions=d.permissions; a.admin=false; a.gate=d.permissions.includes('gate');
   }
   if(['bookings','dashboard'].includes(role) && !a.admin)throw new HttpsError('permission-denied','Administrator access required.');
   if(role!=='visitor' && !a.admin && !(role==='gate' && a.gate) && !a.permissions?.includes(role))
     throw new HttpsError('permission-denied','You do not have access to this area.');
-  if(role==='visitor'&&!a.phone)throw new HttpsError('failed-precondition','A verified phone number is required.');
+  if(role==='visitor'&&!a.phone&&!a.admin&&!a.khadim)throw new HttpsError('failed-precondition','A verified phone number is required.');
   return a;
 }
 const enforceAppCheck = !emulator && process.env.ENFORCE_APP_CHECK === 'true';
@@ -52,7 +53,7 @@ export const getActiveHold=callable(async r=>{
 });
 export const createHold=callable(async r=>service.createHold(await actor(r),r.data));
 export const releaseHold=callable(async r=>service.releaseHold(await actor(r),id(r.data?.holdId)));
-export const createBooking=callable(async r=>service.createBooking(await actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress));
+export const createBooking=callable(async r=>service.createBooking(await actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress,r.data?.visitorPhone));
 export const ensureBookingTokens=callable(async r=>service.ensureBookingTokens(await actor(r),id(r.data?.bookingId)));
 export const cancelBooking=callable(async r=>service.cancelBooking(await actor(r),id(r.data?.bookingId),r.data?.reason));
 export const validatePass=callable(async r=>service.validatePass(await actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));

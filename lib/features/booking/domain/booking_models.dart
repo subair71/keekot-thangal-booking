@@ -171,6 +171,11 @@ class VisitBooking {
     required this.reference,
     required this.visitorName,
     this.visitorAddress = '',
+    this.visitorPhone = '',
+    this.visitorPhoneVerified = false,
+    this.bookedByUid = '',
+    this.bookedByRole = '',
+    this.bookedByName = '',
     this.khadimName,
     this.serviceStatus = 'unassigned',
     this.tokenStart,
@@ -196,6 +201,21 @@ class VisitBooking {
       status,
       qrToken;
   final String? khadimName;
+  final String visitorPhone, bookedByUid, bookedByRole, bookedByName;
+  final bool visitorPhoneVerified;
+  // Legacy account masks may belong to staff. Never present them as a visitor number.
+  String get visitorPhoneDisplay =>
+      visitorPhone.isEmpty ? 'Not recorded' : visitorPhone;
+  String get bookedByLabel {
+    final role = switch (bookedByRole) {
+      'admin' => 'Administrator',
+      'khadim' => 'Khadim',
+      _ => '',
+    };
+    if (role.isEmpty) return '';
+    return bookedByName.isEmpty ? role : '$bookedByName ($role)';
+  }
+
   final String serviceStatus;
   final int startAt, endAt, visitors;
   final int? tokenStart, tokenEnd;
@@ -209,6 +229,11 @@ class VisitBooking {
     reference: m['bookingReference'] as String,
     visitorName: m['visitorName'] as String,
     visitorAddress: m['visitorAddress'] as String? ?? '',
+    visitorPhone: m['visitorPhone'] as String? ?? '',
+    visitorPhoneVerified: m['visitorPhoneVerified'] == true,
+    bookedByUid: m['bookedByUid'] as String? ?? '',
+    bookedByRole: m['bookedByRole'] as String? ?? '',
+    bookedByName: m['bookedByName'] as String? ?? '',
     khadimName: (m['assignment'] as Map?)?['displayName'] as String?,
     serviceStatus:
         (m['assignment'] as Map?)?['status'] as String? ?? 'unassigned',

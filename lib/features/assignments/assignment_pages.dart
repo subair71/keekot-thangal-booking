@@ -267,6 +267,10 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                                           context,
                                         ).textTheme.titleLarge,
                                       ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '${tr(context, 'Visitor Phone Number')}: ${b['visitorPhone'] ?? tr(context, 'Not recorded')}',
+                                      ),
                                       const SizedBox(height: 4),
                                       Text(
                                         '${b['bookingReference']} · ${tr(context, 'Token')} ${b['tokenStart'] ?? '—'}',

@@ -82,6 +82,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (path.startsWith('/khadim') && user?.khadim != true) {
         return '/access-denied';
       }
+      if (path == '/book/confirmation' &&
+          user != null &&
+          user.khadim &&
+          !user.canBookForVisitor) {
+        return '/access-denied';
+      }
       if (path.startsWith('/admin') && user != null) {
         final section = path == '/admin' ? 'dashboard' : path.split('/').last;
         if ([

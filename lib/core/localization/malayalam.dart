@@ -1,5 +1,19 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Visitor Phone Number': 'സന്ദർശകന്റെ ഫോൺ നമ്പർ',
+  'Enter the phone number of the visitor you are booking for.':
+      'നിങ്ങൾ ബുക്ക് ചെയ്യുന്ന സന്ദർശകന്റെ ഫോൺ നമ്പർ നൽകുക.',
+  'Enter a valid phone number with country code.':
+      'രാജ്യകോഡ് ഉൾപ്പെടെയുള്ള സാധുവായ ഫോൺ നമ്പർ നൽകുക.',
+  'Booked by': 'ബുക്ക് ചെയ്തത്',
+  'Administrator': 'അഡ്മിനിസ്ട്രേറ്റർ',
+  'Not recorded': 'രേഖപ്പെടുത്തിയിട്ടില്ല',
+  'Check the visit time and enter the visitor’s name, phone number and address.':
+      'സന്ദർശന സമയം പരിശോധിച്ച് സന്ദർശകന്റെ പേര്, ഫോൺ നമ്പർ, വിലാസം എന്നിവ നൽകുക.',
+  'Booking permission is required to book for visitors.':
+      'സന്ദർശകർക്കായി ബുക്ക് ചെയ്യാൻ ബുക്കിംഗ് അനുമതി ആവശ്യമാണ്.',
+  'Enter the visitor phone number with country code, for example +91 9876543210.':
+      'രാജ്യകോഡ് ഉൾപ്പെടെ സന്ദർശകന്റെ ഫോൺ നമ്പർ നൽകുക. ഉദാഹരണം: +91 9876543210.',
   'Your schedule': 'നിങ്ങളുടെ സമയക്രമം',
   'Khadim': 'ഖാദിം',
   'Token': 'ടോക്കൺ',
