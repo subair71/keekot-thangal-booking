@@ -323,6 +323,15 @@ class AppShell extends ConsumerWidget {
           ? null
           : NavigationBar(
               height: 64,
+              labelTextStyle: AppLanguage.of(context) == 'ml'
+                  ? WidgetStateProperty.resolveWith(
+                      (states) => Theme.of(context)
+                          .navigationBarTheme
+                          .labelTextStyle!
+                          .resolve(states)
+                          ?.copyWith(fontFamily: 'Noto Sans Malayalam'),
+                    )
+                  : null,
               selectedIndex: selected,
               onDestinationSelected: (i) => context.go(routes[i]),
               destinations: [
