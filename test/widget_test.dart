@@ -86,6 +86,7 @@ void main() {
     for (final font in {
       'Newsreader': 'Newsreader.ttf',
       'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
     }.entries) {
       final loader = FontLoader(font.key)
         ..addFont(rootBundle.load('assets/fonts/${font.value}'));
@@ -95,7 +96,7 @@ void main() {
       ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
     await icons.load();
   });
-  for (final width in [375, 430, 768, 1024, 1100, 1280, 1440, 1920]) {
+  for (final width in [320, 375, 430, 768, 1024, 1100, 1280, 1440, 1920]) {
     testWidgets('home and responsive navigation at ${width}px', (tester) async {
       tester.view.physicalSize = Size(width.toDouble(), 1100);
       tester.view.devicePixelRatio = 1;
@@ -184,6 +185,43 @@ void main() {
       await tester.pumpWidget(const SizedBox());
     });
   }
+  testWidgets('mobile home and booking support larger bilingual text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(375, 1100);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.pumpWidget(
+      RepaintBoundary(
+        key: captureKey,
+        child: ProviderScope(
+          overrides: [
+            authRepositoryProvider.overrideWithValue(FakeAuth()),
+            bookingRepositoryProvider.overrideWithValue(FakeBookings()),
+          ],
+          child: const KeekotApp(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byKey(const ValueKey('language-toggle')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await capturePage(tester, 'home_malayalam_large_text_375');
+    final book = find.text('സന്ദർശനം ബുക്ക് ചെയ്യുക').first;
+    await tester.ensureVisible(book);
+    await tester.tap(book);
+    await tester.pumpAndSettle();
+    expect(find.byType(BookingPage), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.byType(SlotCard).first);
+    await capturePage(tester, 'slots_malayalam_large_text_375');
+    await tester.pumpWidget(const SizedBox());
+  });
   testWidgets(
     'period filters retain selection and visitor controls precede mobile slots',
     (tester) async {

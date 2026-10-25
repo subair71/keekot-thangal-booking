@@ -33,7 +33,8 @@ class AppShell extends ConsumerWidget {
         : path == '/information'
         ? 3
         : 0;
-    final wide = MediaQuery.sizeOf(context).width > 1200;
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final wide = MediaQuery.sizeOf(context).width > 1200 && textScale <= 1.15;
     final user = ref.watch(authProvider).asData?.value;
     return Scaffold(
       endDrawer: Drawer(
@@ -175,11 +176,20 @@ class AppShell extends ConsumerWidget {
         ),
       ),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(wide ? 136 : 108),
+        preferredSize: Size.fromHeight(
+          (wide ? 120 : 108) * textScale.clamp(1.0, 1.5),
+        ),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.white,
-            border: Border(bottom: BorderSide(color: AppColors.outline)),
+            border: const Border(bottom: BorderSide(color: AppColors.outline)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.emerald.withValues(alpha: .025),
+                blurRadius: 18,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: SafeArea(
             child: Center(
@@ -188,7 +198,7 @@ class AppShell extends ConsumerWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
-                    vertical: wide ? 10 : 4,
+                    vertical: wide ? 6 : 4,
                   ),
                   child: Row(
                     children: [
@@ -215,7 +225,7 @@ class AppShell extends ConsumerWidget {
                                         style: TextStyle(
                                           fontFamily: 'Newsreader',
                                           fontWeight: FontWeight.w700,
-                                          fontSize: wide ? 24 : 16,
+                                          fontSize: wide ? 22 : 16,
                                           height: 1.2,
                                           color: AppColors.emerald,
                                         ),
@@ -248,8 +258,14 @@ class AppShell extends ConsumerWidget {
                                 onPressed: () => context.go(routes[i]),
                                 style: TextButton.styleFrom(
                                   backgroundColor: selected == i
-                                      ? AppColors.mint
+                                      ? AppColors.emerald
                                       : null,
+                                  foregroundColor: selected == i
+                                      ? AppColors.white
+                                      : AppColors.muted,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                 ),
                                 child: AppText(
                                   AppLanguage.of(context) == 'ml'
@@ -306,13 +322,31 @@ class AppShell extends ConsumerWidget {
       bottomNavigationBar: wide
           ? null
           : NavigationBar(
-              height: 64,
+              height: textScale > 1.3 ? 88 : 64,
+              labelTextStyle: AppLanguage.of(context) == 'ml'
+                  ? WidgetStateProperty.resolveWith(
+                      (states) => Theme.of(context)
+                          .navigationBarTheme
+                          .labelTextStyle!
+                          .resolve(states)
+                          ?.copyWith(fontFamily: 'Noto Sans Malayalam'),
+                    )
+                  : null,
               selectedIndex: selected,
               onDestinationSelected: (i) => context.go(routes[i]),
               destinations: [
                 for (var i = 0; i < routes.length; i++)
                   NavigationDestination(
                     icon: Icon(icons[i], size: 20),
+                    selectedIcon: Icon(
+                      [
+                        Icons.home_rounded,
+                        Icons.calendar_month_rounded,
+                        Icons.confirmation_number_rounded,
+                        Icons.info_rounded,
+                      ][i],
+                      size: 21,
+                    ),
                     label: tr(context, ['Home', 'Book', 'Bookings', 'Info'][i]),
                   ),
               ],

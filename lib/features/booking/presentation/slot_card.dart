@@ -53,7 +53,7 @@ class SlotCard extends StatelessWidget {
       child: Material(
         color: color,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: selected ? AppColors.gold : AppColors.outline,
             width: selected ? 2 : 1,
@@ -64,28 +64,48 @@ class SlotCard extends StatelessWidget {
           onTap: enabled ? onSelect : null,
           hoverColor: AppColors.mintStrong.withValues(alpha: .25),
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppText(
-                  slot.label,
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.4,
-                    fontWeight: FontWeight.w600,
-                    color: foreground,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.schedule_rounded,
+                      size: 17,
+                      color: selected ? AppColors.mintStrong : foreground,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppText(
+                        slot.label,
+                        style: TextStyle(
+                          fontSize: 14,
+                          height: 1.4,
+                          fontWeight: FontWeight.w700,
+                          color: foreground,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 18),
+                Divider(
+                  height: 1,
+                  color: selected
+                      ? AppColors.ivory.withValues(alpha: .2)
+                      : AppColors.outline,
+                ),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: AppText(
                         label,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           height: 1.4,
                           color: selected
                               ? AppColors.mintStrong

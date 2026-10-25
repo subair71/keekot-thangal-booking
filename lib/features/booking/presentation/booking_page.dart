@@ -134,7 +134,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                 ),
                 const SizedBox(height: 14),
                 SizedBox(
-                  height: 125,
+                  height: 125 * MediaQuery.textScalerOf(context).scale(1),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: dates.length,
@@ -144,7 +144,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                           dt = DateTime.parse(d),
                           selected = d == day;
                       return SizedBox(
-                        width: 82,
+                        width: 82 * MediaQuery.textScalerOf(context).scale(1),
                         child: Semantics(
                           selected: selected,
                           label: VisitClock.dayLabel(d),
@@ -157,6 +157,15 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   }),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              side: BorderSide(
+                                color: selected
+                                    ? AppColors.gold
+                                    : AppColors.outline,
+                                width: selected ? 2 : 1,
+                              ),
                               backgroundColor: selected
                                   ? AppColors.emerald
                                   : AppColors.white,
@@ -177,7 +186,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   '${dt.day}',
                                   style: const TextStyle(
                                     fontFamily: 'Newsreader',
-                                    fontSize: 30,
+                                    fontSize: 34,
                                   ),
                                 ),
                                 AppText(

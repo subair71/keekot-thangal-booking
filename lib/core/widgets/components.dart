@@ -35,7 +35,7 @@ class PageContainer extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
-            vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 32,
+            vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 36,
           ),
           child: child,
         ),
@@ -55,16 +55,27 @@ class SurfaceCard extends StatelessWidget {
   final Color color;
   final double padding;
   @override
-  Widget build(BuildContext context) => Material(
-    color: color,
-    elevation: 1,
-    shadowColor: AppColors.emerald.withValues(alpha: .04),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-      side: BorderSide(color: AppColors.outline),
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.emerald.withValues(alpha: .045),
+          blurRadius: 28,
+          offset: const Offset(0, 8),
+        ),
+      ],
     ),
-    clipBehavior: Clip.antiAlias,
-    child: Padding(padding: EdgeInsets.all(padding), child: child),
+    child: Material(
+      color: color,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: const BorderSide(color: AppColors.outline),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(padding: EdgeInsets.all(padding), child: child),
+    ),
   );
 }
 
@@ -74,17 +85,26 @@ class PageHeading extends StatelessWidget {
   final String? eyebrow, subtitle;
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 18),
+    padding: const EdgeInsets.only(bottom: 24),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (eyebrow != null) ...[
+          Container(
+            width: 32,
+            height: 3,
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              color: AppColors.gold,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           AppText(
             tr(context, eyebrow!).toUpperCase(),
             style: const TextStyle(
-              color: AppColors.secondary,
-              fontSize: 12,
-              letterSpacing: 2,
+              color: AppColors.gold,
+              fontSize: 11,
+              letterSpacing: 1.5,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -99,7 +119,7 @@ class PageHeading extends StatelessWidget {
         ),
         if (subtitle != null) ...[
           const SizedBox(height: 8),
-          AppText(subtitle!, style: Theme.of(context).textTheme.bodyLarge),
+          AppText(subtitle!, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ],
     ),
@@ -111,36 +131,92 @@ class BookingProgress extends StatelessWidget {
   final int current;
 
   @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: 12,
-    runSpacing: 12,
-    children: [
-      for (final (index, label) in [
-        'Choose your time',
-        'Confirm your details',
-      ].indexed)
-        Semantics(
-          excludeSemantics: true,
-          label: AppLanguage.of(context) == 'ml'
-              ? 'ഘട്ടം ${index + 1}, ആകെ 2: ${tr(context, label)}'
-              : 'Step ${index + 1} of 2: ${tr(context, label)}',
-          selected: current == index,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: current == index ? AppColors.emerald : AppColors.mint,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: AppText(
-              '${index < current ? '✓' : index + 1}  ${tr(context, label)}',
-              style: TextStyle(
-                color: current == index ? AppColors.white : AppColors.emerald,
-                fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final stacked =
+          constraints.maxWidth < 520 ||
+          MediaQuery.textScalerOf(context).scale(1) > 1.3;
+      return Wrap(
+        spacing: 12,
+        runSpacing: 10,
+        children: [
+          for (final (index, label) in [
+            'Choose your time',
+            'Confirm your details',
+          ].indexed)
+            SizedBox(
+              width: stacked
+                  ? constraints.maxWidth
+                  : (constraints.maxWidth - 12) / 2,
+              child: Semantics(
+                excludeSemantics: true,
+                label: AppLanguage.of(context) == 'ml'
+                    ? 'ഘട്ടം ${index + 1}, ആകെ 2: ${tr(context, label)}'
+                    : 'Step ${index + 1} of 2: ${tr(context, label)}',
+                selected: current == index,
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: current == index ? AppColors.mint : AppColors.white,
+                    border: Border.all(
+                      color: current == index
+                          ? AppColors.secondary
+                          : AppColors.outline,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: index <= current
+                              ? AppColors.emerald
+                              : AppColors.cream,
+                          shape: BoxShape.circle,
+                        ),
+                        child: index < current
+                            ? const Icon(
+                                Icons.check_rounded,
+                                size: 18,
+                                color: AppColors.white,
+                              )
+                            : Text(
+                                '${index + 1}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: current == index
+                                      ? AppColors.white
+                                      : AppColors.muted,
+                                ),
+                              ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AppText(
+                          label,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: current == index
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                            color: current == index
+                                ? AppColors.emerald
+                                : AppColors.muted,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-    ],
+        ],
+      );
+    },
   );
 }
 
