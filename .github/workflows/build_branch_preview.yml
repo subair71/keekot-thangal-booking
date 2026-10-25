@@ -1,13 +1,7 @@
 name: Build branch Site preview
 on:
   push:
-    branches: [feature/zip-inspired-enhancements, feature/international-design]
-    paths:
-      - '.github/workflows/build_branch_preview.yml'
-      - 'lib/**'
-      - 'assets/**'
-      - 'web/**'
-      - 'pubspec*'
+    branches: [preview/premium-ui-refresh]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,16 +16,8 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get --enforce-lockfile
-      - name: Read existing public Firebase configuration
-        run: |
-          python3 - <<'PY'
-          import pathlib, re
-          workflow = pathlib.Path('.github/workflows/deploy_pages.yml').read_text()
-          config = re.search(r'\{\s*"ENVIRONMENT": "production".*?\}', workflow, re.S).group(0)
-          pathlib.Path('config/production.json').write_text(config)
-          PY
-      - run: python3 tool/configure_web.py config/production.json
-      - run: flutter build web --release --base-href=/ --dart-define-from-file=config/production.json
+      - run: flutter analyze tool/preview_main.dart
+      - run: flutter build web --release --target tool/preview_main.dart --base-href=/ --dart-define=ENVIRONMENT=preview --no-web-resources-cdn
       - uses: actions/upload-artifact@v4
         with:
           name: branch-site-preview
