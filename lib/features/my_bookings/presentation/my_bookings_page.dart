@@ -151,7 +151,10 @@ class PassPage extends ConsumerWidget {
                 ? const EmptyState(title: 'Booking not found')
                 : PassCard(booking: booking, allowCancel: user != null),
           ),
-          if (success) ...[const SizedBox(height: 24), const NotificationOptIn()],
+          if (success) ...[
+            const SizedBox(height: 24),
+            const NotificationOptIn(),
+          ],
           const SizedBox(height: 18),
           if (user != null)
             TextButton(
