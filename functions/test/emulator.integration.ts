@@ -8,6 +8,7 @@ import {doc,getDoc,setDoc,collection,query,where,getDocs,onSnapshot} from 'fireb
 import {BookingService} from '../src/booking_service.js';
 import {BookingSettings, generateSlots} from '../src/domain.js';
 import {queueNotice,deliverNotice} from '../src/notifications.js';
+import {RequestLimiter} from '../src/request_security.js';
 
 if(!process.env.FIRESTORE_EMULATOR_HOST)throw new Error('Integration tests require a Firestore emulator.');
 const projectId='demo-keekot-thangal', app=initializeApp({projectId}), db=getFirestore(app);
@@ -19,6 +20,17 @@ const hold=(i:number,slot=0,count=1)=>service.createHold(actor(i),{visitDate:day
 after(async()=>{await db.terminate();await deleteApp(app);});
 test('Firestore transactions and rules',async t=>{
   await db.doc('settings/booking').set(settings);
+  await t.test('request limits stay atomic across concurrent requests and reset without TTL cleanup',async()=>{
+    let clock=Date.now();
+    const limiter=new RequestLimiter(db,()=>clock);
+    const limits={scope:'integration-security',authenticated:true,perAccount:3,perIp:30,windowMs:60_000};
+    const request={auth:{uid:'security-test-account'},rawRequest:{ip:'192.0.2.51'}} as any;
+    const attempts=await Promise.allSettled(Array.from({length:12},()=>limiter.check(request,limits)));
+    assert.equal(attempts.filter(r=>r.status==='fulfilled').length,3);
+    assert.ok(attempts.filter(r=>r.status==='rejected').every(r=>r.reason.code==='resource-exhausted'));
+    clock+=60_000;
+    await limiter.check(request,limits);
+  });
   await t.test('date hours enforce availability, holds, reset and booking protection',async()=>{
     const date='2030-01-16', admin={...actor(800),admin:true};
     await assert.rejects(()=>service.adminSetDateHours(actor(801),{visitDate:date,openingTime:'08:00',closingTime:'17:00'}));
@@ -225,7 +237,19 @@ test('Firestore transactions and rules',async t=>{
       await assertFails(getDoc(doc(own,'phoneDailyBookings','fake')));
       await assertFails(getDoc(doc(own,'slotTokenCounters',`${day}_0700`)));
       await assertFails(getDoc(doc(own,'slotState',`${day}_0700`)));await assertFails(setDoc(doc(own,'users',owner.uid,'devices','fake'),{token:'fake'}));
-      await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(),'settings','booking')));
+      const anonymous=env.unauthenticatedContext().firestore();
+      await assertSucceeds(getDoc(doc(anonymous,'settings','booking')));
+      const publicToken='a'.repeat(43);
+      await db.doc(`publicPasses/${publicToken}`).set({bookingId:'synthetic-pass',visitorName:'Synthetic visitor',qrToken:'synthetic-qr'});
+      await assertSucceeds(getDoc(doc(anonymous,'publicPasses',publicToken)));
+      for(const client of [anonymous,own,admin]) {
+        await assertFails(getDocs(collection(client,'publicPasses')));
+        await assertFails(getDocs(query(collection(client,'publicPasses'),where('bookingId','==','synthetic-pass'))));
+        await assertFails(setDoc(doc(client,'publicPasses',publicToken),{visitorName:'Forged'}));
+        await assertFails(getDocs(collection(client,'requestRateLimits')));
+        await assertFails(getDoc(doc(client,'requestRateLimits','fake')));
+        await assertFails(setDoc(doc(client,'requestRateLimits','fake'),{count:0}));
+      }
       await db.doc('khadims/limited-staff').set({name:'Test Khadim',phone:'+919888888888',enabled:true,version:1,permissions:['bookings']});
       await db.doc('khadimSecrets/limited-staff').set({hash:'private',salt:'private'});
       const staff=env.authenticatedContext('limited-staff',{khadimVersion:1}).firestore();
