@@ -48,6 +48,15 @@
     (() => {
       const url = new URL(window.location.href);
       const route = url.searchParams.get('route');
+      // Shared pass links use the root document so hosting never needs a deep
+      // route rewrite. Convert only validated pass fragments for path routing.
+      const pass = /^#\/pass\/([A-Za-z0-9_-]{1,240})\/?$/.exec(url.hash);
+      if (!route && pass) {
+        const target = new URL('pass/' + pass[1], document.baseURI);
+        target.search = url.search;
+        window.history.replaceState(null, '', target.pathname + target.search);
+        return;
+      }
       if (!['book', 'my-bookings', 'information', 'booking'].includes(route)) return;
       const bookingId = url.searchParams.get('bookingId');
       if (route === 'booking' && !/^[A-Za-z0-9_-]{1,240}$/.test(bookingId || '')) return;

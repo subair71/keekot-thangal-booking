@@ -180,6 +180,7 @@ class VisitBooking {
     this.serviceStatus = 'unassigned',
     this.tokenStart,
     this.tokenEnd,
+    this.passViewToken,
     required this.phoneMasked,
     required this.visitDate,
     required this.startTime,
@@ -200,7 +201,7 @@ class VisitBooking {
       endTime,
       status,
       qrToken;
-  final String? khadimName;
+  final String? khadimName, passViewToken;
   final String visitorPhone, bookedByUid, bookedByRole, bookedByName;
   final bool visitorPhoneVerified;
   // Legacy account masks may belong to staff. Never present them as a visitor number.
@@ -239,6 +240,7 @@ class VisitBooking {
         (m['assignment'] as Map?)?['status'] as String? ?? 'unassigned',
     tokenStart: (m['tokenStart'] as num?)?.toInt(),
     tokenEnd: (m['tokenEnd'] as num?)?.toInt(),
+    passViewToken: m['passViewToken'] as String?,
     phoneMasked: m['phoneNumberMasked'] as String? ?? '',
     visitDate: m['visitDate'] as String,
     startTime: m['startTime'] as String,
