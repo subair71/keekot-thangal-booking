@@ -23,10 +23,10 @@ async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
   if(staff.exists){
     const d=staff.data()!;
     if(!d.enabled || r.auth.token.khadimVersion!==d.version)throw new HttpsError('permission-denied','Access changed. Please sign in again.');
-    a.phone=d.phone; a.name=d.name; a.khadim=true; a.permissions=d.permissions; a.admin=false; a.gate=d.permissions.includes('gate');
+    a.phone=d.phone; a.name=d.name; a.khadim=true; a.khadimVersion=d.version; a.permissions=d.permissions; a.admin=false; a.gate=d.permissions.includes('gate');
   }
   if(['bookings','dashboard'].includes(role) && !a.admin)throw new HttpsError('permission-denied','Administrator access required.');
-  if(role!=='visitor' && !a.admin && !(role==='gate' && a.gate) && !a.permissions?.includes(role))
+  if(role!=='visitor' && !a.admin && !(role==='gate' && a.gate) && !(role==='pass' && (a.gate || a.khadim)) && !a.permissions?.includes(role))
     throw new HttpsError('permission-denied','You do not have access to this area.');
   if(role==='visitor'&&!a.phone&&!a.admin&&!a.khadim)throw new HttpsError('failed-precondition','A verified phone number is required.',{publicMessage:'A verified phone number is required.'});
   return a;
@@ -56,7 +56,7 @@ export const releaseHold=callable(async r=>service.releaseHold(await actor(r),id
 export const createBooking=callable(async r=>service.createBooking(await actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress,r.data?.visitorPhone));
 export const ensureBookingTokens=callable(async r=>service.ensureBookingTokens(await actor(r),id(r.data?.bookingId)));
 export const cancelBooking=callable(async r=>service.cancelBooking(await actor(r),id(r.data?.bookingId),r.data?.reason));
-export const validatePass=callable(async r=>service.validatePass(await actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));
+export const validatePass=callable(async r=>service.validatePass(await actor(r,'pass'),r.data?.qrToken,r.data?.checkIn===true));
 export const adminUpdateSlot=callable(async r=>service.adminUpdateSlots(await actor(r,'slots'),r.data));
 export const adminSetDateHours=callable(async r=>service.adminSetDateHours(await actor(r,'slots'),r.data));
 export const adminUpdateSettings=callable(async r=>service.adminUpdateSettings(await actor(r,'settings'),r.data));

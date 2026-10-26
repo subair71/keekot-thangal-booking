@@ -176,23 +176,54 @@ export class BookingService {
     });
   }
   async validatePass(actor: Actor, qrToken: string, checkIn: boolean) {
-    if(!actor.admin && !actor.gate)throw new DomainError('permission-denied','Entry staff access is required.');
+    if(!actor.admin && !actor.gate && !actor.khadim)throw new DomainError('permission-denied','Entry staff access is required.');
     if(typeof qrToken!=='string' || !/^[A-Za-z0-9_-]{43}$/.test(qrToken))return {valid:false,reason:'invalid_pass'};
-    const tokenDocument=await this.db.doc(`passTokens/${tokenHash(qrToken)}`).get();
-    if(!tokenDocument.exists)return {valid:false,reason:'invalid_pass'};
-    await this.ensureBookingTokens(actor,tokenDocument.data()!.bookingId);
     return this.db.runTransaction(async tx=>{
       const p=await tx.get(this.db.doc(`passTokens/${tokenHash(qrToken)}`)); if(!p.exists)return {valid:false,reason:'invalid_pass'};
-      const [booking,config]=await tx.getAll(this.db.doc(`bookings/${p.data()!.bookingId}`),this.db.doc('settings/booking'));
+      const refs=[this.db.doc(`bookings/${p.data()!.bookingId}`),this.db.doc('settings/booking')];
+      if(actor.khadim)refs.push(this.db.doc(`khadims/${actor.uid}`));
+      const [booking,config,profile]=await tx.getAll(...refs);
       if(!booking.exists)return {valid:false,reason:'invalid_pass'};
-      const b=booking.data()!, c=settingsFrom(config.data()), now=this.clock();
+      const b=booking.data()!;
+      let gateAccess=actor.admin===true || actor.gate===true;
+      if(actor.khadim){
+        // These reads share the check-in transaction: revocation or reassignment
+        // racing a scan must be retried against the current permission state.
+        const staff=profile.data();
+        if(!staff?.enabled || !Number.isSafeInteger(actor.khadimVersion) || staff.version!==actor.khadimVersion)
+          throw new DomainError('permission-denied','Access changed. Please sign in again.');
+        gateAccess=Array.isArray(staff.permissions) && staff.permissions.includes('gate');
+      }
+      if(!gateAccess){
+        const assignment=b.assignment;
+        if(!actor.khadim || assignment?.khadimId!==actor.uid)
+          throw new DomainError('permission-denied','This visit is not assigned to you.');
+        if(!['assigned','inProgress'].includes(assignment.status))
+          throw new DomainError('failed-precondition','This visit is no longer actively assigned to you.');
+        if(assignment.conflict)
+          throw new DomainError('failed-precondition','Ask an administrator to resolve the assignment conflict.');
+        if(assignment.scheduledStart!==b.startAt || assignment.scheduledEnd!==b.endAt)
+          throw new DomainError('failed-precondition','Visit time changed. Ask an administrator to review.');
+      }
+      // Authorize before migrating legacy visitor numbers or returning pass details.
+      // Keep every read before every write, including sequence-counter lookups.
+      let tokenStart=b.tokenStart ?? null,tokenEnd=b.tokenEnd ?? null;
+      if(tokenStart===null || tokenEnd===null){
+        const sequence=await readTokenSequence(this.db,tx,b.slotId);
+        const assigned=sequence.assignments.find(a=>a.ref.id===booking.id);
+        if(!assigned)throw new DomainError('failed-precondition','Token sequence needs administrator review.');
+        tokenStart=assigned.tokenStart;tokenEnd=assigned.tokenEnd;
+        writeLegacyTokens(tx,sequence.assignments);
+        tx.set(sequence.counter,{nextToken:sequence.nextToken});
+      }
+      const c=settingsFrom(config.data()),now=this.clock();
       const reason=b.status==='completed'?'already_used':b.status==='cancelled'?'cancelled':b.status!=='confirmed'?'invalid_pass':now<b.startAt-c.arrivalMinutes*60_000?'too_early':now>=b.endAt?'expired':null;
       const valid=reason===null;
       if(valid && checkIn){
         tx.update(booking.ref,{status:'completed',checkedInBy:actor.uid,checkedInAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});
         tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'checkIn',bookingId:booking.id,at:FieldValue.serverTimestamp()});
       }
-      return {valid,reason,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,tokenStart:b.tokenStart ?? null,tokenEnd:b.tokenEnd ?? null,status:valid && checkIn?'completed':b.status};
+      return {valid,reason,bookingReference:b.bookingReference,visitDate:b.visitDate,timeSlot:`${b.startTime}–${b.endTime}`,visitorCount:b.visitorCount,tokenStart,tokenEnd,status:valid && checkIn?'completed':b.status};
     });
   }
   async cleanupExpiredHolds() {

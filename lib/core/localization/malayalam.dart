@@ -18,6 +18,10 @@ const malayalam = <String, String>{
   'Khadim': 'ഖാദിം',
   'Token': 'ടോക്കൺ',
   'Khadim login': 'ഖാദിം ലോഗിൻ',
+  'Scan visitor pass': 'സന്ദർശക പാസ് സ്കാൻ ചെയ്യുക',
+  'Visitor entry': 'സന്ദർശക പ്രവേശനം',
+  'Scan the QR code for a visit assigned to you. The pass must be within its allowed arrival and visit time.':
+      'നിങ്ങൾക്ക് നിയോഗിച്ച സന്ദർശനത്തിന്റെ പാസിലെ QR കോഡ് സ്കാൻ ചെയ്യുക. അനുവദിച്ച പ്രവേശന സമയത്തിനും സന്ദർശന സമയത്തിനും ഉള്ളിൽ മാത്രമേ പാസ് ഉപയോഗിക്കാനാകൂ.',
   'Six-digit password': 'ആറക്ക പാസ്‌വേഡ്',
   'Visitor login': 'സന്ദർശക ലോഗിൻ',
   'Use the phone number and six-digit password provided by the administrator.':
