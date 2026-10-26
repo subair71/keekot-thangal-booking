@@ -15,4 +15,13 @@ unset ADMIN_ACCOUNT_PASSWORD
 
 The script creates a Firebase Auth user with an admin custom claim and stores only a salted scrypt hash in a server-only Firestore collection. It refuses to overwrite an existing username. Never put the password in source code, workflow inputs, command arguments, or logs.
 
+To reset the password for an existing administrator account:
+
+```bash
+read -r -s -p 'New administrator password: ' ADMIN_ACCOUNT_PASSWORD
+printf '\n'
+printf '%s' "$ADMIN_ACCOUNT_PASSWORD" | node functions/lib/scripts/reset-admin-password.js keekot-thangal-booking keekkottbungalow
+unset ADMIN_ACCOUNT_PASSWORD
+```
+
 After deploying, verify login at `/admin/login`, access to administrator pages, rejection of incorrect credentials, and unchanged visitor SMS login. Account provisioning and live verification require privileged production access and are not performed by the code change alone.

@@ -2,6 +2,7 @@ import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
@@ -11,8 +12,9 @@ import '../../booking/domain/booking_models.dart';
 import '../data/pass_download.dart' deferred as pass_download;
 
 class PassCard extends ConsumerStatefulWidget {
-  const PassCard({super.key, required this.booking});
+  const PassCard({super.key, required this.booking, this.allowCancel = true});
   final VisitBooking booking;
+  final bool allowCancel;
   @override
   ConsumerState<PassCard> createState() => _PassCardState();
 }
@@ -156,12 +158,29 @@ class _PassCardState extends ConsumerState<PassCard> {
               icon: const Icon(Icons.download_outlined),
               label: const AppText('Download pass (PDF)'),
             ),
+            const SizedBox(height: 12),
+            FilledButton.tonalIcon(
+              onPressed: () {
+                final cleanPhone = b.visitorPhone.replaceAll(RegExp(r'[^\d]'), '');
+                final passUrl = 'https://subair71.github.io/keekot-thangal-booking/#/pass/${b.id}';
+                final text = 'Keekkott Sayyid Attakoya Thangal Maqam\n'
+                    'Visit Confirmed: ${b.visitDate} (${b.timeLabel})\n'
+                    'Token: ${b.tokenLabel}\n'
+                    'Download Pass: $passUrl';
+                final waUrl = cleanPhone.isNotEmpty
+                    ? 'https://wa.me/$cleanPhone?text=${Uri.encodeComponent(text)}'
+                    : 'https://wa.me/?text=${Uri.encodeComponent(text)}';
+                launchUrl(Uri.parse(waUrl), mode: LaunchMode.externalApplication);
+              },
+              icon: const Icon(Icons.share_outlined),
+              label: const AppText('Share pass via WhatsApp'),
+            ),
           ] else
             const AppText(
               'This pass is no longer valid for entry.',
               textAlign: TextAlign.center,
             ),
-          if (b.canCancel) ...[
+          if (b.canCancel && widget.allowCancel) ...[
             const SizedBox(height: 12),
             TextButton.icon(
               onPressed: busy ? null : cancel,

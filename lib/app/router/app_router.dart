@@ -69,7 +69,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           path.startsWith('/book/success/') ||
           path == '/my-bookings' ||
           path.startsWith('/booking/') ||
-          path.startsWith('/pass/') ||
           path == '/notifications';
       if (protected && user == null) {
         final entry = path.startsWith('/admin')

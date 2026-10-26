@@ -123,31 +123,49 @@ class PassPage extends ConsumerWidget {
   final String id;
   final bool success;
   @override
-  Widget build(BuildContext context, WidgetRef ref) => PageContainer(
-    width: 660,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        PageHeading(
-          success ? 'Your visit is confirmed' : 'Your visitor pass',
-          eyebrow: success
-              ? 'We look forward to welcoming you'
-              : 'Keekkott Sayyid Attakoya Thangal Maqam',
-        ),
-        AsyncPanel(
-          value: ref.watch(bookingProvider(id)),
-          onRetry: () => ref.invalidate(bookingProvider(id)),
-          builder: (booking) => booking == null
-              ? const EmptyState(title: 'Booking not found')
-              : PassCard(booking: booking),
-        ),
-        if (success) ...[const SizedBox(height: 24), const NotificationOptIn()],
-        const SizedBox(height: 18),
-        TextButton(
-          onPressed: () => context.go('/my-bookings'),
-          child: const AppText('View all my bookings'),
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).asData?.value;
+    final publicAsync = ref.watch(publicPassProvider(id));
+    final passAsync = (user == null || publicAsync.asData?.value != null)
+        ? publicAsync
+        : ref.watch(bookingProvider(id));
+
+    return PageContainer(
+      width: 660,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PageHeading(
+            success ? 'Your visit is confirmed' : 'Your visitor pass',
+            eyebrow: success
+                ? 'We look forward to welcoming you'
+                : 'Keekkott Sayyid Attakoya Thangal Maqam',
+          ),
+          AsyncPanel(
+            value: passAsync,
+            onRetry: () {
+              ref.invalidate(publicPassProvider(id));
+              if (user != null) ref.invalidate(bookingProvider(id));
+            },
+            builder: (booking) => booking == null
+                ? const EmptyState(title: 'Booking not found')
+                : PassCard(booking: booking, allowCancel: user != null),
+          ),
+          if (success) ...[const SizedBox(height: 24), const NotificationOptIn()],
+          const SizedBox(height: 18),
+          if (user != null)
+            TextButton(
+              onPressed: () => context.go('/my-bookings'),
+              child: const AppText('View all my bookings'),
+            )
+          else
+            TextButton.icon(
+              onPressed: () => context.go('/'),
+              icon: const Icon(Icons.home_outlined),
+              label: const AppText('Visit homepage'),
+            ),
+        ],
+      ),
+    );
+  }
 }

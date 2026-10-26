@@ -106,6 +106,14 @@ final bookingProvider = StreamProvider.autoDispose
           ? Stream.value(null)
           : ref.watch(bookingRepositoryProvider).booking(id);
     });
+final publicPassProvider = StreamProvider.autoDispose
+    .family<VisitBooking?, String>((ref, token) {
+      if (token.isEmpty) return Stream.value(null);
+      return FirebaseFirestore.instance
+          .doc('publicPasses/$token')
+          .snapshots()
+          .map((doc) => doc.exists ? VisitBooking.fromMap(doc.data()!) : null);
+    });
 final noticesProvider = StreamProvider<List<VisitNotice>>((ref) {
   final user = ref.watch(authProvider).asData?.value;
   return user == null

@@ -1,6 +1,7 @@
 import {Firestore, FieldValue, DocumentData} from 'firebase-admin/firestore';
 import {getMessaging} from 'firebase-admin/messaging';
 import {settingsFrom} from './domain.js';
+import {getTwilioConfig, sendTwilioSms, formatBookingSmsText} from './twilio_sms.js';
 
 export function noticeData(bookingId: string, kind: string, b: DocumentData) {
   const title=kind==='confirmed'?'Booking confirmed':kind==='cancelled'?'Booking cancelled':'Visit reminder';
@@ -41,21 +42,32 @@ export async function deliverNotice(db: Firestore, id: string) {
     if(!b || (d.kind==='cancelled'?b.status!=='cancelled':d.kind==='assignment'?b.status==='cancelled':b.status!=='confirmed') || (d.kind==='reminder' && b.startAt<=now)) {
       tx.update(ref,{delivery:'superseded'});return null;
     }
-    tx.update(ref,{delivery:'pending',nextAttemptAt:now+120_000,attempts:d.attempts+1}); return d;
+    tx.update(ref,{delivery:'pending',nextAttemptAt:now+120_000,attempts:d.attempts+1}); return {notice: d, booking: b};
   });
   if(!notice)return;
+  const n = (notice as any).notice || notice;
+  const b = (notice as any).booking;
+  const recipientPhone = b?.visitorPhone || b?.phone;
+  if(n.kind==='confirmed' && recipientPhone && !n.smsSent){
+    const twilio=await getTwilioConfig(db);
+    if(twilio){
+      const smsBody=formatBookingSmsText(b);
+      const res=await sendTwilioSms(twilio,recipientPhone,smsBody);
+      await ref.update({smsSent:res.success,smsSid:res.sid||null,smsError:res.error||null,smsAt:Date.now()});
+    }
+  }
   try {
-    const tokens=await db.collection(`users/${notice.userId}/devices`).orderBy('updatedAt','desc').limit(10).get();
+    const tokens=await db.collection(`users/${n.userId}/devices`).orderBy('updatedAt','desc').limit(10).get();
     if(tokens.empty){await ref.update({delivery:'no-device'});return;}
     const result=await getMessaging().sendEachForMulticast({tokens:tokens.docs.map(t=>t.data().token),
-      notification:{title:notice.title,body:notice.body},data:{bookingId:notice.bookingId,notificationId:id},
-      webpush:pushWebOptions(id,notice.bookingId)});
+      notification:{title:n.title,body:n.body},data:{bookingId:n.bookingId,notificationId:id},
+      webpush:pushWebOptions(id,n.bookingId)});
     let retry=false;
     for(const [i,r] of result.responses.entries())if(!r.success){
       if(['messaging/registration-token-not-registered','messaging/invalid-registration-token'].includes(r.error?.code || ''))await tokens.docs[i].ref.delete(); else retry=true;
     }
-    await ref.update({delivery:retry?(notice.attempts>=4?'failed':'pending'):'sent',nextAttemptAt:Date.now()+300_000});
-  } catch {await ref.update({delivery:notice.attempts>=4?'failed':'pending',nextAttemptAt:Date.now()+300_000});}
+    await ref.update({delivery:retry?(n.attempts>=4?'failed':'pending'):'sent',nextAttemptAt:Date.now()+300_000});
+  } catch {await ref.update({delivery:n.attempts>=4?'failed':'pending',nextAttemptAt:Date.now()+300_000});}
 }
 export async function reminders(db: Firestore) {
   const config=(await db.doc('settings/booking').get()).data(); if(!config)return;

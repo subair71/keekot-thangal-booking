@@ -28,7 +28,7 @@ async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
   if(['bookings','dashboard'].includes(role) && !a.admin)throw new HttpsError('permission-denied','Administrator access required.');
   if(role!=='visitor' && !a.admin && !(role==='gate' && a.gate) && !a.permissions?.includes(role))
     throw new HttpsError('permission-denied','You do not have access to this area.');
-  if(role==='visitor'&&!a.phone&&!a.admin&&!a.khadim)throw new HttpsError('failed-precondition','A verified phone number is required.');
+  if(role==='visitor'&&!a.phone&&!a.admin&&!a.khadim)throw new HttpsError('failed-precondition','A verified phone number is required.',{publicMessage:'A verified phone number is required.'});
   return a;
 }
 const enforceAppCheck = !emulator && process.env.ENFORCE_APP_CHECK === 'true';
@@ -227,5 +227,5 @@ export const adminLogin=callable(async r=>{
   if(expected.length!==actual.length||!timingSafeEqual(actual,expected)||!secret?.enabled)throw denied();
   const user=await getAuth().getUser(secret.uid);
   if(user.disabled||user.customClaims?.admin!==true)throw denied();
-  return {token:await getAuth().createCustomToken(user.uid)};
+  return {token:await getAuth().createCustomToken(user.uid,{admin:true})};
 });
