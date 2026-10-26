@@ -191,6 +191,19 @@ void main() {
     },
   );
 
+  test(
+    'public pass tokens stay separate from booking IDs and remain optional',
+    () {
+      final booking = VisitBooking.fromMap({
+        ...staffBookingData(),
+        'passViewToken': 'public-pass-token',
+      });
+      expect(booking.id, 'staff-booking');
+      expect(booking.passViewToken, 'public-pass-token');
+      expect(VisitBooking.fromMap(staffBookingData()).passViewToken, isNull);
+    },
+  );
+
   testWidgets(
     'pass displays visitor number and creator in separate labelled fields',
     (tester) async {

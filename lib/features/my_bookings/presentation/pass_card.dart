@@ -161,19 +161,28 @@ class _PassCardState extends ConsumerState<PassCard> {
             const SizedBox(height: 12),
             FilledButton.tonalIcon(
               onPressed: () {
-                final cleanPhone = b.visitorPhone.replaceAll(RegExp(r'[^\d]'), '');
-                final passToken = (b.passViewToken != null && b.passViewToken!.isNotEmpty)
+                final cleanPhone = b.visitorPhone.replaceAll(
+                  RegExp(r'[^\d]'),
+                  '',
+                );
+                final passToken =
+                    (b.passViewToken != null && b.passViewToken!.isNotEmpty)
                     ? b.passViewToken!
                     : b.id;
-                final passUrl = 'https://www.keekkottbungalow.com/#/pass/$passToken';
-                final text = 'Keekkott Sayyid Attakoya Thangal Maqam\n'
+                final passUrl =
+                    'https://www.keekkottbungalow.com/#/pass/$passToken';
+                final text =
+                    'Keekkott Sayyid Attakoya Thangal Maqam\n'
                     'Visit Confirmed: ${b.visitDate} (${b.timeLabel})\n'
                     'Token: ${b.tokenLabel}\n'
                     'Download Pass: $passUrl';
                 final waUrl = cleanPhone.isNotEmpty
                     ? 'https://wa.me/$cleanPhone?text=${Uri.encodeComponent(text)}'
                     : 'https://wa.me/?text=${Uri.encodeComponent(text)}';
-                launchUrl(Uri.parse(waUrl), mode: LaunchMode.externalApplication);
+                launchUrl(
+                  Uri.parse(waUrl),
+                  mode: LaunchMode.externalApplication,
+                );
               },
               icon: const Icon(Icons.share_outlined),
               label: const AppText('Share pass via WhatsApp'),
