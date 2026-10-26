@@ -16,7 +16,7 @@ export function noticeData(bookingId: string, kind: string, b: DocumentData) {
   return {userId:assisted?(b.bookedByUid || b.userId):b.userId,recipientRole:assisted?'booker':'visitor',bookingId,kind,title,body,read:false,delivery:'pending',attempts:0,nextAttemptAt:Date.now(),createdAt:FieldValue.serverTimestamp()};
 }
 
-export function pushWebOptions(id: string, bookingId: string, appUrl = process.env.APP_ORIGIN || 'https://subair71.github.io/keekot-thangal-booking/') {
+export function pushWebOptions(id: string, bookingId: string, appUrl = process.env.APP_ORIGIN || 'https://www.keekkottbungalow.com/') {
   const base=new URL(appUrl.endsWith('/')?appUrl:appUrl+'/');
   const link=new URL(base);link.searchParams.set('route','booking');link.searchParams.set('bookingId',bookingId);
   return {notification:{tag:id,icon:new URL('icons/keekkott-logo-192.png',base).href},fcmOptions:{link:link.href}};

@@ -162,7 +162,10 @@ class _PassCardState extends ConsumerState<PassCard> {
             FilledButton.tonalIcon(
               onPressed: () {
                 final cleanPhone = b.visitorPhone.replaceAll(RegExp(r'[^\d]'), '');
-                final passUrl = 'https://subair71.github.io/keekot-thangal-booking/#/pass/${b.id}';
+                final passToken = (b.passViewToken != null && b.passViewToken!.isNotEmpty)
+                    ? b.passViewToken!
+                    : b.id;
+                final passUrl = 'https://www.keekkottbungalow.com/#/pass/$passToken';
                 final text = 'Keekkott Sayyid Attakoya Thangal Maqam\n'
                     'Visit Confirmed: ${b.visitDate} (${b.timeLabel})\n'
                     'Token: ${b.tokenLabel}\n'

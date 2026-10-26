@@ -86,7 +86,7 @@ export function formatBookingSmsText(b: {
   tokenStart?: number;
   tokenEnd?: number;
   passViewToken?: string;
-}, appUrl = process.env.APP_ORIGIN || 'https://subair71.github.io/keekot-thangal-booking/'): string {
+}, appUrl = process.env.APP_ORIGIN || 'https://www.keekkottbungalow.com/'): string {
   const base = appUrl.endsWith('/') ? appUrl : `${appUrl}/`;
   const passUrl = b.passViewToken ? `${base}#/pass/${b.passViewToken}` : `${base}#/booking`;
 

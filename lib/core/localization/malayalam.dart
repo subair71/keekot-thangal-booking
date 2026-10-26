@@ -529,9 +529,9 @@ const malayalam = <String, String>{
   "We could not find this booking.": "ഈ ബുക്കിംഗ് കണ്ടെത്താനായില്ല.",
   "Phone sign-in is not enabled for this Firebase project.":
       "മൊബൈൽ ലോഗിൻ നിലവിൽ പ്രവർത്തനക്ഷമമല്ല.",
-  "This website domain is not authorized for phone verification. Please add subair71.github.io to Firebase Authentication authorized domains.":
+  "This website domain is not authorized for phone verification. Please add keekkottbungalow.com to Firebase Authentication authorized domains.":
       "ഈ വെബ്സൈറ്റിന് മൊബൈൽ സ്ഥിരീകരണ അനുമതി സജ്ജമാക്കിയിട്ടില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
-  "The reCAPTCHA verification failed. Check that subair71.github.io is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.":
+  "The reCAPTCHA verification failed. Check that keekkottbungalow.com is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.":
       "സുരക്ഷാ പരിശോധന പരാജയപ്പെട്ടു. പേജ് പുതുക്കി വീണ്ടും ശ്രമിക്കുക. പ്രശ്നം തുടർന്നാൽ അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",
   "Firebase could not validate the verification request. Check the authorized domain, reCAPTCHA configuration, and Firebase web app settings.":
       "സ്ഥിരീകരണ അഭ്യർഥന പരിശോധിക്കാനായില്ല. അഡ്മിനിസ്ട്രേഷനുമായി ബന്ധപ്പെടുക.",

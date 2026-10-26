@@ -36,9 +36,9 @@ AppFailure friendlyFailure(Object e) {
     'operation-not-allowed' =>
       'Phone sign-in is not enabled for this Firebase project.',
     'unauthorized-domain' || 'app-not-authorized' =>
-      'This website domain is not authorized for phone verification. Please add subair71.github.io to Firebase Authentication authorized domains.',
+      'This website domain is not authorized for phone verification. Please add keekkottbungalow.com to Firebase Authentication authorized domains.',
     'captcha-check-failed' =>
-      'The reCAPTCHA verification failed. Check that subair71.github.io is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.',
+      'The reCAPTCHA verification failed. Check that keekkottbungalow.com is allowed in the reCAPTCHA/App Check configuration, then refresh and try again.',
     'invalid-app-credential' =>
       'Firebase could not validate the verification request. Check the authorized domain, reCAPTCHA configuration, and Firebase web app settings.',
     'missing-client-type' || 'missing-app-credential' =>

@@ -3,4 +3,4 @@ export 'booking_share_stub.dart'
 
 const bookingShareMessage =
     'കീക്കോട്ട് സയ്യിദ് അലി നൗഫൽ അൽ ഐദ്രോസ് തങ്ങളെ സന്ദർശിക്കുന്നതിനു വേണ്ടി ഈ ലിങ്കിൽ ക്ലിക്ക് ചെയ്യുക 👇🏻👇🏻\n\n'
-    'https://subair71.github.io/keekot-thangal-booking/';
+    'https://www.keekkottbungalow.com/';

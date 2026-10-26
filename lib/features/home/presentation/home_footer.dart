@@ -118,7 +118,7 @@ class HomeFooter extends StatelessWidget {
                 _link(context, 'Videos', Icons.play_circle_outline, onVideos),
                 Link(
                   uri: Uri.parse(
-                    'https://subair71.github.io/keekot-thangal-booking/visitor-guide.html',
+                    'https://www.keekkottbungalow.com/visitor-guide.html',
                   ),
                   builder: (context, followLink) => _link(
                     context,
