@@ -1,4 +1,5 @@
 import {AssignmentService} from './assignments.js';
+import {enforceAppCheck, policyFor, RequestLimiter, validateRequest} from './request_security.js';
 import {getAuth} from 'firebase-admin/auth';
 import {randomBytes, scryptSync, timingSafeEqual} from 'node:crypto';
 import {initializeApp} from 'firebase-admin/app';
@@ -14,7 +15,7 @@ import {deliverNotice, queueNotice, reminders} from './notifications.js';
 
 initializeApp(); const db=getFirestore(), service=new BookingService(db);
 setGlobalOptions({region:'asia-south1',maxInstances:20,memory:'256MiB',timeoutSeconds:60});
-const emulator=process.env.FUNCTIONS_EMULATOR==='true';
+const requestLimiter=new RequestLimiter(db);
 async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
   if(!r.auth)throw new HttpsError('unauthenticated','Please sign in.');
   const a: Actor={uid:r.auth.uid,phone:String(r.auth.token.phone_number || ''),name:String(r.auth.token.name || ''),admin:r.auth.token.admin===true,gate:r.auth.token.gate===true};
@@ -31,10 +32,13 @@ async function actor(r: CallableRequest, role = 'visitor'): Promise<Actor> {
   if(role==='visitor'&&!a.phone&&!a.admin&&!a.khadim)throw new HttpsError('failed-precondition','A verified phone number is required.',{publicMessage:'A verified phone number is required.'});
   return a;
 }
-const enforceAppCheck = !emulator && process.env.ENFORCE_APP_CHECK === 'true';
-function callable<T>(fn:(r:CallableRequest)=>Promise<T>) {
+function callable<T>(operation:string, fn:(r:CallableRequest)=>Promise<T>) {
   return onCall({enforceAppCheck},async r=>{
-    try{return await fn(r);}catch(e){
+    try{
+      validateRequest(r);
+      await requestLimiter.check(r,policyFor(operation));
+      return await fn(r);
+    }catch(e){
       if(e instanceof HttpsError)throw e;
       if(e instanceof DomainError)throw new HttpsError(e.code,e.message,{publicMessage:e.message});
       logger.error('Operation failed',{type:e instanceof Error?e.name:'unknown'});
@@ -43,24 +47,24 @@ function callable<T>(fn:(r:CallableRequest)=>Promise<T>) {
   });
 }
 const id=(x:unknown)=>{const value=textValue(x,1,240,'identifier');if(!/^[\w-]+$/.test(value))throw new DomainError('invalid-argument','Invalid identifier.');return value;};
-export const getAvailability=callable(async r=>service.availability(validDate(r.data?.visitDate)));
-export const getActiveHold=callable(async r=>{
+export const getAvailability=callable('getAvailability',async r=>service.availability(validDate(r.data?.visitDate)));
+export const getActiveHold=callable('getActiveHold',async r=>{
   const a=await actor(r),now=Date.now(); const current=await db.doc(`activeUserHolds/${a.uid}`).get();
   if(!current.exists || current.data()!.expiresAt<=now)return {hold:null};
   const h=await db.doc(`slotHolds/${current.data()!.holdId}`).get();
   if (!h.exists || h.data()!.status!=='active' || h.data()!.expiresAt<=now) return {hold:null};
   const d=h.data()!; return {hold:{holdId:h.id,slotId:d.slotId,visitDate:d.visitDate,startTime:d.startTime,endTime:d.endTime,visitorCount:d.visitorCount,expiresAt:d.expiresAt,serverNow:now}};
 });
-export const createHold=callable(async r=>service.createHold(await actor(r),r.data));
-export const releaseHold=callable(async r=>service.releaseHold(await actor(r),id(r.data?.holdId)));
-export const createBooking=callable(async r=>service.createBooking(await actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress,r.data?.visitorPhone));
-export const ensureBookingTokens=callable(async r=>service.ensureBookingTokens(await actor(r),id(r.data?.bookingId)));
-export const cancelBooking=callable(async r=>service.cancelBooking(await actor(r),id(r.data?.bookingId),r.data?.reason));
-export const validatePass=callable(async r=>service.validatePass(await actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));
-export const adminUpdateSlot=callable(async r=>service.adminUpdateSlots(await actor(r,'slots'),r.data));
-export const adminSetDateHours=callable(async r=>service.adminSetDateHours(await actor(r,'slots'),r.data));
-export const adminUpdateSettings=callable(async r=>service.adminUpdateSettings(await actor(r,'settings'),r.data));
-export const adminSetBookingStatus=callable(async r=>{
+export const createHold=callable('createHold',async r=>service.createHold(await actor(r),r.data));
+export const releaseHold=callable('releaseHold',async r=>service.releaseHold(await actor(r),id(r.data?.holdId)));
+export const createBooking=callable('createBooking',async r=>service.createBooking(await actor(r),id(r.data?.holdId),r.data?.visitorName,r.data?.visitorAddress,r.data?.visitorPhone));
+export const ensureBookingTokens=callable('ensureBookingTokens',async r=>service.ensureBookingTokens(await actor(r),id(r.data?.bookingId)));
+export const cancelBooking=callable('cancelBooking',async r=>service.cancelBooking(await actor(r),id(r.data?.bookingId),r.data?.reason));
+export const validatePass=callable('validatePass',async r=>service.validatePass(await actor(r,'gate'),r.data?.qrToken,r.data?.checkIn===true));
+export const adminUpdateSlot=callable('adminUpdateSlot',async r=>service.adminUpdateSlots(await actor(r,'slots'),r.data));
+export const adminSetDateHours=callable('adminSetDateHours',async r=>service.adminSetDateHours(await actor(r,'slots'),r.data));
+export const adminUpdateSettings=callable('adminUpdateSettings',async r=>service.adminUpdateSettings(await actor(r,'settings'),r.data));
+export const adminSetBookingStatus=callable('adminSetBookingStatus',async r=>{
   const a=await actor(r,'bookings'), bookingId=id(r.data?.bookingId), status=r.data?.status;
   if(!['completed','noShow'].includes(status))throw new HttpsError('invalid-argument','Choose a valid status.');
   await db.runTransaction(async tx=>{
@@ -73,7 +77,7 @@ export const adminSetBookingStatus=callable(async r=>{
     tx.create(db.collection('auditLog').doc(),{actor:a.uid,action:status,bookingId,at:FieldValue.serverTimestamp()});
   });return {updated:true};
 });
-export const adminDashboard=callable(async r=>{
+export const adminDashboard=callable('adminDashboard',async r=>{
   await actor(r,'dashboard'); const today=dateKey(Date.now());
   const day=db.collection('bookings').where('visitDate','==',today), all=db.collection('bookings');
   const [bookings,visitors,upcoming,cancelled,availability]=await Promise.all([
@@ -83,7 +87,7 @@ export const adminDashboard=callable(async r=>{
   return {bookingsToday:bookings.data().count,visitorsToday:visitors.data().visitors,upcoming:upcoming.data().count,cancelled:cancelled.data().count,
     availableSlots:availability?.slots.filter(s=>s.status==='available').length ?? 0,fullSlots:availability?.slots.filter(s=>s.status==='full').length ?? 0};
 });
-export const registerDevice=callable(async r=>{
+export const registerDevice=callable('registerDevice',async r=>{
   const a=await actor(r),token=textValue(r.data?.token,30,4096,'notification token'), ref=db.doc(`users/${a.uid}/devices/${tokenHash(token)}`);
   await db.runTransaction(async tx=>{
     const devices=await tx.get(db.collection(`users/${a.uid}/devices`).orderBy('updatedAt','asc'));
@@ -91,7 +95,7 @@ export const registerDevice=callable(async r=>{
     tx.set(ref,{token,updatedAt:FieldValue.serverTimestamp()});
   });return {registered:true};
 });
-export const unregisterDevice=callable(async r=>{
+export const unregisterDevice=callable('unregisterDevice',async r=>{
   const a=await actor(r),token=textValue(r.data?.token,30,4096,'notification token'); await db.doc(`users/${a.uid}/devices/${tokenHash(token)}`).delete(); return {removed:true};
 });
 export const sendBookingConfirmation=onDocumentWritten('bookings/{bookingId}',async e=>{
@@ -112,7 +116,7 @@ function staffPhone(value: unknown): string {
   if(!/^\+[1-9]\d{6,14}$/.test(phone))throw new HttpsError('invalid-argument','Enter a phone number with country code.');
   return phone;
 }
-export const adminSaveKhadim=callable(async r=>{
+export const adminSaveKhadim=callable('adminSaveKhadim',async r=>{
   const admin=await actor(r,'admin');
   const uid=r.data?.uid ? id(r.data.uid) : 'khadim_'+randomBytes(16).toString('hex');
   const name=textValue(r.data?.name,1,100,'name'),phone=staffPhone(r.data?.phone);
@@ -138,7 +142,7 @@ export const adminSaveKhadim=callable(async r=>{
   });
   return {uid};
 });
-export const adminDeleteKhadim=callable(async r=>{
+export const adminDeleteKhadim=callable('adminDeleteKhadim',async r=>{
   const admin=await actor(r,'admin');
   const uid=id(r.data?.uid);
   const ref=db.doc(`khadims/${uid}`);
@@ -163,7 +167,7 @@ export const adminDeleteKhadim=callable(async r=>{
   await batch.commit();
   return {deleted:true};
 });
-export const khadimLogin=callable(async r=>{
+export const khadimLogin=callable('khadimLogin',async r=>{
   const phone=staffPhone(r.data?.phone),password=String(r.data?.password ?? '');
   const denied=()=>new HttpsError('unauthenticated','Invalid phone number or password.');
   if(!/^\d{6}$/.test(password))throw denied();
@@ -190,21 +194,21 @@ export const khadimLogin=callable(async r=>{
 });
 
 const assignments=new AssignmentService(db);
-export const assignmentCandidates=callable(async r=>{await actor(r,'admin');return assignments.candidates(id(r.data?.bookingId));});
-export const adminAssignKhadim=callable(async r=>{const a=await actor(r,'admin');return assignments.change(a.uid,id(r.data?.bookingId),r.data?.khadimId?id(r.data.khadimId):null,String(r.data?.reason ?? ''),Number(r.data?.revision ?? 0));});
-export const adminSaveKhadimSchedule=callable(async r=>{const a=await actor(r,'admin');return assignments.saveSchedule(a.uid,id(r.data?.khadimId),validDate(r.data?.visitDate),r.data);});
+export const assignmentCandidates=callable('assignmentCandidates',async r=>{await actor(r,'admin');return assignments.candidates(id(r.data?.bookingId));});
+export const adminAssignKhadim=callable('adminAssignKhadim',async r=>{const a=await actor(r,'admin');return assignments.change(a.uid,id(r.data?.bookingId),r.data?.khadimId?id(r.data.khadimId):null,String(r.data?.reason ?? ''),Number(r.data?.revision ?? 0));});
+export const adminSaveKhadimSchedule=callable('adminSaveKhadimSchedule',async r=>{const a=await actor(r,'admin');return assignments.saveSchedule(a.uid,id(r.data?.khadimId),validDate(r.data?.visitDate),r.data);});
 async function assignmentStaff(r:CallableRequest){
   const a=await actor(r);const staff=await db.doc(`khadims/${a.uid}`).get();
   if(!staff.exists||!staff.data()!.enabled)throw new HttpsError('permission-denied','Khadim access required.');return a;
 }
-export const khadimSetAvailability=callable(async r=>{const a=await assignmentStaff(r);return assignments.saveSchedule(a.uid,a.uid,validDate(r.data?.visitDate),r.data,true);});
-export const khadimVisitStatus=callable(async r=>{const a=await assignmentStaff(r);return assignments.transition(a.uid,id(r.data?.bookingId),String(r.data?.status));});
+export const khadimSetAvailability=callable('khadimSetAvailability',async r=>{const a=await assignmentStaff(r);return assignments.saveSchedule(a.uid,a.uid,validDate(r.data?.visitDate),r.data,true);});
+export const khadimVisitStatus=callable('khadimVisitStatus',async r=>{const a=await assignmentStaff(r);return assignments.transition(a.uid,id(r.data?.bookingId),String(r.data?.status));});
 // Re-read the current document in the transaction: trigger events can arrive out of order.
 export const reconcileAssignment=onDocumentWritten('bookings/{bookingId}',async event=>{if(event.data?.after.exists)await assignments.reconcile(event.params.bookingId);});
 
 // Administrator credentials are provisioned with the privileged admin-account script.
 // Firestore rules deny all client access to credentials and login counters.
-export const adminLogin=callable(async r=>{
+export const adminLogin=callable('adminLogin',async r=>{
   const username=String(r.data?.username ?? '').trim().toLowerCase();
   const password=String(r.data?.password ?? '');
   const denied=()=>new HttpsError('unauthenticated','Invalid username or password.');

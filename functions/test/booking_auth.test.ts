@@ -1,3 +1,4 @@
+import {RequestLimiter} from '../src/request_security.js';
 import {test, mock} from 'node:test';
 import assert from 'node:assert/strict';
 import {getFirestore} from 'firebase-admin/firestore';
@@ -8,13 +9,14 @@ import {createBooking} from '../src/index.js';
 test('callable derives creator and role from authentication and current staff record, ignoring spoofed request identity', async () => {
   let staff: Record<string, unknown> | undefined;
   const db = getFirestore();
+  mock.method(RequestLimiter.prototype, 'check', async () => {});
   mock.method(db, 'doc', (path: string) => {
     assert.equal(path, 'khadims/real-creator');
     return {get: async () => ({exists: staff !== undefined, data: () => staff})};
   });
   mock.method(BookingService.prototype, 'createBooking', async (actor, _hold, _name, _address, phone) => bookingIdentity(actor, phone));
   const run = (token: Record<string, unknown>, phone?: string) => createBooking.run({
-    auth: {uid: 'real-creator', token},
+    app: {appId: 'test-app'}, auth: {uid: 'real-creator', token},
     data: {holdId: 'test-hold', visitorName: 'Guest', visitorPhone: phone, admin: true, bookedByUid: 'spoofed', bookedByRole: 'admin'},
   } as any);
   try {

@@ -1,5 +1,7 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Too many requests. Please wait a moment and try again.':
+      'വളരെയധികം അഭ്യർത്ഥനകൾ ലഭിച്ചു. അൽപ്പസമയം കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക.',
   'Visitor Phone Number': 'സന്ദർശകന്റെ ഫോൺ നമ്പർ',
   'Enter the phone number of the visitor you are booking for.':
       'നിങ്ങൾ ബുക്ക് ചെയ്യുന്ന സന്ദർശകന്റെ ഫോൺ നമ്പർ നൽകുക.',

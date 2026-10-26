@@ -22,7 +22,9 @@ service cloud.firestore {
     match /khadims/{uid} { allow read: if owner(uid) || admin(); allow write: if false; }
     match /settings/booking { allow read: if true; allow write: if false; }
     match /settings/sms { allow read, write: if admin(); }
-    match /publicPasses/{token} { allow read: if true; allow write: if false; }
+    // Public links are bearer capabilities: a known token may read one pass,
+    // but queries must never enumerate passes or visitor details.
+    match /publicPasses/{token} { allow get: if true; allow list, write: if false; }
     match /closures/{id} { allow read: if true; allow write: if false; }
     match /visitSlots/{id} { allow read: if true; allow write: if false; }
     match /users/{uid} {

@@ -29,7 +29,8 @@ AppFailure friendlyFailure(Object e) {
     'deadline-exceeded' => 'Please check your connection and try again.',
     'unauthenticated' => 'Please sign in again to continue.',
     'permission-denied' => 'You do not have access to this information.',
-    'resource-exhausted' => 'This slot is full. Please choose another time.',
+    'resource-exhausted' =>
+      'Too many requests. Please wait a moment and try again.',
     'failed-precondition' =>
       'This request is no longer available. Please refresh and try again.',
     'not-found' => 'We could not find this booking.',
