@@ -152,6 +152,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/khadim/availability',
             builder: (_, _) => const AvailabilityPage(staff: true),
           ),
+          GoRoute(
+            path: '/khadim/scan',
+            builder: (_, _) => const KhadimScanPage(),
+          ),
           GoRoute(path: '/contact', builder: (_, _) => const ContactPage()),
           GoRoute(
             path: '/login',

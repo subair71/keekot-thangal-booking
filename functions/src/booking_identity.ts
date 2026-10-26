@@ -1,7 +1,7 @@
 import {DomainError} from './domain.js';
 
 // Populated by the callable's authenticated account lookup, never request data.
-export interface Actor {uid: string; phone: string; admin?: boolean; khadim?: boolean; name?: string; gate?: boolean; permissions?: string[]}
+export interface Actor {uid: string; phone: string; admin?: boolean; khadim?: boolean; khadimVersion?: number; name?: string; gate?: boolean; permissions?: string[]}
 
 export function normalizeVisitorPhone(value: unknown): string {
   if (typeof value !== 'string' || value.length > 40)

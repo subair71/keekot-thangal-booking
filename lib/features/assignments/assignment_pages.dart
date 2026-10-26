@@ -9,6 +9,7 @@ import '../../app/theme/app_theme.dart';
 import '../../core/localization/app_language.dart';
 import '../../core/utils/visit_clock.dart';
 import '../../core/widgets/components.dart';
+import '../admin/presentation/admin_page.dart' show GateValidation;
 import 'assignment_repository.dart';
 
 class AssignmentPage extends ConsumerStatefulWidget {
@@ -68,6 +69,11 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                   child: const AppText('Administration'),
                 ),
               if (widget.staff) ...[
+                OutlinedButton.icon(
+                  onPressed: busy ? null : () => context.go('/khadim/scan'),
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const AppText('Scan visitor pass'),
+                ),
                 ChoiceChip(
                   label: const AppText('Today'),
                   selected: !upcoming,
@@ -365,6 +371,34 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class KhadimScanPage extends ConsumerWidget {
+  const KhadimScanPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).asData?.value;
+    return PageContainer(
+      width: 760,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const PageHeading('Visitor entry', eyebrow: 'VISITOR CARE'),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: () => context.go('/khadim'),
+              icon: const Icon(Icons.arrow_back),
+              label: const AppText('Back to visits'),
+            ),
+          ),
+          const SizedBox(height: 20),
+          GateValidation(assignedOnly: user?.can('gate') != true),
         ],
       ),
     );

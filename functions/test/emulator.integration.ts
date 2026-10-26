@@ -6,7 +6,7 @@ import {getFirestore, Timestamp} from 'firebase-admin/firestore';
 import {initializeTestEnvironment,assertFails,assertSucceeds} from '@firebase/rules-unit-testing';
 import {doc,getDoc,setDoc,collection,query,where,getDocs,onSnapshot} from 'firebase/firestore';
 import {BookingService} from '../src/booking_service.js';
-import {BookingSettings, generateSlots} from '../src/domain.js';
+import {BookingSettings, generateSlots, makeToken, tokenHash} from '../src/domain.js';
 import {queueNotice,deliverNotice} from '../src/notifications.js';
 
 if(!process.env.FIRESTORE_EMULATOR_HOST)throw new Error('Integration tests require a Firestore emulator.');
@@ -210,6 +210,91 @@ test('Firestore transactions and rules',async t=>{
     assert.equal((await service.validatePass(staff,b.qrToken,true)).reason,'already_used');
     const cancelled=(await db.doc(`bookings/${bookingId}`).get()).data()!;
     assert.equal((await service.validatePass(staff,cancelled.qrToken,true)).reason,'cancelled');
+  });
+  await t.test('assigned Khadim scans use current assignment and account permissions',async t=>{
+    const previousNow=now,startAt=Date.parse('2030-01-10T05:00:00Z'),endAt=startAt+30*60_000;
+    const khadim={uid:'scan-assignee',phone:'+919777777777',khadim:true,khadimVersion:1,permissions:[] as string[]};
+    const profile=db.doc(`khadims/${khadim.uid}`);
+    const resetProfile=()=>profile.set({enabled:true,version:1,permissions:[]});
+    const pass=async(name:string,legacy=false)=>{
+      const qrToken=makeToken(),ref=db.doc(`bookings/scan-${name}`),slotId=`scan-slot-${name}`;
+      const assignment={khadimId:khadim.uid,status:'assigned',revision:1,conflict:false,scheduledStart:startAt,scheduledEnd:endAt};
+      await ref.set({bookingId:ref.id,bookingReference:`SCAN-${name}`,userId:'scan-visitor',visitDate:day,slotId,
+        startTime:'10:30',endTime:'11:00',startAt,endAt,visitorCount:1,status:'confirmed',qrToken,assignment,
+        ...(legacy?{}:{tokenStart:1,tokenEnd:1})});
+      await db.doc(`passTokens/${tokenHash(qrToken)}`).set({bookingId:ref.id});
+      return {qrToken,ref,slotId,assignment};
+    };
+    try {
+      now=startAt+1000;
+      await t.test('assignee without gate can validate, migrate legacy numbers and admit only once',async()=>{
+        await resetProfile();
+        const p=await pass('legacy',true);
+        const checked=await service.validatePass(khadim,p.qrToken,false);
+        assert.equal(checked.valid,true);assert.equal(checked.tokenStart,1);assert.equal(checked.tokenEnd,1);
+        assert.equal((await p.ref.get()).data()!.status,'confirmed');
+        assert.equal((await db.doc(`slotTokenCounters/${p.slotId}`).get()).data()!.nextToken,2);
+        assert.equal((await service.validatePass(khadim,p.qrToken,true)).status,'completed');
+        const saved=(await p.ref.get()).data()!;
+        assert.equal(saved.checkedInBy,khadim.uid);assert.ok(saved.checkedInAt);
+        assert.equal(saved.assignment.status,'assigned'); // Attendance does not finish the Khadim's service.
+        assert.equal((await service.validatePass(khadim,p.qrToken,true)).reason,'already_used');
+      });
+      await t.test('wrong, removed, conflicted and stale assignments cannot disclose or mutate a pass',async()=>{
+        await resetProfile();
+        const p=await pass('denied',true);
+        const denied=()=>assert.rejects(()=>service.validatePass(khadim,p.qrToken,true));
+        await p.ref.update({'assignment.khadimId':'replacement-khadim'});
+        await assert.rejects(()=>service.validatePass({...khadim,gate:true},p.qrToken,true),{code:'permission-denied'});
+        for(const status of ['unassigned','cancelled','completed']){
+          await p.ref.update({assignment:{...p.assignment,status}});await denied();
+        }
+        await p.ref.update({assignment:{...p.assignment,conflict:true}});await denied();
+        await p.ref.update({assignment:{...p.assignment,scheduledStart:startAt-60_000}});await denied();
+        const saved=(await p.ref.get()).data()!;
+        assert.equal(saved.status,'confirmed');assert.equal(saved.checkedInAt,undefined);
+        assert.equal(saved.tokenStart,undefined);
+        assert.equal((await db.doc(`slotTokenCounters/${p.slotId}`).get()).exists,false);
+      });
+      await t.test('disabled, deleted and version-changed profiles are rejected; gate access comes from current profile',async()=>{
+        await resetProfile();
+        const p=await pass('revoked');
+        await profile.update({enabled:false});
+        await assert.rejects(()=>service.validatePass(khadim,p.qrToken,true),{code:'permission-denied'});
+        await profile.update({enabled:true,version:2});
+        await assert.rejects(()=>service.validatePass(khadim,p.qrToken,true),{code:'permission-denied'});
+        await profile.delete();
+        await assert.rejects(()=>service.validatePass(khadim,p.qrToken,true),{code:'permission-denied'});
+        assert.equal((await p.ref.get()).data()!.status,'confirmed');
+        await resetProfile();
+        await p.ref.update({assignment:{...p.assignment,khadimId:'other-khadim'}});
+        await profile.update({permissions:['gate']});
+        assert.equal((await service.validatePass(khadim,p.qrToken,false)).valid,true);
+        await profile.update({permissions:[]});
+        await assert.rejects(()=>service.validatePass({...khadim,gate:true},p.qrToken,true),{code:'permission-denied'});
+      });
+      await t.test('assigned scans retain arrival, cancellation and concurrent-entry protections',async()=>{
+        await resetProfile();
+        const p=await pass('timing');
+        await p.ref.update({'assignment.status':'inProgress'});
+        now=startAt-settings.arrivalMinutes*60_000-1;
+        assert.equal((await service.validatePass(khadim,p.qrToken,true)).reason,'too_early');
+        now=endAt;
+        assert.equal((await service.validatePass(khadim,p.qrToken,true)).reason,'expired');
+        now=startAt+1000;
+        await p.ref.update({status:'cancelled'});
+        assert.equal((await service.validatePass(khadim,p.qrToken,true)).reason,'cancelled');
+        await p.ref.update({status:'confirmed'});
+        const scans=await Promise.all([service.validatePass(khadim,p.qrToken,true),service.validatePass({...actor(3100),admin:true},p.qrToken,true)]);
+        assert.equal(scans.filter(r=>r.valid).length,1);
+        assert.equal(scans.filter(r=>r.reason==='already_used').length,1);
+        const saved=(await p.ref.get()).data()!;
+        assert.ok([khadim.uid,'test-3100'].includes(saved.checkedInBy));
+        assert.equal(saved.assignment.status,'inProgress');
+        const audit=await db.collection('auditLog').where('bookingId','==',p.ref.id).get();
+        assert.equal(audit.docs.filter(d=>d.data().action==='checkIn').length,1);
+      });
+    } finally {now=previousNow;}
   });
   await t.test('Firestore rules isolate owners and reject all client capacity mutations',async()=>{
     const env=await initializeTestEnvironment({projectId,firestore:{rules:await readFile('../firestore.rules','utf8'),host:'127.0.0.1',port:8080}});

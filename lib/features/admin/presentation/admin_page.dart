@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
+import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import 'admin_settings_page.dart';
@@ -321,7 +322,8 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
 }
 
 class GateValidation extends ConsumerStatefulWidget {
-  const GateValidation({super.key});
+  const GateValidation({super.key, this.assignedOnly = false});
+  final bool assignedOnly;
   @override
   ConsumerState<GateValidation> createState() => _GateValidationState();
 }
@@ -393,8 +395,10 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Scan the QR code on the visitor pass. A valid pass automatically confirms attendance during the allowed arrival and visit time.',
+            AppText(
+              widget.assignedOnly
+                  ? 'Scan the QR code for a visit assigned to you. The pass must be within its allowed arrival and visit time.'
+                  : 'Scan the QR code on the visitor pass. A valid pass automatically confirms attendance during the allowed arrival and visit time.',
             ),
             const SizedBox(height: 24),
             FilledButton.icon(

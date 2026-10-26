@@ -110,17 +110,19 @@ class AppShell extends ConsumerWidget {
               for (final item in [
                 ('Contact us', Icons.mail_outline, '/contact'),
                 if (user == null) ('Sign in with mobile', Icons.login, '/auth'),
-                if (user?.staff == true)
+                if (user != null && user.staff)
                   (
-                    'Administration',
+                    user.khadim ? 'Your visits' : 'Administration',
                     Icons.admin_panel_settings_outlined,
-                    '/admin',
+                    user.staffHome,
                   ),
-                if (user?.gate == true && user?.admin != true)
+                if (user != null &&
+                    !user.admin &&
+                    (user.khadim || user.can('gate')))
                   (
                     'Validate visitor pass',
                     Icons.qr_code_scanner,
-                    '/admin/gate',
+                    user.khadim ? '/khadim/scan' : '/admin/gate',
                   ),
               ])
                 Builder(
