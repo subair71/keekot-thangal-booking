@@ -197,7 +197,7 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
                   child: AppText(
                     ml ? 'ആത്മീയ സംഗമങ്ങൾ' : 'Spiritual gatherings',
                     style: TextStyle(
-                      fontFamily: 'Newsreader',
+                      fontFamily: 'Playfair Display',
                       color: AppColors.ink,
                       fontSize: headingSize,
                       fontWeight: FontWeight.w500,

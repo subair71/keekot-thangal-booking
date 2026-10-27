@@ -30,7 +30,7 @@ class InformationPage extends StatelessWidget {
               AppText(
                 'Welcome to Keekkott Sayyid Attakoya Thangal Maqam',
                 style: TextStyle(
-                  fontFamily: 'Newsreader',
+                  fontFamily: 'Playfair Display',
                   fontSize: 24,
                   color: AppColors.emerald,
                 ),

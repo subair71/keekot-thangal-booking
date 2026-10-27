@@ -168,6 +168,7 @@ class AppText extends StatelessWidget {
       AppLanguage.of(context) == 'ml'
       ? (value ?? const TextStyle()).copyWith(
           fontFamily: 'Noto Sans Malayalam',
+          height: (value?.height ?? 1.5) < 1.6 ? 1.6 : value!.height,
           letterSpacing: 0,
         )
       : value;
@@ -227,7 +228,7 @@ class HeaderLanguageToggle extends StatelessWidget {
         key: const ValueKey('language-toggle'),
         onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
         style: TextButton.styleFrom(
-          minimumSize: const Size(88, 32),
+          minimumSize: const Size(88, 44),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           tapTargetSize: MaterialTapTargetSize.padded,
           backgroundColor: colors.primary.withValues(alpha: 0.06),

@@ -177,11 +177,11 @@ class AppShell extends ConsumerWidget {
       ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
-          (wide ? 120 : 108) * textScale.clamp(1.0, 1.5),
+          (wide ? 120 : 112) * textScale.clamp(1.0, 2.5),
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.ivory,
             border: const Border(bottom: BorderSide(color: AppColors.outline)),
             boxShadow: [
               BoxShadow(
@@ -194,15 +194,20 @@ class AppShell extends ConsumerWidget {
           child: SafeArea(
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1320),
+                constraints: const BoxConstraints(maxWidth: 1280),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: wide ? 32 : 12,
                     vertical: wide ? 6 : 4,
                   ),
-                  child: Row(
+                  child: Flex(
+                    direction: textScale > 1.3
+                        ? Axis.vertical
+                        : Axis.horizontal,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
+                      Flexible(
+                        fit: textScale > 1.3 ? FlexFit.loose : FlexFit.tight,
                         child: InkWell(
                           onTap: () => context.go('/'),
                           borderRadius: BorderRadius.circular(12),
@@ -219,11 +224,13 @@ class AppShell extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       AppText(
-                                        'KEEKKOTT SAYYID ATTAKOYA THANGAL',
+                                        textScale > 1.3
+                                            ? 'Keekkott Bungalow'
+                                            : 'KEEKKOTT SAYYID ATTAKOYA THANGAL',
                                         maxLines: 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          fontFamily: 'Newsreader',
+                                          fontFamily: 'Playfair Display',
                                           fontWeight: FontWeight.w700,
                                           fontSize: wide ? 22 : 16,
                                           height: 1.2,
@@ -282,7 +289,10 @@ class AppShell extends ConsumerWidget {
                           ),
                         const SizedBox(width: 8),
                       ],
-                      Column(
+                      Flex(
+                        direction: textScale > 1.3
+                            ? Axis.horizontal
+                            : Axis.vertical,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const HeaderLanguageToggle(),

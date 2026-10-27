@@ -1,6 +1,7 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_theme.dart';
@@ -24,7 +25,7 @@ class Emblem extends StatelessWidget {
 }
 
 class PageContainer extends StatelessWidget {
-  const PageContainer({super.key, required this.child, this.width = 1240});
+  const PageContainer({super.key, required this.child, this.width = 1280});
   final Widget child;
   final double width;
   @override
@@ -34,7 +35,7 @@ class PageContainer extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: width),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.sizeOf(context).width < 600 ? 16 : 24,
+            horizontal: MediaQuery.sizeOf(context).width < 600 ? 20 : 32,
             vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 36,
           ),
           child: child,
@@ -49,15 +50,16 @@ class SurfaceCard extends StatelessWidget {
     super.key,
     required this.child,
     this.color = AppColors.white,
-    this.padding = 18,
+    this.padding = 20,
+    this.borderColor = AppColors.outline,
   });
   final Widget child;
-  final Color color;
+  final Color color, borderColor;
   final double padding;
   @override
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
           color: AppColors.emerald.withValues(alpha: .045),
@@ -70,8 +72,8 @@ class SurfaceCard extends StatelessWidget {
       color: color,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: AppColors.outline),
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: borderColor),
       ),
       clipBehavior: Clip.antiAlias,
       child: Padding(padding: EdgeInsets.all(padding), child: child),
@@ -95,14 +97,14 @@ class PageHeading extends StatelessWidget {
             height: 3,
             margin: const EdgeInsets.only(bottom: 14),
             decoration: BoxDecoration(
-              color: AppColors.gold,
+              color: AppColors.goldText,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
           AppText(
             tr(context, eyebrow!).toUpperCase(),
             style: const TextStyle(
-              color: AppColors.gold,
+              color: AppColors.goldText,
               fontSize: 11,
               letterSpacing: 1.5,
               fontWeight: FontWeight.w700,
@@ -420,3 +422,63 @@ Future<bool> confirmDialog(
       ),
     ) ??
     false;
+
+/// Keeps a desktop sidebar within its own section. Tall panels and mobile
+/// layouts stay in normal document flow so every control remains reachable.
+class StickyAsideLayout extends StatefulWidget {
+  const StickyAsideLayout({
+    super.key,
+    required this.main,
+    required this.aside,
+    this.asideWidth = 380,
+  });
+  final Widget main, aside;
+  final double asideWidth;
+  @override
+  State<StickyAsideLayout> createState() => _StickyAsideLayoutState();
+}
+
+class _StickyAsideLayoutState extends State<StickyAsideLayout> {
+  final _section = GlobalKey(), _panel = GlobalKey();
+  @override
+  Widget build(BuildContext context) {
+    final position = Scrollable.maybeOf(context)?.position;
+    Widget layout(double offset) => Row(
+      key: _section,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: widget.main),
+        const SizedBox(width: 28),
+        Transform.translate(
+          offset: Offset(0, offset),
+          child: SizedBox(
+            key: _panel,
+            width: widget.asideWidth,
+            child: widget.aside,
+          ),
+        ),
+      ],
+    );
+    if (position == null) return layout(0);
+    return AnimatedBuilder(
+      animation: position,
+      builder: (context, _) {
+        final section = _section.currentContext?.findRenderObject();
+        final panel = _panel.currentContext?.findRenderObject();
+        var offset = 0.0;
+        if (section is RenderBox &&
+            panel is RenderBox &&
+            section.hasSize &&
+            panel.hasSize &&
+            position.hasViewportDimension &&
+            panel.size.height < position.viewportDimension - 40) {
+          final viewport = RenderAbstractViewport.of(section);
+          final top = section.localToGlobal(Offset.zero, ancestor: viewport).dy;
+          final travel = section.size.height - panel.size.height;
+          if (travel > 0) offset = (20 - top).clamp(0.0, travel);
+        }
+        return layout(offset);
+      },
+    );
+  }
+}
