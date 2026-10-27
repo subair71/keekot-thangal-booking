@@ -263,10 +263,32 @@ export class BookingService {
     const keys: (keyof BookingSettings)[]=['timezone','openingTime','closingTime','slotDurationMinutes','bookingWindowDays','allowSameDayBooking','maxVisitorsPerBooking','defaultSlotCapacity','reminderEnabled','reminderMinutes','bookingEnabled','locationUrl','contactPhone','arrivalMinutes'];
     return this.db.runTransaction(async tx=>{
       const ref=this.db.doc('settings/booking'), prev=await tx.get(ref), p=prev.data();
-      if(p && p.scheduleLockedUntil>=dateKey(this.clock()) && ['openingTime','closingTime','slotDurationMinutes','timezone'].some(k=>p[k]!==input[k as keyof BookingSettings]))
-        throw new DomainError('failed-precondition',`Hours and duration are locked through ${p!.scheduleLockedUntil}. Change them after the existing schedule has elapsed.`);
-      const dateHours=Object.fromEntries(Object.entries(p?.dateHours || {}).filter(([day])=>day>=dateKey(this.clock())));
-      settingsFrom({...c,dateHours});
+      const now=this.clock(), today=dateKey(now);
+      const dateHours=Object.fromEntries(Object.entries(p?.dateHours || {}).filter(([day])=>day>=today));
+      const next=settingsFrom({...c,dateHours});
+      if(p && ['openingTime','closingTime','slotDurationMinutes','timezone'].some(k=>p[k]!==c[k as keyof BookingSettings])) {
+        // A historical lock date does not imply a booking still exists. Check the
+        // actual slots inside this transaction so concurrent holds remain safe.
+        const slots=await tx.get(this.db.collection('visitSlots').where('visitDate','>=',today));
+        const states=await tx.get(this.db.collection('slotState').where('visitDate','>=',today));
+        const holds=new Map(states.docs.map(d=>[d.id,activeHolds(d.data().holds || {},now)]));
+        const schedules=new Map<string,Map<string,Slot>>();
+        const obsolete=slots.docs.filter(d=>{
+          const slot=d.data() as Slot;
+          if(!schedules.has(slot.visitDate))schedules.set(slot.visitDate,new Map(generateSlots(slot.visitDate,next).map(s=>[s.slotId,s])));
+          const replacement=schedules.get(slot.visitDate)!.get(d.id);
+          return !replacement || replacement.endAt!==slot.endAt;
+        });
+        for(const d of obsolete) {
+          const slot=d.data() as Slot;
+          if(slot.occupancy>0 || Object.keys(holds.get(d.id) || {}).length)
+            throw new DomainError('failed-precondition',`Cannot change these hours or duration: ${slot.visitDate} at ${slot.startTime} has confirmed visitors or an active reservation. Keep that slot unchanged, cancel the affected booking, or wait for the reservation to expire.`);
+          if(slot.blocked)
+            throw new DomainError('failed-precondition',`These hours or duration affect a blocked slot on ${slot.visitDate} at ${slot.startTime}. Remove that slot block before changing the schedule.`);
+        }
+        // Unused old slots must not override newly generated slot durations.
+        for(const d of obsolete) {tx.delete(d.ref);tx.delete(this.db.doc(`slotState/${d.id}`));}
+      }
       const data=Object.fromEntries(keys.map(k=>[k,c[k]]));
       tx.set(ref,{...data,dateHours,environment:p?.environment || 'production',updatedAt:FieldValue.serverTimestamp()}, {merge:true});
       tx.create(this.db.collection('auditLog').doc(),{actor:actor.uid,action:'updateSettings',at:FieldValue.serverTimestamp()}); return {updated:true};
