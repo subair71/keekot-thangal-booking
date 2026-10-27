@@ -184,13 +184,13 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
                     builder: (availability) {
                       final slots = availability.closed
                           ? <VisitSlot>[]
-                          : availability.slots;
+                          : availability.slots
+                                .where((s) => s.accepts(count))
+                                .toList();
                       final selected = slots
                           .where((s) => s.id == slotId && s.accepts(count))
                           .firstOrNull;
-                      final available = slots
-                          .where((s) => s.accepts(count))
-                          .length;
+                      final available = slots.length;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
