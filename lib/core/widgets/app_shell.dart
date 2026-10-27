@@ -177,7 +177,7 @@ class AppShell extends ConsumerWidget {
       ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
-          (wide ? 120 : 112) * textScale.clamp(1.0, 2.5),
+          (wide ? 96 : 106) * textScale.clamp(1.0, 2.5),
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -227,7 +227,7 @@ class AppShell extends ConsumerWidget {
                                         textScale > 1.3
                                             ? 'Keekkott Bungalow'
                                             : 'KEEKKOTT SAYYID ATTAKOYA THANGAL',
-                                        maxLines: 3,
+                                        maxLines: wide ? 2 : 3,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: 'Playfair Display',
@@ -290,7 +290,7 @@ class AppShell extends ConsumerWidget {
                         const SizedBox(width: 8),
                       ],
                       Flex(
-                        direction: textScale > 1.3
+                        direction: wide || textScale > 1.3
                             ? Axis.horizontal
                             : Axis.vertical,
                         mainAxisSize: MainAxisSize.min,
