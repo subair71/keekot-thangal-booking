@@ -1,5 +1,10 @@
 // Visitor interface translations.
 const malayalam = <String, String>{
+  'Select date': 'തീയതി തിരഞ്ഞെടുക്കുക',
+  'View all availability': 'ലഭ്യമായ എല്ലാ സമയങ്ങളും കാണുക',
+  'Limited': 'പരിമിതം',
+  'Keekkott Bungalow': 'കീക്കോട്ട് ബംഗ്ലാവ്',
+
   'Too many requests. Please wait a moment and try again.':
       'വളരെയധികം അഭ്യർത്ഥനകൾ ലഭിച്ചു. അൽപ്പസമയം കാത്തിരുന്ന് വീണ്ടും ശ്രമിക്കുക.',
   'Visitor Phone Number': 'സന്ദർശകന്റെ ഫോൺ നമ്പർ',

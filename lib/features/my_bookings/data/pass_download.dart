@@ -26,7 +26,7 @@ class PassDownload {
               style: pw.TextStyle(
                 fontSize: 16,
                 fontWeight: pw.FontWeight.bold,
-                color: PdfColor.fromHex('#064E3B'),
+                color: PdfColor.fromHex('#13382D'),
               ),
             ),
             pw.Text('Chavakkad, Kerala | Visitor pass'),

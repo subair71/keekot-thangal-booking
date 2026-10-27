@@ -42,9 +42,9 @@ flutter:
   assets:
     - assets/brand/
   fonts:
-    - family: Newsreader
+    - family: Playfair Display
       fonts:
-        - asset: assets/fonts/Newsreader.ttf
+        - asset: assets/fonts/PlayfairDisplay.ttf
     - family: Plus Jakarta Sans
       fonts:
         - asset: assets/fonts/PlusJakartaSans.ttf

@@ -7,7 +7,7 @@ import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
-import '../../booking/domain/booking_models.dart';
+import 'quick_booking_card.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
 import 'home_footer.dart';
@@ -69,7 +69,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final config = ref.watch(configurationProvider);
     return PageContainer(
-      width: 1320,
+      width: 1280,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -78,7 +78,39 @@ class _HomePageState extends ConsumerState<HomePage> {
               final availability = AsyncPanel(
                 value: config,
                 onRetry: () => ref.invalidate(configurationProvider),
-                builder: (c) => _LiveAvailability(c),
+                builder: (c) => QuickBookingCard(config: c),
+              );
+              final summary = AsyncPanel(
+                value: config,
+                onRetry: () => ref.invalidate(configurationProvider),
+                builder: (c) => SurfaceCard(
+                  color: AppColors.cream,
+                  padding: 24,
+                  child: _FeatureGrid(
+                    children: [
+                      InfoLine(
+                        Icons.schedule_outlined,
+                        'Visiting hours',
+                        c.hoursForDate(VisitClock.today()),
+                      ),
+                      InfoLine(
+                        Icons.hourglass_bottom_outlined,
+                        'Time for your visit',
+                        '${c.slotDurationMinutes} minutes per slot',
+                      ),
+                      const InfoLine(
+                        Icons.location_on_outlined,
+                        'Find us',
+                        'Chavakkad, Kerala',
+                      ),
+                      const InfoLine(
+                        Icons.confirmation_number_outlined,
+                        'Easy entry',
+                        'Your booking. Your digital pass.',
+                      ),
+                    ],
+                  ),
+                ),
               );
               if (constraints.maxWidth < 1050) {
                 return Column(
@@ -87,53 +119,66 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const _MaqamHero(),
                     const SizedBox(height: 20),
                     availability,
+                    const SizedBox(height: 20),
+                    summary,
                   ],
                 );
               }
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Expanded(child: _MaqamHero()),
-                  const SizedBox(width: 28),
-                  SizedBox(width: 340, child: availability),
-                ],
+              return StickyAsideLayout(
+                main: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const _MaqamHero(),
+                    const SizedBox(height: 20),
+                    summary,
+                  ],
+                ),
+                aside: availability,
               );
             },
           ),
           const SizedBox(height: 20),
-          AsyncPanel(
-            value: config,
-            onRetry: () => ref.invalidate(configurationProvider),
-            builder: (c) => SurfaceCard(
+          const SizedBox(height: 20),
+          Container(
+            padding: EdgeInsets.all(
+              MediaQuery.sizeOf(context).width < 600 ? 24 : 36,
+            ),
+            decoration: BoxDecoration(
               color: AppColors.cream,
-              padding: 24,
-              child: _FeatureGrid(
-                children: [
-                  InfoLine(
-                    Icons.schedule_outlined,
-                    'Visiting hours',
-                    c.hoursForDate(VisitClock.today()),
-                  ),
-                  InfoLine(
-                    Icons.hourglass_bottom_outlined,
-                    'Time for your visit',
-                    '${c.slotDurationMinutes} minutes per slot',
-                  ),
-                  const InfoLine(
-                    Icons.location_on_outlined,
-                    'Find us',
-                    'Chavakkad, Kerala',
-                  ),
-                  const InfoLine(
-                    Icons.confirmation_number_outlined,
-                    'Easy entry',
-                    'Your booking. Your digital pass.',
-                  ),
-                ],
-              ),
+              border: Border.all(color: AppColors.outline),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionTitle(
+                  'YOUR VISIT, SIMPLIFIED',
+                  'Arrive prepared. Be fully present.',
+                ),
+                SizedBox(height: 20),
+                _FeatureGrid(
+                  children: [
+                    _VisitStep(
+                      '01',
+                      'Choose your time',
+                      'Select an available date and time that works for you. Check the latest schedule before making travel plans.',
+                    ),
+                    _VisitStep(
+                      '02',
+                      'Confirm your details',
+                      'Verify your mobile number and add the visitor details requested to complete your reservation.',
+                    ),
+                    _VisitStep(
+                      '03',
+                      'Keep your pass ready',
+                      'Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.',
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 56),
           const ProgrammeCarousel(),
           const SizedBox(height: 32),
           const _HomeFeaturedVideo(),
@@ -177,46 +222,6 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
             aside: const LocationCard(),
-          ),
-          const SizedBox(height: 56),
-          Container(
-            padding: EdgeInsets.all(
-              MediaQuery.sizeOf(context).width < 600 ? 24 : 36,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.mint,
-              border: Border.all(color: AppColors.outline),
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _SectionTitle(
-                  'YOUR VISIT, SIMPLIFIED',
-                  'Arrive prepared. Be fully present.',
-                ),
-                SizedBox(height: 20),
-                _FeatureGrid(
-                  children: [
-                    _VisitStep(
-                      '01',
-                      'Choose your time',
-                      'Select an available date and time that works for you. Check the latest schedule before making travel plans.',
-                    ),
-                    _VisitStep(
-                      '02',
-                      'Confirm your details',
-                      'Verify your mobile number and add the visitor details requested to complete your reservation.',
-                    ),
-                    _VisitStep(
-                      '03',
-                      'Keep your pass ready',
-                      'Open My Bookings to access your QR pass and token details. Follow the arrival time on your booking.',
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: 56),
           KeyedSubtree(key: videosKey, child: const VideoGallery()),
@@ -280,7 +285,7 @@ class _MaqamHero extends StatelessWidget {
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 650;
       return ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(16),
         child: Stack(
           children: [
             Positioned.fill(
@@ -335,16 +340,25 @@ class _MaqamHero extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 32),
+                  const AppText(
+                    'Keekkott Bungalow',
+                    style: TextStyle(
+                      color: AppColors.ivory,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 650),
                     child: AppText(
                       'A peaceful place.\nA heartfelt visit.',
                       style: TextStyle(
-                        fontFamily: 'Newsreader',
-                        fontSize: compact ? 32 : 44,
-                        height: 1.12,
-                        color: Colors.white,
+                        fontFamily: 'Playfair Display',
+                        fontSize: compact ? 34 : 48,
+                        height: 1.22,
+                        color: AppColors.mintStrong,
                       ),
                     ),
                   ),
@@ -386,7 +400,10 @@ class _MaqamHero extends StatelessWidget {
                             horizontal: 14,
                             vertical: 10,
                           ),
-                          textStyle: const TextStyle(fontSize: 13),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 13,
+                          ),
                           foregroundColor: AppColors.emerald,
                         ),
                         icon: const Icon(Icons.calendar_month_outlined),
@@ -401,7 +418,10 @@ class _MaqamHero extends StatelessWidget {
                             horizontal: 14,
                             vertical: 10,
                           ),
-                          textStyle: const TextStyle(fontSize: 13),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 13,
+                          ),
                           side: const BorderSide(color: Color(0xFFB7C9BE)),
                         ),
                         child: const AppText('Visitor guide'),
@@ -445,12 +465,12 @@ class _SectionTitle extends StatelessWidget {
         width: 30,
         height: 2,
         margin: const EdgeInsets.only(bottom: 14),
-        color: AppColors.gold,
+        color: AppColors.goldText,
       ),
       AppText(
         eyebrow,
         style: const TextStyle(
-          color: AppColors.gold,
+          color: AppColors.goldText,
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 2,
@@ -511,12 +531,12 @@ class _VisitStep extends StatelessWidget {
           alignment: Alignment.center,
           decoration: const BoxDecoration(
             color: AppColors.emerald,
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           child: AppText(
             number,
             style: const TextStyle(
-              fontFamily: 'Newsreader',
+              fontFamily: 'Playfair Display',
               fontSize: 22,
               fontWeight: FontWeight.w500,
               color: AppColors.mintStrong,
@@ -586,129 +606,6 @@ class _VisitQuestions extends StatelessWidget {
   );
 }
 
-class _LiveAvailability extends ConsumerWidget {
-  const _LiveAvailability(this.config);
-  final BookingConfiguration config;
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dates = config.dates();
-    if (!config.bookingEnabled || dates.isEmpty) {
-      return const EmptyState(
-        title: 'Bookings are currently paused',
-        detail: 'Please check again soon.',
-      );
-    }
-    final closed = ref.watch(closedDaysProvider).asData?.value ?? <String>{};
-    final day = dates.firstWhere(
-      (d) => !closed.contains(d),
-      orElse: () => dates.first,
-    );
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: SurfaceCard(
-          padding: 24,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.mint,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(
-                      Icons.event_available_outlined,
-                      color: AppColors.emerald,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AppText(
-                      'Plan your visit',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(height: 1),
-              const SizedBox(height: 16),
-              AppText(
-                '${VisitClock.dayLabel(day)} · ${config.hoursForDate(day)}',
-                style: const TextStyle(
-                  color: AppColors.muted,
-                  fontSize: 13,
-                  height: 1.7,
-                ),
-              ),
-              const SizedBox(height: 20),
-              AsyncPanel(
-                value: ref.watch(availabilityProvider(day)),
-                onRetry: () => ref.invalidate(availabilityProvider(day)),
-                builder: (a) {
-                  final available = (a.closed ? <VisitSlot>[] : a.slots)
-                      .where((s) => s.status == SlotStatus.available)
-                      .toList();
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AppText(
-                        '${available.length} available time slots',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: AppColors.emerald,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      if (a.closed) AppText(a.reason),
-                      if (available.isEmpty && !a.closed)
-                        const AppText(
-                          'Choose another date to find an available time.',
-                        ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: available
-                            .take(3)
-                            .map(
-                              (s) => Chip(
-                                backgroundColor: AppColors.mint,
-                                side: BorderSide.none,
-                                visualDensity: VisualDensity.compact,
-                                label: AppText(
-                                  VisitClock.timeLabel(s.startTime),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => context.go('/book'),
-                icon: const Icon(Icons.calendar_month_outlined),
-                label: const AppText('Choose a time'),
-              ),
-              const SizedBox(height: 12),
-              const AppText(
-                'Availability updates every 20 seconds.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppColors.muted),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _HomeFeaturedVideo extends StatelessWidget {
   const _HomeFeaturedVideo();
 
@@ -726,7 +623,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
             width: 36,
             height: 3,
             decoration: BoxDecoration(
-              color: AppColors.gold,
+              color: AppColors.goldText,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -748,7 +645,7 @@ class _HomeFeaturedVideo extends StatelessWidget {
                   ? 'സന്ദർശനത്തിന് മുമ്പ് ഒരു ശാന്ത നിമിഷം.'
                   : 'A quiet moment before your visit.',
               style: TextStyle(
-                fontFamily: 'Newsreader',
+                fontFamily: 'Playfair Display',
                 fontSize: compact ? 26 : 34,
                 height: 1.2,
                 fontWeight: FontWeight.w500,
@@ -798,8 +695,8 @@ class _HomeFeaturedVideo extends StatelessWidget {
             color: AppColors.emerald,
             child: youtubePlayer(
               _videoId,
-              autoplay: !MediaQuery.disableAnimationsOf(context),
-              controls: false,
+              autoplay: false,
+              controls: true,
               loop: true,
               mute: true,
             ),

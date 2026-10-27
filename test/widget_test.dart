@@ -84,7 +84,7 @@ Future<void> pumpPage(
 void main() {
   setUpAll(() async {
     for (final font in {
-      'Newsreader': 'Newsreader.ttf',
+      'Playfair Display': 'PlayfairDisplay.ttf',
       'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
       'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
     }.entries) {

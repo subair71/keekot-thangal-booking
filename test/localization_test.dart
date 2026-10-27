@@ -7,6 +7,7 @@ import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
+
 import 'fixtures.dart';
 
 void main() {

@@ -31,12 +31,15 @@ class SlotCard extends StatelessWidget {
         : slot.status == SlotStatus.blocked
         ? AppColors.error
         : AppColors.emerald;
+    final limited = enabled && slot.remaining < slot.capacity;
     final label = selected
         ? 'Selected'
         : switch (slot.status) {
             SlotStatus.available =>
               enabled
-                  ? '${slot.remaining} places left'
+                  ? (limited
+                        ? '${tr(context, 'Limited')} · ${tr(context, '${slot.remaining} places left')}'
+                        : '${slot.remaining} places left')
                   : 'Not enough places for this group',
             SlotStatus.full => 'Fully booked',
             SlotStatus.blocked =>
@@ -55,7 +58,11 @@ class SlotCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: selected ? AppColors.gold : AppColors.outline,
+            color: selected
+                ? AppColors.brass
+                : enabled
+                ? AppColors.secondary
+                : AppColors.outline,
             width: selected ? 2 : 1,
           ),
         ),
@@ -109,6 +116,10 @@ class SlotCard extends StatelessWidget {
                           height: 1.4,
                           color: selected
                               ? AppColors.mintStrong
+                              : limited
+                              ? AppColors.limitedText
+                              : enabled
+                              ? AppColors.available
                               : AppColors.muted,
                         ),
                       ),

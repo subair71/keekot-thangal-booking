@@ -185,7 +185,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                 AppText(
                                   '${dt.day}',
                                   style: const TextStyle(
-                                    fontFamily: 'Newsreader',
+                                    fontFamily: 'Playfair Display',
                                     fontSize: 34,
                                   ),
                                 ),
