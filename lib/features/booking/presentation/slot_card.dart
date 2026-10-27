@@ -44,10 +44,12 @@ class SlotCard extends StatelessWidget {
             SlotStatus.full => 'Fully booked',
             SlotStatus.blocked =>
               slot.reason.isEmpty ? 'Unavailable' : slot.reason,
-            SlotStatus.past => 'Time passed',
+            SlotStatus.past => '',
           };
     return Semantics(
-      label: '${tr(context, slot.label)}. ${tr(context, label)}',
+      label: label.isEmpty
+          ? tr(context, slot.label)
+          : '${tr(context, slot.label)}. ${tr(context, label)}',
       excludeSemantics: true,
       onTap: enabled ? onSelect : null,
       button: true,
@@ -98,40 +100,42 @@ class SlotCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
-                Divider(
-                  height: 1,
-                  color: selected
-                      ? AppColors.ivory.withValues(alpha: .2)
-                      : AppColors.outline,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        label,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.4,
-                          color: selected
-                              ? AppColors.mintStrong
-                              : limited
-                              ? AppColors.limitedText
-                              : enabled
-                              ? AppColors.available
-                              : AppColors.muted,
+                if (label.isNotEmpty) ...[
+                  const SizedBox(height: 18),
+                  Divider(
+                    height: 1,
+                    color: selected
+                        ? AppColors.ivory.withValues(alpha: .2)
+                        : AppColors.outline,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppText(
+                          label,
+                          style: TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: selected
+                                ? AppColors.mintStrong
+                                : limited
+                                ? AppColors.limitedText
+                                : enabled
+                                ? AppColors.available
+                                : AppColors.muted,
+                          ),
                         ),
                       ),
-                    ),
-                    if (selected)
-                      const Icon(
-                        Icons.check_circle,
-                        size: 18,
-                        color: AppColors.mintStrong,
-                      ),
-                  ],
-                ),
+                      if (selected)
+                        const Icon(
+                          Icons.check_circle,
+                          size: 18,
+                          color: AppColors.mintStrong,
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

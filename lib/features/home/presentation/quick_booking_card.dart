@@ -336,7 +336,7 @@ class _QuickSlot extends StatelessWidget {
             : 'Not enough places for this group',
       SlotStatus.full => 'Fully booked',
       SlotStatus.blocked => slot.reason.isEmpty ? 'Unavailable' : slot.reason,
-      SlotStatus.past => 'Time passed',
+      SlotStatus.past => '',
     };
     return Semantics(
       selected: selected,
@@ -364,23 +364,25 @@ class _QuickSlot extends StatelessWidget {
               VisitClock.timeLabel(slot.startTime),
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 4),
-            AppText(
-              limited
-                  ? '${tr(context, 'Limited')} · ${tr(context, label)}'
-                  : label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                color: selected
-                    ? AppColors.mintStrong
-                    : limited
-                    ? AppColors.limitedText
-                    : enabled
-                    ? AppColors.available
-                    : AppColors.muted,
+            if (label.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              AppText(
+                limited
+                    ? '${tr(context, 'Limited')} · ${tr(context, label)}'
+                    : label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: selected
+                      ? AppColors.mintStrong
+                      : limited
+                      ? AppColors.limitedText
+                      : enabled
+                      ? AppColors.available
+                      : AppColors.muted,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
