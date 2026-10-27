@@ -20,6 +20,35 @@ const hold=(i:number,slot=0,count=1)=>service.createHold(actor(i),{visitDate:day
 after(async()=>{await db.terminate();await deleteApp(app);});
 test('Firestore transactions and rules',async t=>{
   await db.doc('settings/booking').set(settings);
+  await t.test('settings edits check real conflicts instead of the historical schedule lock',async()=>{
+    const admin={...actor(780),admin:true}, date='2030-01-11';
+    const config=db.doc('settings/booking');
+    await config.update({scheduleLockedUntil:'2030-01-30'});
+    await service.adminUpdateSettings(admin,{...settings,arrivalMinutes:15});
+    await service.adminUpdateSettings(admin,{...settings,openingTime:'08:00'});
+    await assert.rejects(()=>service.adminUpdateSettings(actor(781),settings),/Administrator/);
+    await service.adminUpdateSettings(admin,settings);
+    const h=await service.createHold(actor(782),{visitDate:date,slotId:`${date}_0700`,visitorCount:1,requestId:'settings-lock-regression-hold'});
+    await assert.rejects(()=>service.adminUpdateSettings(admin,{...settings,openingTime:'08:00'}),/active reservation/);
+    assert.equal((await config.get()).data()!.openingTime,'07:00');
+    // Extending hours leaves the held slot untouched.
+    await service.adminUpdateSettings(admin,{...settings,closingTime:'20:00'});
+    const b=await service.createBooking(actor(782),h.holdId,'Settings Visitor');
+    await assert.rejects(()=>service.adminUpdateSettings(admin,{...settings,slotDurationMinutes:60}),/confirmed visitors/);
+    await service.cancelBooking(admin,b.bookingId,'Regression cleanup');
+    await service.adminUpdateSettings(admin,{...settings,slotDurationMinutes:60});
+    assert.equal((await db.doc(`visitSlots/${date}_0700`).get()).exists,false);
+    assert.equal((await service.availability(date)).slots[0].endTime,'08:00');
+    await service.adminUpdateSettings(admin,settings);
+    await service.adminUpdateSlots(admin,{visitDate:date,startTime:'07:00',endTime:'07:30',blocked:true,reason:'Closed'});
+    await assert.rejects(()=>service.adminUpdateSettings(admin,{...settings,slotDurationMinutes:60}),/blocked slot/);
+    await service.adminUpdateSlots(admin,{visitDate:date,startTime:'07:00',endTime:'07:30',blocked:false,reason:'Reopen'});
+    await db.doc(`visitSlots/${date}_0700`).delete();
+    await db.doc(`slotState/${date}_0700`).delete();
+    await db.doc(`bookings/${b.bookingId}`).delete();
+    await db.doc(`slotTokenCounters/${date}_0700`).delete();
+    await config.set(settings);
+  });
   await t.test('request limits stay atomic across concurrent requests and reset without TTL cleanup',async()=>{
     let clock=Date.now();
     const limiter=new RequestLimiter(db,()=>clock);
