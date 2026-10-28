@@ -20,6 +20,7 @@ import 'package:keekot_thangal/features/my_bookings/presentation/pass_card.dart'
 import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
 
 import 'fixtures.dart';
+import 'navigation_helpers.dart';
 
 import 'package:keekot_thangal/core/widgets/sanctuary_mobile_shell.dart';
 
@@ -262,7 +263,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.tap(find.byKey(const ValueKey('language-toggle')));
+    await selectDrawerLanguage(tester, 'ml');
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await capturePage(tester, 'home_malayalam_large_text_375');

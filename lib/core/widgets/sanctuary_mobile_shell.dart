@@ -40,7 +40,6 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                   ],
                 ),
               ),
-              const HeaderLanguageToggle(compact: true),
             ],
           ),
         ),
@@ -67,7 +66,6 @@ class SanctuaryMobileHeader extends ConsumerWidget {
     final controls = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const HeaderLanguageToggle(compact: true),
         IconButton(
           constraints: const BoxConstraints.tightFor(width: 44, height: 44),
           padding: EdgeInsets.zero,

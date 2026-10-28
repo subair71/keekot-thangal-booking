@@ -209,10 +209,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     errorBuilder: (context, _) => Scaffold(
-      appBar: AppBar(
-        title: const AppText('Page not found'),
-        actions: const [HeaderLanguageToggle()],
-      ),
+      appBar: AppBar(title: const AppText('Page not found')),
       body: PageContainer(
         child: EmptyState(
           title: 'This page could not be found',

@@ -255,10 +255,7 @@ class _SanctuaryVideoArchiveState extends State<SanctuaryVideoArchive> {
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => Scaffold(
-                appBar: AppBar(
-                  title: const AppText('Videos'),
-                  actions: const [HeaderLanguageToggle()],
-                ),
+                appBar: AppBar(title: const AppText('Videos')),
                 body: const PageContainer(child: VideoGallery()),
               ),
             ),

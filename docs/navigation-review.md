@@ -1,6 +1,6 @@
 # Sanctuary navigation review
 
-The shared navigation drawer now follows the supplied Stitch HTML on mobile and desktop: pale green surfaces, the official crest, a forest-green booking card with a brass Free Pass badge, grouped icon links, fine dividers, and a language/footer panel. The app-bar menu buttons share the same styling. EN / MA is used throughout the header and drawer.
+The shared navigation drawer now follows the supplied Stitch HTML on mobile and desktop: pale green surfaces, the official crest, a forest-green booking card with a brass Free Pass badge, grouped icon links, fine dividers, and a language/footer panel. The app-bar menu buttons share the same styling. Language selection is available through EN / MA in the drawer footer; app bars do not contain a language switch.
 
 English navigation shows English labels without Malayalam subtitles. Malayalam mode translates the main labels instead of stacking two languages. Existing English location labels remain in the app bar; supplementary header text is omitted in Malayalam and in the compact keyboard header. Large text can wrap, and the drawer footer joins the scrollable links on short screens or with enlarged text.
 
