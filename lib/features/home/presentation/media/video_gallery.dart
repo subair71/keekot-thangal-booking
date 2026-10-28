@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import 'video_catalog.dart';
+import '../../../../core/widgets/components.dart';
 import 'youtube_player.dart';
 
 const _channel = 'https://www.youtube.com/@keekkott_bungalow_online';
@@ -57,16 +58,23 @@ class VideoGallery extends StatelessWidget {
       const SizedBox(height: 32),
       _heading(context, 'Videos', 'Watch, reflect and reconnect'),
       const SizedBox(height: 16),
-      LayoutBuilder(
-        builder: (context, constraints) {
-          final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
-          return _LongVideoCarousel(
-            key: ValueKey(columns),
-            columns: columns,
-            width: constraints.maxWidth,
-          );
-        },
-      ),
+      if (SanctuaryLayout.mobile(context))
+        for (final video in maqamVideos.where((video) => !video.isShort))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: SurfaceCard(child: _VideoCard(video)),
+          )
+      else
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final columns = MediaQuery.sizeOf(context).width >= 1024 ? 4 : 2;
+            return _LongVideoCarousel(
+              key: ValueKey(columns),
+              columns: columns,
+              width: constraints.maxWidth,
+            );
+          },
+        ),
     ],
   );
 
@@ -267,7 +275,7 @@ class _VideoCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: AppText(
-                          video.title,
+                          video.localizedTitle(AppLanguage.of(context)),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -312,14 +320,17 @@ class _VideoCard extends StatelessWidget {
   }
 
   Widget _longVideoCard(BuildContext context) => Material(
-    color: Colors.transparent,
+    color: SanctuaryLayout.mobile(context)
+        ? AppColors.cream
+        : Colors.transparent,
     child: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semantics(
           button: true,
-          label: '${tr(context, 'Play video')}: ${video.title}',
+          label:
+              '${tr(context, 'Play video')}: ${video.localizedTitle(AppLanguage.of(context))}',
           child: InkWell(
             onTap: () => _play(context),
             borderRadius: BorderRadius.circular(12),
@@ -353,9 +364,11 @@ class _VideoCard extends StatelessWidget {
               child: InkWell(
                 onTap: () => _play(context),
                 child: AppText(
-                  video.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  video.localizedTitle(AppLanguage.of(context)),
+                  maxLines: SanctuaryLayout.mobile(context) ? null : 2,
+                  overflow: SanctuaryLayout.mobile(context)
+                      ? null
+                      : TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.ink,
                     fontSize: 12,
@@ -366,8 +379,8 @@ class _VideoCard extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
               child: PopupMenuButton<String>(
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.more_horiz, size: 20),
@@ -477,7 +490,7 @@ class _VideoCard extends StatelessWidget {
             right: 10,
             bottom: 12,
             child: AppText(
-              video.title,
+              video.localizedTitle(AppLanguage.of(context)),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(

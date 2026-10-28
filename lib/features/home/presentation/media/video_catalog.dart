@@ -6,6 +6,8 @@ class MaqamVideo {
   final String title;
   final bool isShort;
   final String? englishTitle;
+  String localizedTitle(String language) =>
+      language == 'ml' ? title : englishTitle ?? title;
   Uri get watchUri => Uri.https('www.youtube.com', '/watch', {'v': id});
   String get thumbnailUrl => 'https://i.ytimg.com/vi/$id/hqdefault.jpg';
 }
@@ -15,27 +17,37 @@ const maqamVideos = <MaqamVideo>[
     "JYaokXAxFYs",
     "ശൈഖ് അബ്ദുൽ ഖാദർ ജീലാനി (റ) ആണ്ട് നേർച്ച, റബീഉൽ ആഖിർ 11",
     true,
+    englishTitle: "Sheikh Abdul Qadir Jilani remembrance · Rabi al-Akhir 11",
   ),
-  MaqamVideo("SSmcKYSFLzI", "യാ ഖ്വാജാ (റ) ♥️👑💚", true),
+  MaqamVideo(
+    "SSmcKYSFLzI",
+    "യാ ഖ്വാജാ (റ) ♥️👑💚",
+    true,
+    englishTitle: "Ya Khwaja",
+  ),
   MaqamVideo(
     "mKi3AVgAyoM",
     "​എന്നാലുമെന്റെ നൂറൂ് കരുണതൻ അരുവിയാ, അണയാത്ത പ്രകാശം...💚",
     true,
+    englishTitle: "Ennalumente Nooru · devotional recording",
   ),
   MaqamVideo(
     "jwoZ07ckJpE",
     "രിഫാഈ റാത്തീബിലേക്കും ഏവർക്കും ഹൃദ്യമായ സ്വാഗതം!സെപ്റ്റംബർ 07 (തിങ്കൾ) - 7:30 PM▪️ രിഫാഈ റാത്തീബ്",
     true,
+    englishTitle: "Rifai Ratheeb · gathering invitation",
   ),
   MaqamVideo(
     "zISQK7HaCPQ",
     "ഖൽബിലുണ്ട് എന്റെ നബി 😘ഹൃദയം നിറഞ്ഞ നബിദിനാശംസകൾ💚❤️!",
     true,
+    englishTitle: "Nabidina greetings",
   ),
   MaqamVideo(
     "Bs14hVESlTM",
     "കീക്കോട്ട് ബംഗ്ലാവ്, 2026 ഓഗസ്റ്റ് 08, 09 തീയതികളിൽ നടന്ന 13-ാമത് ഉറൂസിന്റെ സമാപന വേദിയിൽ നിന്ന്",
     true,
+    englishTitle: "13th Urs · closing gathering",
   ),
   MaqamVideo(
     "id1ttz7P9K8",

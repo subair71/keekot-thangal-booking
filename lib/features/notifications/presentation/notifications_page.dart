@@ -43,7 +43,7 @@ class NotificationsPage extends ConsumerWidget {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 8),
-                              Text(n.body),
+                              AppText(n.body),
                               const SizedBox(height: 12),
                               TextButton(
                                 onPressed: () async {

@@ -92,7 +92,7 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                     onChanged: (v) => setState(() => search = v),
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
-                      labelText: tr(context, 'Search visitor or booking'),
+                      label: AppText('Search visitor or booking'),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -121,7 +121,7 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                           isExpanded: true,
                           initialValue: status,
                           decoration: InputDecoration(
-                            labelText: tr(context, 'Service status'),
+                            label: AppText('Service status'),
                           ),
                           items: [
                             for (final s in [
@@ -149,7 +149,7 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                         child: TextField(
                           onChanged: (v) => setState(() => time = v),
                           decoration: InputDecoration(
-                            labelText: tr(context, 'Time (HH:mm)'),
+                            label: AppText('Time (HH:mm)'),
                           ),
                         ),
                       ),
@@ -160,8 +160,8 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                           builder: (staff) => DropdownButtonFormField<String>(
                             isExpanded: true,
                             initialValue: khadim,
-                            decoration: const InputDecoration(
-                              labelText: 'Khadim',
+                            decoration: InputDecoration(
+                              label: AppText('Khadim'),
                             ),
                             items: [
                               const DropdownMenuItem(
@@ -282,7 +282,7 @@ class _AssignmentPageState extends ConsumerState<AssignmentPage> {
                                         spacing: 20,
                                         runSpacing: 8,
                                         children: [
-                                          Text(
+                                          AppText(
                                             VisitClock.dayLabel(
                                               '${b['visitDate']}',
                                             ),
@@ -515,7 +515,7 @@ class _AssignDialogState extends ConsumerState<AssignDialog> {
                   controller: reason,
                   maxLength: 500,
                   decoration: InputDecoration(
-                    labelText: tr(context, 'Reason for change'),
+                    label: AppText('Reason for change'),
                     helperText: tr(
                       context,
                       'Required for reassignment or removal',
@@ -525,7 +525,7 @@ class _AssignDialogState extends ConsumerState<AssignDialog> {
               if (error != null)
                 Semantics(
                   liveRegion: true,
-                  child: Text(
+                  child: AppText(
                     error!,
                     style: const TextStyle(color: AppColors.error),
                   ),
@@ -700,9 +700,7 @@ class _AvailabilityPageState extends ConsumerState<AvailabilityPage> {
                       isExpanded: true,
                       key: ValueKey(uid),
                       initialValue: uid.isEmpty ? null : uid,
-                      decoration: InputDecoration(
-                        labelText: tr(context, 'Khadim'),
-                      ),
+                      decoration: InputDecoration(label: AppText('Khadim')),
                       items: [
                         for (final k in staff)
                           DropdownMenuItem(
@@ -745,7 +743,7 @@ class _AvailabilityPageState extends ConsumerState<AvailabilityPage> {
                         controller: item.$1,
                         enabled: !busy,
                         decoration: InputDecoration(
-                          labelText: tr(context, item.$2),
+                          label: AppText(item.$2),
                           helperText: item.$1 == capacity
                               ? tr(context, 'Default: one overlapping visit')
                               : tr(context, 'HH:mm-HH:mm, separated by commas'),

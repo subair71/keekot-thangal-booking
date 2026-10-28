@@ -24,7 +24,7 @@ class SlotCard extends StatelessWidget {
         : slot.status == SlotStatus.blocked
         ? AppColors.rose
         : enabled
-        ? AppColors.white
+        ? (SanctuaryLayout.mobile(context) ? AppColors.cream : AppColors.white)
         : AppColors.disabled;
     final foreground = selected
         ? AppColors.white
@@ -44,7 +44,7 @@ class SlotCard extends StatelessWidget {
             SlotStatus.full => 'Fully booked',
             SlotStatus.blocked =>
               slot.reason.isEmpty ? 'Unavailable' : slot.reason,
-            SlotStatus.past => '',
+            SlotStatus.past => 'Expired',
           };
     return Semantics(
       label: label.isEmpty
@@ -73,7 +73,7 @@ class SlotCard extends StatelessWidget {
           onTap: enabled ? onSelect : null,
           hoverColor: AppColors.mintStrong.withValues(alpha: .25),
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(SanctuaryLayout.mobile(context) ? 12 : 18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

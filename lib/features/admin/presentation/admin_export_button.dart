@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -119,23 +120,23 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        AppText(
           'Download bookings',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
-        const Text(
+        const AppText(
           'Select a visit date and time frame. All times are India Standard Time (IST).',
         ),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: busy ? null : pickDate,
           icon: const Icon(Icons.calendar_month_outlined),
-          label: Text(VisitClock.dayLabel(VisitClock.dayKey(selectedDate))),
+          label: AppText(VisitClock.dayLabel(VisitClock.dayKey(selectedDate))),
         ),
         SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
-          title: const Text('All day'),
+          title: const AppText('All day'),
           value: allDay,
           onChanged: busy ? null : (value) => setState(() => allDay = value),
         ),
@@ -147,21 +148,21 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
               OutlinedButton.icon(
                 onPressed: busy ? null : () => pickTime(true),
                 icon: const Icon(Icons.schedule),
-                label: Text('Start: ${timeLabel(start)}'),
+                label: AppText('Start: ${timeLabel(start)}'),
               ),
               OutlinedButton.icon(
                 onPressed: busy ? null : () => pickTime(false),
                 icon: const Icon(Icons.schedule),
-                label: Text('End: ${timeLabel(end)}'),
+                label: AppText('End: ${timeLabel(end)}'),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
+          const AppText(
             'Includes bookings starting at or after Start and before End, on the selected date.',
           ),
           if (minutes(start) >= minutes(end))
-            Text(
+            AppText(
               'End time must be after start time.',
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
@@ -177,7 +178,7 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
                     ? null
                     : () => download(format),
                 icon: const Icon(Icons.download_outlined),
-                label: Text(
+                label: AppText(
                   format == 'pdf' ? 'Download PDF' : 'Download Excel',
                 ),
               ),
@@ -185,7 +186,7 @@ class _AdminExportButtonState extends ConsumerState<AdminExportButton> {
         ),
         if (busy) ...[
           const SizedBox(height: 12),
-          const Text('Preparing report…'),
+          const AppText('Preparing report…'),
         ],
       ],
     ),

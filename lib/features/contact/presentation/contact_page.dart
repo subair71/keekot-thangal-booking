@@ -92,7 +92,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
       textInputAction: lines == 1
           ? TextInputAction.next
           : TextInputAction.newline,
-      decoration: InputDecoration(labelText: tr(context, label)),
+      decoration: InputDecoration(label: AppText(label)),
       validator: (raw) {
         final value = (raw ?? '').trim();
         if (value.length < minimum || value.length > maximum) {
@@ -148,8 +148,8 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                     ),
                   ],
                 )
-              : Form(
-                  key: formKey,
+              : LocalizedForm(
+                  formKey: formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -199,6 +199,7 @@ class _ContactPageState extends ConsumerState<ContactPage> {
                                 height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
+                                  color: AppColors.ivory,
                                 ),
                               )
                             : const Icon(Icons.send_outlined),

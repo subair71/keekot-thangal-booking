@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +18,36 @@ class AdminPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).asData?.value;
+    final navigation = Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final item in [
+          ('dashboard', 'Overview'),
+          ('bookings', 'Bookings'),
+          ('slots', 'Slots & closures'),
+          ('settings', 'Settings'),
+          ('gate', 'Scan visitor pass'),
+          if (user?.admin == true) ...[
+            ('khadims', 'Khadim accounts'),
+            ('assignments', 'Khadim Assignments'),
+            ('availability', 'Khadim availability'),
+          ],
+        ])
+          if (['khadims', 'assignments', 'availability'].contains(item.$1)
+              ? user?.admin == true
+              : user?.can(item.$1) == true)
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: item.$1 == section ? AppColors.mint : null,
+              ),
+              onPressed: () => context.go(
+                item.$1 == 'dashboard' ? '/admin' : '/admin/${item.$1}',
+              ),
+              child: AppText(item.$2),
+            ),
+      ],
+    );
     return PageContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -26,44 +57,37 @@ class AdminPage extends ConsumerWidget {
             eyebrow: 'Keekkott Sayyid Attakoya Thangal Maqam',
           ),
           if (user?.staff == true) ...[
-            if (user?.can('bookings') == true) const AdminExportButton(),
+            if (user?.can('bookings') == true)
+              if (SanctuaryLayout.mobile(context))
+                SurfaceCard(
+                  padding: 0,
+                  child: ExpansionTile(
+                    leading: const Icon(Icons.file_download_outlined),
+                    title: const AppText('Download bookings'),
+                    children: const [AdminExportButton()],
+                  ),
+                )
+              else
+                const AdminExportButton(),
             const SizedBox(height: 20),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final item in [
-                  ('dashboard', 'Overview'),
-                  ('bookings', 'Bookings'),
-                  ('slots', 'Slots & closures'),
-                  ('settings', 'Settings'),
-                  ('gate', 'Scan visitor pass'),
-                  if (user?.admin == true) ...[
-                    ('khadims', 'Khadim accounts'),
-                    ('assignments', 'Khadim Assignments'),
-                    ('availability', 'Khadim availability'),
-                  ],
-                ])
-                  if ([
-                        'khadims',
-                        'assignments',
-                        'availability',
-                      ].contains(item.$1)
-                      ? user?.admin == true
-                      : user?.can(item.$1) == true)
-                    OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: item.$1 == section
-                            ? AppColors.mint
-                            : null,
-                      ),
-                      onPressed: () => context.go(
-                        item.$1 == 'dashboard' ? '/admin' : '/admin/${item.$1}',
-                      ),
-                      child: Text(item.$2),
-                    ),
-              ],
-            ),
+            if (SanctuaryLayout.mobile(context))
+              SurfaceCard(
+                padding: 0,
+                child: ExpansionTile(
+                  leading: const Icon(Icons.dashboard_outlined),
+                  title: AppText(switch (section) {
+                    'bookings' => 'Bookings',
+                    'slots' => 'Slots & closures',
+                    'settings' => 'Settings',
+                    'gate' => 'Scan visitor pass',
+                    _ => 'Overview',
+                  }),
+                  childrenPadding: const EdgeInsets.all(12),
+                  children: [navigation],
+                ),
+              )
+            else
+              navigation,
             const SizedBox(height: 28),
           ],
           switch (section) {
@@ -91,7 +115,9 @@ class AdminDashboard extends ConsumerWidget {
           builder: (context, c) {
             final cols = c.maxWidth > 900
                 ? 3
-                : c.maxWidth > 550
+                : c.maxWidth > 550 ||
+                      (SanctuaryLayout.mobile(context) &&
+                          MediaQuery.textScalerOf(context).scale(1) <= 1.3)
                 ? 2
                 : 1;
             const labels = {
@@ -113,9 +139,9 @@ class AdminDashboard extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.value),
+                          AppText(item.value),
                           const SizedBox(height: 12),
-                          Text(
+                          AppText(
                             '${data[item.key] ?? 0}',
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
@@ -131,7 +157,7 @@ class AdminDashboard extends ConsumerWidget {
         OutlinedButton.icon(
           onPressed: () => ref.invalidate(adminDashboardProvider),
           icon: const Icon(Icons.refresh),
-          label: const Text('Refresh overview'),
+          label: const AppText('Refresh overview'),
         ),
       ],
     ),
@@ -168,14 +194,16 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
               }
             },
             icon: const Icon(Icons.calendar_month),
-            label: Text(VisitClock.dayLabel(day)),
+            label: AppText(VisitClock.dayLabel(day)),
           ),
           SizedBox(
-            width: 340,
+            width: SanctuaryLayout.mobile(context)
+                ? MediaQuery.sizeOf(context).width - 40
+                : 340,
             child: TextField(
               onChanged: (v) => setState(() => search = v.toLowerCase().trim()),
-              decoration: const InputDecoration(
-                labelText: 'Reference, visitor or phone on selected date',
+              decoration: InputDecoration(
+                label: AppText('Reference, visitor or phone on selected date'),
                 prefixIcon: Icon(Icons.search),
               ),
             ),
@@ -211,7 +239,7 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                           runSpacing: 12,
                           alignment: WrapAlignment.spaceBetween,
                           children: [
-                            Text(
+                            AppText(
                               b.reference,
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
@@ -219,8 +247,8 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          '${b.visitorName} · ${b.visitors} visitors\n${b.timeLabel}',
+                        AppText(
+                          '${b.visitorName} · ${tr(context, '${b.visitors} visitors')}\n${tr(context, b.timeLabel)}',
                         ),
                         const SizedBox(height: 16),
                         InfoLine(
@@ -304,7 +332,7 @@ class _AdminBookingsState extends ConsumerState<AdminBookings> {
                                             }
                                           }
                                         },
-                                  child: Text(action.$2),
+                                  child: AppText(action.$2),
                                 ),
                             ],
                           ),
@@ -388,19 +416,19 @@ class _GateValidationState extends ConsumerState<GateValidation> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            AppText(
               'Scan and confirm visit',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
-            const Text(
+            const AppText(
               'Scan the QR code on the visitor pass. A valid pass automatically confirms attendance during the allowed arrival and visit time.',
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: busy ? null : scanPass,
               icon: const Icon(Icons.qr_code_scanner),
-              label: const Text('Scan visitor pass'),
+              label: const AppText('Scan visitor pass'),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -408,8 +436,8 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               controller: token,
               onChanged: (_) => setState(() => result = null),
               onSubmitted: (_) => busy ? null : validate(true),
-              decoration: const InputDecoration(
-                labelText: 'Or paste the pass QR token',
+              decoration: InputDecoration(
+                label: AppText('Or paste the pass QR token'),
                 prefixIcon: Icon(Icons.qr_code_scanner),
               ),
             ),
@@ -420,13 +448,13 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               children: [
                 OutlinedButton(
                   onPressed: busy ? null : () => validate(false),
-                  child: const Text('Check pass'),
+                  child: const AppText('Check pass'),
                 ),
                 FilledButton(
                   onPressed: busy || result?['status'] == 'completed'
                       ? null
                       : () => validate(true),
-                  child: const Text('Verify and confirm visit'),
+                  child: const AppText('Verify and confirm visit'),
                 ),
               ],
             ),
@@ -437,7 +465,7 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               ),
             if (error != null) ...[
               const SizedBox(height: 20),
-              Text(error!, style: const TextStyle(color: AppColors.error)),
+              AppText(error!, style: const TextStyle(color: AppColors.error)),
             ],
             if (result != null) ...[
               const SizedBox(height: 24),
@@ -451,7 +479,7 @@ class _GateValidationState extends ConsumerState<GateValidation> {
               ),
               const SizedBox(height: 12),
               if (result!['valid'] != true)
-                Text(switch (result!['reason'] ?? result!['status']) {
+                AppText(switch (result!['reason'] ?? result!['status']) {
                   'already_used' || 'completed' =>
                     'This pass has already been used. Do not admit again.',
                   'cancelled' => 'This booking has been cancelled.',
@@ -462,8 +490,8 @@ class _GateValidationState extends ConsumerState<GateValidation> {
                     'This pass is not valid for entry. Check the booking and visit time.',
                 }),
               if (result!['bookingReference'] != null)
-                Text(
-                  '${result!['bookingReference']}\n${result!['visitDate']} · ${result!['timeSlot']}\n${result!['visitorCount']} visitors · ${result!['status']}',
+                AppText(
+                  "${result!['bookingReference']}\n${result!['visitDate']} · ${result!['timeSlot']}\n${tr(context, '${result!['visitorCount']} visitors')} · ${tr(context, '${result!['status']}')}",
                 ),
             ],
           ],

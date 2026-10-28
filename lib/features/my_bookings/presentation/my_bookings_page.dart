@@ -29,13 +29,10 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> {
           eyebrow: 'Your visits',
           subtitle: 'Everything you need for your next visit.',
         ),
-        SegmentedButton<bool>(
-          segments: const [
-            ButtonSegment(value: false, label: AppText('Upcoming')),
-            ButtonSegment(value: true, label: AppText('Past bookings')),
-          ],
-          selected: {past},
-          onSelectionChanged: (s) => setState(() => past = s.first),
+        SanctuaryChoices<bool>(
+          options: const {false: 'Upcoming', true: 'Past bookings'},
+          value: past,
+          onChanged: (value) => setState(() => past = value),
         ),
         const SizedBox(height: 24),
         AsyncPanel(

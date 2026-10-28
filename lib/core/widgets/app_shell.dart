@@ -38,14 +38,18 @@ class AppShell extends ConsumerWidget {
     final wide = MediaQuery.sizeOf(context).width > 1200 && textScale <= 1.15;
     final user = ref.watch(authProvider).asData?.value;
     final mobile = MediaQuery.sizeOf(context).width < 768;
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     final drawer = Drawer(
       width: (MediaQuery.sizeOf(context).width * 0.88)
           .clamp(0.0, 360.0)
           .toDouble(),
-      backgroundColor: AppColors.white,
+      backgroundColor: mobile ? AppColors.ivory : AppColors.white,
       surfaceTintColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(left: Radius.circular(24)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(mobile ? 0 : 24),
+          right: Radius.circular(mobile ? 24 : 0),
+        ),
       ),
       child: SafeArea(
         child: ListView(
@@ -138,9 +142,16 @@ class AppShell extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: Divider(height: 1, color: AppColors.outline),
               ),
-              ListTile(
-                leading: const Icon(Icons.account_circle_outlined),
-                title: Text(user.maskedPhone),
+              SurfaceCard(
+                child: InfoLine(
+                  Icons.account_circle_outlined,
+                  user.admin
+                      ? 'Administrator'
+                      : user.khadim
+                      ? 'Khadim'
+                      : 'Your account',
+                  user.maskedPhone,
+                ),
               ),
               Builder(
                 builder: (drawerContext) => ListTile(
@@ -177,14 +188,7 @@ class AppShell extends ConsumerWidget {
       drawer: mobile ? drawer : null,
       endDrawer: mobile ? null : drawer,
       appBar: mobile
-          ? PreferredSize(
-              preferredSize: Size.fromHeight(
-                textScale > 1.3
-                    ? 142 * textScale.clamp(1, 2)
-                    : (AppLanguage.of(context) == 'ml' ? 130 : 110),
-              ),
-              child: const SanctuaryMobileHeader(),
-            )
+          ? null
           : PreferredSize(
               preferredSize: Size.fromHeight(
                 (wide ? 96 : 106) * textScale.clamp(1.0, 2.5),
@@ -345,8 +349,17 @@ class AppShell extends ConsumerWidget {
                 ),
               ),
             ),
-      body: child,
-      bottomNavigationBar: mobile
+      body: mobile
+          ? Column(
+              children: [
+                SanctuaryMobileHeader(keyboardOpen: keyboardOpen),
+                Expanded(child: child),
+              ],
+            )
+          : child,
+      bottomNavigationBar: keyboardOpen && mobile
+          ? null
+          : mobile
           ? const SanctuaryMobileNavigation()
           : wide
           ? null

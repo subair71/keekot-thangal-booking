@@ -31,7 +31,7 @@ class KeekotApp extends ConsumerWidget {
           supportedLocales: const [Locale('en'), Locale('ml')],
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           scaffoldMessengerKey: _messenger,
-          title: 'Keekkott Sayyid Attakoya Thangal | Online Booking',
+          title: AppBrand.title,
           debugShowCheckedModeBanner: false,
           theme: AppLanguage.of(context) == 'ml'
               ? buildTheme().copyWith(
@@ -43,7 +43,12 @@ class KeekotApp extends ConsumerWidget {
           routerConfig: ref.watch(routerProvider),
           builder: (context, child) {
             final config = ref.watch(appConfigProvider);
-            final content = child!;
+            final content = SanctuaryLayout.mobile(context)
+                ? Theme(
+                    data: mobileSanctuaryTheme(Theme.of(context)),
+                    child: child!,
+                  )
+                : child!;
             if (config.environment == 'production') return content;
             return Column(
               children: [
