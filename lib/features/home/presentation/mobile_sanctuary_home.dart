@@ -171,8 +171,9 @@ class _HeritageHero extends ConsumerWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/brand/stitch/hero.jpg',
+              'assets/brand/maqam-hero.png',
               fit: BoxFit.cover,
+              alignment: const Alignment(.25, 0),
               excludeFromSemantics: true,
             ),
           ),
@@ -183,9 +184,11 @@ class _HeritageHero extends ConsumerWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.forest.withValues(alpha: .85),
-                    AppColors.forest,
+                    AppColors.forest.withValues(alpha: .62),
+                    AppColors.forest.withValues(alpha: .68),
+                    AppColors.forest.withValues(alpha: .92),
                   ],
+                  stops: const [0, .55, 1],
                 ),
               ),
             ),

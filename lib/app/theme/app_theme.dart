@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// The web identity is also used by the mobile shell and application metadata.
 abstract final class AppBrand {
-  static const name = 'Keekkott Sayyid Attakoya Thangal';
+  static const name = 'KEEKKOTT SAYYID ATTAKOYA THANGAL';
   static const service = 'Online Booking';
   static const title = '$name | $service';
 }

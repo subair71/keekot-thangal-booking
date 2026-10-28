@@ -14,7 +14,6 @@ class SanctuaryMobileHeader extends ConsumerWidget {
   final bool keyboardOpen;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final large = MediaQuery.textScalerOf(context).scale(1) > 1.3;
     final ml = AppLanguage.of(context) == 'ml';
     if (keyboardOpen) {
       return SafeArea(
@@ -38,26 +37,17 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
-                child: Text(
-                  ml ? 'EN' : 'മല',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontFamily: 'Noto Sans Malayalam',
-                  ),
-                ),
-              ),
+              const _LanguageToggle(),
             ],
           ),
         ),
       );
     }
     final identity = AppText(
-      AppBrand.name,
+      ml ? AppBrand.name : 'KEEKKOTT SAYYID\nATTAKOYA THANGAL',
       style: const TextStyle(
         fontFamily: 'Playfair Display',
-        fontSize: 17,
+        fontSize: 12,
         height: 1.35,
         color: AppColors.primary,
         fontWeight: FontWeight.w600,
@@ -66,53 +56,17 @@ class SanctuaryMobileHeader extends ConsumerWidget {
     final controls = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Semantics(
-          toggled: ml,
-          label: ml ? 'Switch to English' : 'മലയാളത്തിലേക്ക് മാറ്റുക',
-          child: TextButton(
-            key: const ValueKey('language-toggle'),
-            onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
-            style: TextButton.styleFrom(
-              minimumSize: const Size(60, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              shape: const StadiumBorder(),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.disabled,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'EN',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: ml ? FontWeight.w400 : FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'മല',
-                    style: TextStyle(
-                      fontFamily: 'Noto Sans Malayalam',
-                      fontSize: 10,
-                      fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        const _LanguageToggle(),
         IconButton(
+          constraints: const BoxConstraints.tightFor(width: 44, height: 44),
+          padding: EdgeInsets.zero,
           tooltip: tr(context, 'My Pass'),
           onPressed: () => context.go('/my-bookings'),
           icon: const Icon(Icons.confirmation_number_outlined, size: 19),
         ),
         IconButton(
+          constraints: const BoxConstraints.tightFor(width: 44, height: 44),
+          padding: EdgeInsets.zero,
           tooltip: tr(context, 'Profile'),
           onPressed: () {
             final user = ref.read(authProvider).asData?.value;
@@ -138,46 +92,83 @@ class SanctuaryMobileHeader extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
+                    horizontal: 4,
                     vertical: 4,
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            key: const ValueKey('header-menu'),
-                            tooltip: ml ? 'മെനു' : 'Menu',
-                            onPressed: () => Scaffold.of(context).openDrawer(),
-                            icon: const Icon(Icons.menu, size: 20),
-                          ),
-                          Expanded(child: identity),
-                        ],
+                      IconButton(
+                        key: const ValueKey('header-menu'),
+                        constraints: const BoxConstraints.tightFor(
+                          width: 44,
+                          height: 44,
+                        ),
+                        padding: EdgeInsets.zero,
+                        tooltip: ml ? 'മെനു' : 'Menu',
+                        onPressed: () => Scaffold.of(context).openDrawer(),
+                        icon: const Icon(Icons.menu, size: 20),
                       ),
-                      Row(
-                        children: [
-                          if (!large) ...[
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: AppText(
-                                AppBrand.service,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: AppColors.secondary,
-                                  letterSpacing: .5,
-                                ),
-                              ),
-                            ),
-                          ] else
-                            const Spacer(),
-                          controls,
-                        ],
-                      ),
+                      Expanded(child: identity),
+                      controls,
                     ],
                   ),
                 ),
                 const _GateStatus(),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageToggle extends StatelessWidget {
+  const _LanguageToggle();
+
+  @override
+  Widget build(BuildContext context) {
+    final ml = AppLanguage.of(context) == 'ml';
+    return Semantics(
+      toggled: ml,
+      label: ml ? 'Switch to English' : 'മലയാളത്തിലേക്ക് മാറ്റുക',
+      child: TextButton(
+        key: const ValueKey('language-toggle'),
+        onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
+        style: TextButton.styleFrom(
+          minimumSize: const Size(44, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: const StadiumBorder(),
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+          decoration: BoxDecoration(
+            color: AppColors.disabled,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'EN',
+                  style: TextStyle(
+                    fontWeight: ml ? FontWeight.w400 : FontWeight.w700,
+                  ),
+                ),
+                const TextSpan(text: ' / '),
+                TextSpan(
+                  text: 'MA',
+                  style: TextStyle(
+                    fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+            style: const TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 10,
+              height: 1.4,
             ),
           ),
         ),
