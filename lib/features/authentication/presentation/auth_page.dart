@@ -96,7 +96,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.mint,
+                color: AppColors.cream,
                 borderRadius: BorderRadius.circular(28),
               ),
               child: const Emblem(size: 64),
@@ -127,7 +127,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       autocorrect: false,
                       autofillHints: const [AutofillHints.username],
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(labelText: 'Username'),
+                      decoration: InputDecoration(
+                        label: const AppText('Username'),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -140,11 +142,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       textInputAction: TextInputAction.done,
                       onSubmitted: (_) => submit(),
                       decoration: InputDecoration(
-                        labelText: 'Password',
+                        label: AppText('Password'),
                         suffixIcon: IconButton(
                           tooltip: hidePassword
-                              ? 'Show password'
-                              : 'Hide password',
+                              ? tr(context, 'Show password')
+                              : tr(context, 'Hide password'),
                           onPressed: () =>
                               setState(() => hidePassword = !hidePassword),
                           icon: Icon(
@@ -162,7 +164,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       keyboardType: TextInputType.phone,
                       autofillHints: const [AutofillHints.telephoneNumber],
                       decoration: InputDecoration(
-                        labelText: tr(context, 'Mobile number'),
+                        label: AppText('Mobile number'),
                         helperText: tr(
                           context,
                           'Include country code, for example +91',
@@ -200,9 +202,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                         ],
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) => busy ? null : submit(),
-                        style: const TextStyle(fontSize: 26, letterSpacing: 10),
+                        style: const TextStyle(fontSize: 22, letterSpacing: 3),
                         decoration: InputDecoration(
-                          labelText: tr(context, 'SMS verification code'),
+                          label: AppText('SMS verification code'),
                           hintText: tr(context, '000000'),
                         ),
                       ),
@@ -233,7 +235,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.ivory,
+                            ),
                           )
                         : AppText(
                             widget.admin

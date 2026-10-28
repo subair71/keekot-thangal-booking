@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'malayalam.dart';
 import 'sanctuary_malayalam.dart';
+import 'staff_malayalam.dart';
 import 'language_storage.dart';
 
 class LanguageRoot extends StatefulWidget {
@@ -45,9 +46,84 @@ String tr(BuildContext context, String text) =>
     AppLanguage.of(context) == 'ml' ? translateMalayalam(text) : text;
 
 String translateMalayalam(String text) {
-  final direct = sanctuaryMalayalam[text] ?? malayalam[text];
+  final direct =
+      staffMalayalam[text] ?? sanctuaryMalayalam[text] ?? malayalam[text];
   if (direct != null) return direct;
   final patterns = <(RegExp, String Function(RegExpMatch))>[
+    (
+      RegExp(r'^1\. Select dates \((\d+)\)$'),
+      (m) => '1. തീയതികൾ തിരഞ്ഞെടുക്കുക (${m[1]})',
+    ),
+    (
+      RegExp(r'^(\d+) entire days selected$'),
+      (m) => '${m[1]} ദിവസങ്ങൾ മുഴുവൻ തിരഞ്ഞെടുത്തു',
+    ),
+    (
+      RegExp(r'^(\d+) dates · (\d+) slots per date$'),
+      (m) => '${m[1]} തീയതികൾ · ഓരോ ദിവസവും ${m[2]} സമയങ്ങൾ',
+    ),
+    (RegExp(r'^Start: (.+)$'), (m) => 'ആരംഭം: ${m[1]}'),
+    (RegExp(r'^End: (.+)$'), (m) => 'അവസാനം: ${m[1]}'),
+    (
+      RegExp(r'^Current hours: (.+)$'),
+      (m) => 'നിലവിലെ സമയം: ${m[1]!.replaceAll('(default)', '(പതിവ്)')}',
+    ),
+    (
+      RegExp(r'^Hours saved for (.+)\.$'),
+      (m) => '${translateMalayalam(m[1]!)}: സമയം സംരക്ഷിച്ചു.',
+    ),
+    (
+      RegExp(r'^Default hours restored for (.+)\.$'),
+      (m) => '${translateMalayalam(m[1]!)}: പതിവ് സമയം പുനഃസ്ഥാപിച്ചു.',
+    ),
+    (
+      RegExp(r'^Report prepared for (.+) \(India time\)\.$'),
+      (m) => '${m[1]}-ലെ റിപ്പോർട്ട് തയ്യാറായി (ഇന്ത്യൻ സമയം).',
+    ),
+    (
+      RegExp(r'^Your assigned khadim is (.+)\.$'),
+      (m) => 'നിങ്ങൾക്ക് നിയോഗിച്ച ഖാദിം: ${m[1]}.',
+    ),
+    (
+      RegExp(
+        r'^(Your Keekkott Sayyid Attakoya Thangal Maqam visit|The visit you booked for a visitor) (begins|is confirmed) at (.+) on (.+)\.$',
+      ),
+      (m) =>
+          '${m[4]}-ന് ${m[3]}-ലെ ${m[1]!.startsWith('The') ? 'നിങ്ങൾ സന്ദർശകനായി ബുക്ക് ചെയ്ത സന്ദർശനം' : 'നിങ്ങളുടെ മഖാം സന്ദർശനം'} ${m[2] == 'begins' ? 'ആരംഭിക്കും' : 'സ്ഥിരീകരിച്ചു'}. ',
+    ),
+    (RegExp(r'^Token number: (.+)$'), (m) => 'ടോക്കൺ നമ്പർ: ${m[1]}'),
+    (
+      RegExp(
+        r'^Delete (.+) permanently\? Reassign active visits first\. This cannot be undone\.$',
+      ),
+      (m) =>
+          '${m[1]} എന്ന അക്കൗണ്ട് സ്ഥിരമായി നീക്കണോ? സജീവ സന്ദർശനങ്ങൾ ആദ്യം മറ്റൊരാൾക്ക് നിയോഗിക്കുക. ഇത് തിരിച്ചെടുക്കാനാവില്ല.',
+    ),
+    (
+      RegExp(
+        r'^End time must be after start time and hours must contain complete (\d+)-minute slots\.$',
+      ),
+      (m) =>
+          'അവസാന സമയം ആരംഭത്തിന് ശേഷമായിരിക്കണം. ${m[1]} മിനിറ്റിന്റെ പൂർണ്ണ സമയങ്ങൾ ഉൾപ്പെടണം.',
+    ),
+    (
+      RegExp(
+        r'^Choose an end time after the start time with complete (\d+)-minute slots\.$',
+      ),
+      (m) =>
+          'ആരംഭത്തിന് ശേഷമുള്ള അവസാന സമയം തിരഞ്ഞെടുക്കുക. ${m[1]} മിനിറ്റിന്റെ പൂർണ്ണ സമയങ്ങൾ വേണം.',
+    ),
+    (
+      RegExp(
+        r'^Proposed hours: (.+) · (\d+) complete slots, (\d+) minutes each\. Availability still depends on closures and capacity\.$',
+      ),
+      (m) =>
+          'പുതിയ സമയം: ${m[1]} · ${m[2]} പൂർണ്ണ സമയങ്ങൾ, ഓരോന്നും ${m[3]} മിനിറ്റ്. ലഭ്യത ഒഴിവുദിവസങ്ങളെയും ശേഷിയെയും ആശ്രയിക്കുന്നു.',
+    ),
+    (
+      RegExp(r'^(\d+) of (\d+) schedule changes saved\.$'),
+      (m) => '${m[2]} സമയമാറ്റങ്ങളിൽ ${m[1]} സംരക്ഷിച്ചു.',
+    ),
     (RegExp(r'^(\d+)-Min Slots$'), (m) => '${m[1]} മിനിറ്റ് സമയം'),
     (
       RegExp(r'^Select Date & (\d+)-Minute Slot$'),

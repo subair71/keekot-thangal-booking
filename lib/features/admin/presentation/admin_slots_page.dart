@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'admin_date_hours.dart';
 
 import 'package:flutter/material.dart';
@@ -130,17 +131,17 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
       final sortedDates = dates.toList()..sort();
       return TwoColumn(
         main: SurfaceCard(
-          child: Form(
-            key: form,
+          child: LocalizedForm(
+            formKey: form,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                AppText(
                   'Block dates & slots',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                AppText(
                   '1. Select dates (${dates.length})',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
@@ -152,16 +153,16 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                     OutlinedButton.icon(
                       onPressed: busy ? null : () => addDates(false),
                       icon: const Icon(Icons.calendar_today),
-                      label: const Text('Add a date'),
+                      label: const AppText('Add a date'),
                     ),
                     OutlinedButton.icon(
                       onPressed: busy ? null : () => addDates(true),
                       icon: const Icon(Icons.date_range),
-                      label: const Text('Add date range'),
+                      label: const AppText('Add date range'),
                     ),
                     TextButton(
                       onPressed: busy ? null : () => setState(dates.clear),
-                      child: const Text('Clear dates'),
+                      child: const AppText('Clear dates'),
                     ),
                   ],
                 ),
@@ -172,7 +173,7 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                   children: [
                     for (final day in sortedDates)
                       InputChip(
-                        label: Text(VisitClock.dayLabel(day)),
+                        label: AppText(VisitClock.dayLabel(day)),
                         onDeleted: busy
                             ? null
                             : () => setState(() => dates.remove(day)),
@@ -182,8 +183,8 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 const SizedBox(height: 20),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Entire selected days'),
-                  subtitle: const Text(
+                  title: const AppText('Entire selected days'),
+                  subtitle: const AppText(
                     'Apply to every slot on each selected date.',
                   ),
                   value: wholeDay,
@@ -191,11 +192,11 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 ),
                 if (!wholeDay) ...[
                   const SizedBox(height: 12),
-                  Text(
+                  AppText(
                     '2. Select time slots',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const Text(
+                  const AppText(
                     'Choose any combination. These slots apply to every selected date.',
                   ),
                   Wrap(
@@ -209,13 +210,13 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                                   slots.map((s) => s.startTime),
                                 ),
                               ),
-                        child: const Text('Select all slots'),
+                        child: const AppText('Select all slots'),
                       ),
                       TextButton(
                         onPressed: busy
                             ? null
                             : () => setState(selectedStarts.clear),
-                        child: const Text('Clear slots'),
+                        child: const AppText('Clear slots'),
                       ),
                     ],
                   ),
@@ -225,7 +226,7 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                     children: [
                       for (final slot in slots)
                         FilterChip(
-                          label: Text(slot.label),
+                          label: AppText(slot.label),
                           selected: selectedStarts.contains(slot.startTime),
                           onSelected: busy
                               ? null
@@ -241,27 +242,24 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                   ),
                 ],
                 const SizedBox(height: 24),
-                SegmentedButton<bool>(
-                  segments: const [
-                    ButtonSegment(value: true, label: Text('Block')),
-                    ButtonSegment(value: false, label: Text('Reopen')),
-                  ],
-                  selected: {blocked},
-                  onSelectionChanged: busy
+                SanctuaryChoices<bool>(
+                  options: const {true: 'Block', false: 'Reopen'},
+                  value: blocked,
+                  onChanged: busy
                       ? null
-                      : (s) => setState(() => blocked = s.first),
+                      : (value) => setState(() => blocked = value),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: reason,
                   enabled: !busy,
                   maxLength: 200,
-                  decoration: const InputDecoration(
-                    labelText: 'Reason',
-                    hintText: 'Prayer time, maintenance, holiday…',
+                  decoration: InputDecoration(
+                    label: AppText('Reason'),
+                    hintText: tr(context, 'Prayer time, maintenance, holiday…'),
                   ),
                   validator: (v) => blocked && (v == null || v.trim().isEmpty)
-                      ? 'Enter a reason visitors can understand.'
+                      ? tr(context, 'Enter a reason visitors can understand.')
                       : null,
                 ),
                 const SizedBox(height: 12),
@@ -269,9 +267,12 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                   controller: capacity,
                   enabled: !busy,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Capacity (optional)',
-                    helperText: 'Leave empty to keep each slot’s capacity.',
+                  decoration: InputDecoration(
+                    label: AppText('Capacity (optional)'),
+                    helperText: tr(
+                      context,
+                      'Leave empty to keep each slot’s capacity.',
+                    ),
                   ),
                   validator: (v) =>
                       v == null ||
@@ -279,10 +280,10 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                           ((int.tryParse(v.trim()) ?? 0) >= 1 &&
                               (int.tryParse(v.trim()) ?? 0) <= 500)
                       ? null
-                      : 'Enter 1–500.',
+                      : tr(context, 'Enter 1–500.'),
                 ),
                 const SizedBox(height: 24),
-                Text(
+                AppText(
                   wholeDay
                       ? '${dates.length} entire days selected'
                       : '${dates.length} dates · ${slots.where((s) => selectedStarts.contains(s.startTime)).length} slots per date',
@@ -290,7 +291,7 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: busy ? null : () => save(slots),
-                  child: Text(
+                  child: AppText(
                     busy
                         ? 'Saving…'
                         : blocked
@@ -300,11 +301,11 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 ),
                 if (result != null) ...[
                   const SizedBox(height: 16),
-                  Semantics(liveRegion: true, child: Text(result!)),
+                  Semantics(liveRegion: true, child: AppText(result!)),
                   if (failed.isNotEmpty)
                     OutlinedButton(
                       onPressed: busy ? null : () => apply(List.of(failed)),
-                      child: const Text('Retry failed changes'),
+                      child: const AppText('Retry failed changes'),
                     ),
                 ],
               ],
@@ -319,24 +320,24 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AppText(
                     'Before changing the schedule',
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  AppText(
                     'Add separate dates or a date range within the next 30 days. Select entire days, or choose multiple individual time slots.',
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  AppText(
                     'Blocking prevents new confirmations. Existing confirmed bookings remain valid; cancel affected bookings separately if visits cannot take place.',
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  AppText(
                     'Reopen a whole-day closure before reopening individual slots on that date. Capacity cannot be reduced below confirmed visitors and active holds.',
                   ),
                   SizedBox(height: 16),
-                  Text(
+                  AppText(
                     'Changes save in batches. If any fail, successful changes remain saved and you can retry only the failed changes.',
                   ),
                 ],

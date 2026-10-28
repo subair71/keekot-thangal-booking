@@ -24,21 +24,63 @@ class Emblem extends StatelessWidget {
   );
 }
 
+/// Translate visible validation errors when switching language, preserving
+/// controllers, focus and field values. Untouched fields remain untouched.
+class LocalizedForm extends StatefulWidget {
+  const LocalizedForm({super.key, required this.formKey, required this.child});
+  final GlobalKey<FormState> formKey;
+  final Widget child;
+  @override
+  State<LocalizedForm> createState() => _LocalizedFormState();
+}
+
+class _LocalizedFormState extends State<LocalizedForm> {
+  String? language;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = AppLanguage.of(context);
+    if (language != null && next != language) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        for (final field
+            in widget.formKey.currentState?.fields ??
+                <FormFieldState<dynamic>>[]) {
+          if (field.hasError) field.validate();
+        }
+      });
+    }
+    language = next;
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Form(key: widget.formKey, child: widget.child);
+}
+
 class PageContainer extends StatelessWidget {
   const PageContainer({super.key, required this.child, this.width = 1280});
   final Widget child;
   final double width;
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-    child: Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: width),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.sizeOf(context).width < 600 ? 20 : 32,
-            vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 36,
+  Widget build(BuildContext context) => Theme(
+    data: SanctuaryLayout.mobile(context)
+        ? mobileSanctuaryTheme(Theme.of(context))
+        : Theme.of(context),
+    child: SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: width),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: SanctuaryLayout.mobile(context)
+                  ? SanctuaryLayout.pageMargin
+                  : 32,
+              vertical: MediaQuery.sizeOf(context).width < 600 ? 20 : 36,
+            ),
+            child: child,
           ),
-          child: child,
         ),
       ),
     ),
@@ -49,12 +91,13 @@ class SurfaceCard extends StatelessWidget {
   const SurfaceCard({
     super.key,
     required this.child,
-    this.color = AppColors.white,
+    this.color,
     this.padding = 20,
     this.borderColor = AppColors.outline,
   });
   final Widget child;
-  final Color color, borderColor;
+  final Color? color;
+  final Color borderColor;
   final double padding;
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -69,14 +112,21 @@ class SurfaceCard extends StatelessWidget {
       ],
     ),
     child: Material(
-      color: color,
+      color:
+          color ??
+          (SanctuaryLayout.mobile(context) ? AppColors.cream : AppColors.white),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: borderColor),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Padding(padding: EdgeInsets.all(padding), child: child),
+      child: Padding(
+        padding: EdgeInsets.all(
+          SanctuaryLayout.mobile(context) && padding == 20 ? 16 : padding,
+        ),
+        child: child,
+      ),
     ),
   );
 }
@@ -86,46 +136,103 @@ class PageHeading extends StatelessWidget {
   final String title;
   final String? eyebrow, subtitle;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 24),
-    child: Column(
+  Widget build(BuildContext context) {
+    final mobile = SanctuaryLayout.mobile(context);
+    final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (eyebrow != null) ...[
-          Container(
-            width: 32,
-            height: 3,
-            margin: const EdgeInsets.only(bottom: 14),
-            decoration: BoxDecoration(
-              color: AppColors.goldText,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
           AppText(
-            tr(context, eyebrow!).toUpperCase(),
-            style: const TextStyle(
-              color: AppColors.goldText,
-              fontSize: 11,
-              letterSpacing: 1.5,
+            eyebrow!,
+            style: TextStyle(
+              color: mobile ? AppColors.brass : AppColors.goldText,
+              fontSize: 10,
+              letterSpacing: 1.3,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
         ],
         Semantics(
           header: true,
           child: AppText(
             title,
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              color: mobile ? AppColors.ivory : AppColors.primary,
+              fontSize: mobile ? 27 : 32,
+            ),
           ),
         ),
         if (subtitle != null) ...[
-          const SizedBox(height: 8),
-          AppText(subtitle!, style: Theme.of(context).textTheme.bodyMedium),
+          const SizedBox(height: 10),
+          AppText(
+            subtitle!,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: mobile
+                  ? AppColors.ivory.withValues(alpha: .83)
+                  : AppColors.muted,
+            ),
+          ),
         ],
       ],
-    ),
-  );
+    );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: mobile
+          ? Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.forest,
+                borderRadius: BorderRadius.circular(SanctuaryLayout.cardRadius),
+                border: Border.all(
+                  color: AppColors.brass.withValues(alpha: .35),
+                ),
+              ),
+              child: heading,
+            )
+          : heading,
+    );
+  }
+}
+
+/// Wraps at large text sizes instead of squeezing translated segmented labels.
+class SanctuaryChoices<T> extends StatelessWidget {
+  const SanctuaryChoices({
+    super.key,
+    required this.options,
+    required this.value,
+    required this.onChanged,
+  });
+  final Map<T, String> options;
+  final T value;
+  final ValueChanged<T>? onChanged;
+  @override
+  Widget build(BuildContext context) => !SanctuaryLayout.mobile(context)
+      ? SegmentedButton<T>(
+          segments: [
+            for (final entry in options.entries)
+              ButtonSegment(value: entry.key, label: AppText(entry.value)),
+          ],
+          selected: {value},
+          onSelectionChanged: onChanged == null
+              ? null
+              : (selection) => onChanged!(selection.first),
+        )
+      : Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final entry in options.entries)
+              ChoiceChip(
+                label: AppText(entry.value),
+                selected: value == entry.key,
+                onSelected: onChanged == null
+                    ? null
+                    : (_) => onChanged!(entry.key),
+              ),
+          ],
+        );
 }
 
 class BookingProgress extends StatelessWidget {
@@ -136,7 +243,9 @@ class BookingProgress extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final stacked =
-          constraints.maxWidth < 520 ||
+          (SanctuaryLayout.mobile(context)
+              ? (AppLanguage.of(context) == 'ml' || constraints.maxWidth < 260)
+              : constraints.maxWidth < 520) ||
           MediaQuery.textScalerOf(context).scale(1) > 1.3;
       return Wrap(
         spacing: 12,
@@ -159,7 +268,7 @@ class BookingProgress extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: current == index ? AppColors.mint : AppColors.white,
+                    color: current == index ? AppColors.cream : AppColors.ivory,
                     border: Border.all(
                       color: current == index
                           ? AppColors.secondary
@@ -264,8 +373,12 @@ class InfoLine extends StatelessWidget {
       Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: AppColors.mint,
-          borderRadius: BorderRadius.circular(12),
+          color: SanctuaryLayout.mobile(context)
+              ? AppColors.disabled
+              : AppColors.mint,
+          borderRadius: BorderRadius.circular(
+            SanctuaryLayout.mobile(context) ? 30 : 12,
+          ),
         ),
         child: Icon(icon, color: AppColors.emerald, size: 22),
       ),
@@ -274,7 +387,13 @@ class InfoLine extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppText(title, style: Theme.of(context).textTheme.titleMedium),
+            AppText(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             const SizedBox(height: 4),
             AppText(detail, style: Theme.of(context).textTheme.bodyMedium),
           ],
@@ -374,7 +493,14 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 38, color: AppColors.secondary),
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: const BoxDecoration(
+              color: AppColors.disabled,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 32, color: AppColors.secondary),
+          ),
           const SizedBox(height: 18),
           AppText(
             title,
@@ -407,6 +533,7 @@ Future<bool> confirmDialog(
     await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        scrollable: true,
         title: AppText(title),
         content: AppText(message),
         actions: [

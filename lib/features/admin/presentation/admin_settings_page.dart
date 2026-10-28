@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'admin_date_hours.dart';
 
 import 'package:flutter/material.dart';
@@ -109,8 +110,8 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
           const SizedBox(height: 24),
         ],
         SurfaceCard(
-          child: Form(
-            key: form,
+          child: LocalizedForm(
+            formKey: form,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -118,14 +119,14 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                   OutlinedButton.icon(
                     onPressed: () => context.go('/admin/khadims'),
                     icon: const Icon(Icons.manage_accounts),
-                    label: const Text('Manage Khadim accounts'),
+                    label: const AppText('Manage Khadim accounts'),
                   ),
-                Text(
+                AppText(
                   'Default booking configuration',
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                const AppText(
                   'These defaults apply to dates without custom hours. Use Hours for a specific date to change one day without changing these defaults. Changes that conflict with confirmed bookings or active reservations are blocked. Default capacity applies to new slots; use Slots & closures to update existing slots.',
                 ),
                 const SizedBox(height: 24),
@@ -142,7 +143,7 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                             child: TextFormField(
                               controller: fields[e.key],
                               decoration: InputDecoration(
-                                labelText: e.value.$1,
+                                label: AppText(e.value.$1),
                               ),
                               validator: (v) {
                                 if ([
@@ -152,7 +153,7 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                                   return null;
                                 }
                                 if (v == null || v.trim().isEmpty) {
-                                  return 'This value is required.';
+                                  return tr(context, 'This value is required.');
                                 }
                                 if ([
                                   'openingTime',
@@ -160,18 +161,24 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                                 ].contains(e.key)) {
                                   return VisitClock.timeValue(v) != null
                                       ? null
-                                      : 'Use h:mm AM/PM, for example 7:00 PM.';
+                                      : tr(
+                                          context,
+                                          'Use h:mm AM/PM, for example 7:00 PM.',
+                                        );
                                 }
                                 if (e.key == 'slotDurationMinutes') {
                                   final minutes = int.tryParse(v.trim());
                                   if (minutes == null ||
                                       minutes < 10 ||
                                       minutes > 120) {
-                                    return 'Enter 10 to 120 whole minutes.';
+                                    return tr(
+                                      context,
+                                      'Enter 10 to 120 whole minutes.',
+                                    );
                                   }
                                 }
                                 return int.tryParse(v) == null
-                                    ? 'Enter a whole number.'
+                                    ? tr(context, 'Enter a whole number.')
                                     : null;
                               },
                             ),
@@ -183,20 +190,20 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                 const SizedBox(height: 24),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Open bookings to visitors'),
+                  title: const AppText('Open bookings to visitors'),
                   value: enabled,
                   onChanged: (v) => setState(() => enabled = v),
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Allow same-day booking'),
+                  title: const AppText('Allow same-day booking'),
                   value: sameDay,
                   onChanged: (v) => setState(() => sameDay = v),
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Send visit reminders'),
-                  subtitle: const Text(
+                  title: const AppText('Send visit reminders'),
+                  subtitle: const AppText(
                     'Lead time changes apply to new bookings.',
                   ),
                   value: reminders,
@@ -205,7 +212,9 @@ class _AdminSettingsState extends ConsumerState<AdminSettings> {
                 const SizedBox(height: 20),
                 FilledButton(
                   onPressed: busy ? null : save,
-                  child: Text(busy ? 'Saving…' : 'Save default configuration'),
+                  child: AppText(
+                    busy ? 'Saving…' : 'Save default configuration',
+                  ),
                 ),
               ],
             ),

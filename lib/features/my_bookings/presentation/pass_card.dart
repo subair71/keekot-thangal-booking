@@ -51,14 +51,17 @@ class _PassCardState extends ConsumerState<PassCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
             children: [
               StatusBadge(
                 b.status.toUpperCase(),
                 danger: b.status == 'cancelled',
                 neutral: b.status == 'expired',
               ),
-              const Spacer(),
               const Emblem(size: 44),
             ],
           ),
@@ -116,7 +119,7 @@ class _PassCardState extends ConsumerState<PassCard> {
           if (b.upcoming) ...[
             Center(
               child: Semantics(
-                label: 'Private QR pass for entry staff',
+                label: tr(context, 'Private QR pass for entry staff'),
                 image: true,
                 child: Container(
                   color: AppColors.white,

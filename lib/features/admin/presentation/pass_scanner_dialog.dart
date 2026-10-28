@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -24,20 +25,19 @@ class _PassScannerDialogState extends State<PassScannerDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Scan visitor pass'),
+    scrollable: true,
+    title: const AppText('Scan visitor pass'),
     content: SizedBox(
       width: 420,
-      height: (MediaQuery.sizeOf(context).height * 0.65)
-          .clamp(180.0, 480.0)
-          .toDouble(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          const AppText(
             'Point the camera at the QR code. A valid pass confirms the visit automatically.',
           ),
           const SizedBox(height: 16),
-          Flexible(
+          SizedBox(
+            height: (MediaQuery.sizeOf(context).width - 88).clamp(180.0, 420.0),
             child: AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(
@@ -56,12 +56,10 @@ class _PassScannerDialogState extends State<PassScannerDialog> {
                   },
                   errorBuilder: (context, error) => const ColoredBox(
                     color: Color(0xFFF2F5F3),
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Camera unavailable. Allow camera access in your browser settings and try again, or close this scanner and paste the QR token.',
-                        ),
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(20),
+                      child: AppText(
+                        'Camera unavailable. Allow camera access in your browser settings and try again, or close this scanner and paste the QR token.',
                       ),
                     ),
                   ),
@@ -75,7 +73,7 @@ class _PassScannerDialogState extends State<PassScannerDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Close scanner'),
+        child: const AppText('Close scanner'),
       ),
     ],
   );

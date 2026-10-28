@@ -1,5 +1,81 @@
 import 'package:flutter/material.dart';
 
+/// The web identity is also used by the mobile shell and application metadata.
+abstract final class AppBrand {
+  static const name = 'Keekkott Sayyid Attakoya Thangal';
+  static const service = 'Online Booking';
+  static const title = '$name | $service';
+}
+
+abstract final class SanctuaryLayout {
+  static const mobileBreakpoint = 768.0;
+  static const pageMargin = 20.0;
+  static const cardRadius = 16.0;
+  static bool mobile(BuildContext context) =>
+      MediaQuery.sizeOf(context).width < mobileBreakpoint;
+}
+
+/// Scoped to phones. Desktop retains the existing theme and layout.
+ThemeData mobileSanctuaryTheme(ThemeData base) => base.copyWith(
+  scaffoldBackgroundColor: AppColors.canvas,
+  textTheme: base.textTheme.copyWith(
+    headlineLarge: base.textTheme.headlineLarge?.copyWith(fontSize: 28),
+    headlineMedium: base.textTheme.headlineMedium?.copyWith(
+      fontSize: 23,
+      height: 1.35,
+    ),
+    bodyLarge: base.textTheme.bodyLarge?.copyWith(fontSize: 14, height: 1.65),
+    bodyMedium: base.textTheme.bodyMedium?.copyWith(fontSize: 14, height: 1.65),
+    titleMedium: base.textTheme.titleMedium?.copyWith(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+  inputDecorationTheme: base.inputDecorationTheme.copyWith(
+    fillColor: AppColors.ivory,
+    labelStyle: const TextStyle(fontSize: 14, color: AppColors.muted),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+    helperMaxLines: 6,
+    errorMaxLines: 6,
+  ),
+  cardTheme: base.cardTheme.copyWith(color: AppColors.cream),
+  chipTheme: base.chipTheme.copyWith(
+    backgroundColor: AppColors.ivory,
+    selectedColor: AppColors.emerald,
+    checkmarkColor: AppColors.brass,
+    labelStyle: base.textTheme.labelLarge?.copyWith(
+      color: WidgetStateColor.resolveWith(
+        (states) => states.contains(WidgetState.selected)
+            ? AppColors.ivory
+            : AppColors.primary,
+      ),
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+    ),
+    side: const BorderSide(color: AppColors.outline),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+  ),
+  iconButtonTheme: IconButtonThemeData(
+    style: IconButton.styleFrom(minimumSize: const Size(44, 44)),
+  ),
+  listTileTheme: base.listTileTheme.copyWith(
+    iconColor: AppColors.secondary,
+    titleTextStyle: base.textTheme.titleMedium?.copyWith(
+      color: AppColors.primary,
+    ),
+    subtitleTextStyle: base.textTheme.bodySmall?.copyWith(
+      height: 1.65,
+      color: AppColors.muted,
+    ),
+    minVerticalPadding: 12,
+  ),
+  dialogTheme: base.dialogTheme.copyWith(
+    insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+    titleTextStyle: base.textTheme.headlineMedium?.copyWith(fontSize: 23),
+  ),
+  dividerTheme: const DividerThemeData(color: AppColors.outline, thickness: 1),
+);
+
 abstract final class AppColors {
   static const canvas = Color(0xFFF4FBF3), primary = Color(0xFF002219);
   static const emerald = Color(0xFF13382D),

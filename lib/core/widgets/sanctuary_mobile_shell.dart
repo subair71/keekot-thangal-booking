@@ -10,33 +10,58 @@ import '../localization/app_language.dart';
 import '../utils/visit_clock.dart';
 
 class SanctuaryMobileHeader extends ConsumerWidget {
-  const SanctuaryMobileHeader({super.key});
+  const SanctuaryMobileHeader({super.key, this.keyboardOpen = false});
+  final bool keyboardOpen;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final large = MediaQuery.textScalerOf(context).scale(1) > 1.3;
     final ml = AppLanguage.of(context) == 'ml';
-    final identity = Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AppText(
-          'KEEKKOTT MAQAM',
-          style: TextStyle(
-            fontSize: 9,
-            letterSpacing: 1.1,
-            color: AppColors.primary,
+    if (keyboardOpen) {
+      return SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            children: [
+              IconButton(
+                tooltip: tr(context, 'Menu'),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: const Icon(Icons.menu),
+              ),
+              const Expanded(
+                child: AppText(
+                  AppBrand.name,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    fontFamily: 'Playfair Display',
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
+                child: Text(
+                  ml ? 'EN' : 'മല',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontFamily: 'Noto Sans Malayalam',
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        const AppText(
-          'Sanctuary Home',
-          style: TextStyle(
-            fontFamily: 'Playfair Display',
-            fontSize: 16,
-            height: 1.3,
-            color: AppColors.primary,
-          ),
-        ),
-      ],
+      );
+    }
+    final identity = AppText(
+      AppBrand.name,
+      style: const TextStyle(
+        fontFamily: 'Playfair Display',
+        fontSize: 17,
+        height: 1.35,
+        color: AppColors.primary,
+        fontWeight: FontWeight.w600,
+      ),
     );
     final controls = Row(
       mainAxisSize: MainAxisSize.min,
@@ -127,14 +152,27 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                             icon: const Icon(Icons.menu, size: 20),
                           ),
                           Expanded(child: identity),
-                          if (!large) controls,
                         ],
                       ),
-                      if (large)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: controls,
-                        ),
+                      Row(
+                        children: [
+                          if (!large) ...[
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: AppText(
+                                AppBrand.service,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.secondary,
+                                  letterSpacing: .5,
+                                ),
+                              ),
+                            ),
+                          ] else
+                            const Spacer(),
+                          controls,
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -231,7 +269,7 @@ class SanctuaryMobileNavigation extends StatelessWidget {
             'remembrance' => 2,
             'guide' => 3,
             'heritage' => 4,
-            _ => 0,
+            _ => uri.path == '/' ? 0 : -1,
           };
     // Natural-height cells allow Malayalam and accessibility text to wrap.
     return ClipRect(

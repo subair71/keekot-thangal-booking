@@ -1,6 +1,7 @@
 import 'package:keekot_thangal/core/localization/app_language.dart';
 
 import 'dart:async';
+import 'visit_form_state.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,8 +39,21 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   @override
   void initState() {
     super.initState();
+    final saved = ref.read(visitorFormProvider);
+    name.text = saved.name;
+    address.text = saved.address;
+    phone.text = saved.phone;
+    for (final controller in [name, address, phone]) {
+      controller.addListener(saveForm);
+    }
     Future.microtask(loadHold);
   }
+
+  void saveForm() => ref.read(visitorFormProvider.notifier).save((
+    name: name.text,
+    address: address.text,
+    phone: phone.text,
+  ));
 
   Future<void> loadHold() async {
     setState(() {
@@ -103,6 +117,8 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                 : null,
           );
       ref.read(draftProvider.notifier).clear();
+      ref.read(visitorFormProvider.notifier).clear();
+      ref.read(visitSelectionProvider.notifier).clear();
       if (mounted) context.go('/book/success/$id');
     } catch (e) {
       if (mounted) setState(() => error = failureMessage(e));
@@ -161,13 +177,14 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Expanded(
-                        child: AppText(
-                          'Booking summary',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
+                      AppText(
+                        'Booking summary',
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       StatusBadge(
                         remaining > 0
@@ -211,8 +228,8 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
               ),
             ),
             aside: SurfaceCard(
-              child: Form(
-                key: form,
+              child: LocalizedForm(
+                formKey: form,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -228,7 +245,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       textCapitalization: TextCapitalization.words,
                       autofillHints: const [AutofillHints.name],
                       decoration: InputDecoration(
-                        labelText: tr(context, 'Full name'),
+                        label: AppText('Full name'),
                         prefixIcon: Icon(Icons.person_outline),
                       ),
                       validator: (value) =>
@@ -247,7 +264,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                       textCapitalization: TextCapitalization.sentences,
                       autofillHints: const [AutofillHints.fullStreetAddress],
                       decoration: InputDecoration(
-                        labelText: tr(context, 'Address'),
+                        label: AppText('Address'),
                         hintText: tr(
                           context,
                           'House / street, area, city and postal code',
@@ -271,7 +288,7 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
                         textDirection: TextDirection.ltr,
                         autofillHints: null,
                         decoration: InputDecoration(
-                          labelText: tr(context, 'Visitor Phone Number'),
+                          label: AppText('Visitor Phone Number'),
                           hintText: '+91 9876543210',
                           helperText: tr(
                             context,

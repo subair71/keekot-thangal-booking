@@ -1,3 +1,4 @@
+import '../../core/localization/app_language.dart';
 import '../../features/assignments/assignment_pages.dart';
 
 import 'package:flutter/material.dart';
@@ -208,12 +209,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     errorBuilder: (context, _) => Scaffold(
+      appBar: AppBar(
+        title: const AppText('Page not found'),
+        actions: const [HeaderLanguageToggle()],
+      ),
       body: PageContainer(
         child: EmptyState(
           title: 'This page could not be found',
           action: FilledButton(
             onPressed: () => context.go('/'),
-            child: const Text('Return home'),
+            child: const AppText('Return home'),
           ),
         ),
       ),

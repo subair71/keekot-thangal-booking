@@ -10,6 +10,20 @@ import 'package:go_router/go_router.dart';
 import '../../../app/bootstrap/providers.dart';
 import '../../../core/widgets/components.dart';
 
+// The query is unchanged; a provider makes loading/error/mobile states testable.
+final khadimAccountsProvider =
+    StreamProvider.autoDispose<List<Map<String, dynamic>>>(
+      (ref) => FirebaseFirestore.instance
+          .collection('khadims')
+          .orderBy('name')
+          .snapshots()
+          .map(
+            (snapshot) => [
+              for (final doc in snapshot.docs) {...doc.data(), 'uid': doc.id},
+            ],
+          ),
+    );
+
 const _permissions = {
   'bookings': 'Book visits for visitors',
   'slots': 'Slots, closures and date hours',
@@ -79,7 +93,7 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
                 enabled: !busy,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: tr(context, 'Phone number'),
+                  label: AppText('Phone number'),
                   helperText: tr(
                     context,
                     'Include country code, for example +91',
@@ -96,11 +110,11 @@ class _LoginState extends ConsumerState<KhadimLoginPage> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onSubmitted: (_) => login(),
                 decoration: InputDecoration(
-                  labelText: tr(context, 'Six-digit password'),
+                  label: AppText('Six-digit password'),
                 ),
               ),
               if (error != null)
-                Text(
+                AppText(
                   error!,
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
@@ -182,18 +196,19 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete Khadim?'),
-        content: Text(
+        scrollable: true,
+        title: const AppText('Delete Khadim?'),
+        content: AppText(
           'Delete $targetName permanently? Reassign active visits first. This cannot be undone.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: const AppText('Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Delete'),
+            child: const AppText('Delete'),
           ),
         ],
       ),
@@ -223,7 +238,7 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
       children: [
         TextButton(
           onPressed: () => context.go('/admin/settings'),
-          child: const Text('Back to settings'),
+          child: const AppText('Back to settings'),
         ),
         const PageHeading(
           'Khadim accounts',
@@ -231,12 +246,12 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
               'Every enabled Khadim can view their own visits. Choose additional operational permissions below. Booking reports and assignments are administrator-only.',
         ),
         SurfaceCard(
-          child: Form(
-            key: form,
+          child: LocalizedForm(
+            formKey: form,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                AppText(
                   uid == null ? 'Create Khadim' : 'Edit Khadim',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
@@ -245,20 +260,24 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                   controller: name,
                   enabled: !busy,
                   maxLength: 100,
-                  validator: (v) =>
-                      v == null || v.trim().isEmpty ? 'Enter a name' : null,
-                  decoration: const InputDecoration(labelText: 'Name'),
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? tr(context, 'Enter a name')
+                      : null,
+                  decoration: InputDecoration(label: const AppText('Name')),
                 ),
                 TextFormField(
                   controller: phone,
                   enabled: !busy,
                   keyboardType: TextInputType.phone,
                   validator: (v) => v == null || v.trim().isEmpty
-                      ? 'Enter a phone number'
+                      ? tr(context, 'Enter a phone number')
                       : null,
-                  decoration: const InputDecoration(
-                    labelText: 'Phone number',
-                    helperText: 'Include country code, for example +91',
+                  decoration: InputDecoration(
+                    label: AppText('Phone number'),
+                    helperText: tr(
+                      context,
+                      'Include country code, for example +91',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -273,20 +292,25 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                       ? null
                       : RegExp(r'^\d{6}$').hasMatch(v ?? '')
                       ? null
-                      : 'Enter exactly six digits',
+                      : tr(context, 'Enter exactly six digits'),
                   decoration: InputDecoration(
-                    labelText: uid == null
-                        ? 'Six-digit password'
-                        : 'New six-digit password',
+                    label: AppText(
+                      uid == null
+                          ? 'Six-digit password'
+                          : 'New six-digit password',
+                    ),
                     helperText: uid == null
-                        ? 'Keep this password private'
-                        : 'Leave blank to keep the current password',
+                        ? tr(context, 'Keep this password private')
+                        : tr(
+                            context,
+                            'Leave blank to keep the current password',
+                          ),
                   ),
                 ),
                 for (final item in _permissions.entries)
                   CheckboxListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(item.value),
+                    title: AppText(item.value),
                     value: selected.contains(item.key),
                     onChanged: busy
                         ? null
@@ -300,17 +324,17 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                   ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Account enabled'),
+                  title: const AppText('Account enabled'),
                   value: enabled,
                   onChanged: busy ? null : (v) => setState(() => enabled = v),
                 ),
-                const Text(
+                const AppText(
                   'Changes invalidate the current staff session. The Khadim must sign in again.',
                 ),
                 const SizedBox(height: 16),
                 FilledButton(
                   onPressed: busy ? null : save,
-                  child: Text(
+                  child: AppText(
                     busy
                         ? 'Saving…'
                         : uid == null
@@ -321,72 +345,83 @@ class _ManagementState extends ConsumerState<KhadimManagementPage> {
                 if (uid != null)
                   TextButton(
                     onPressed: busy ? null : reset,
-                    child: const Text('Cancel editing'),
+                    child: const AppText('Cancel editing'),
                   ),
               ],
             ),
           ),
         ),
         const SizedBox(height: 24),
-        StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-          stream: FirebaseFirestore.instance
-              .collection('khadims')
-              .orderBy('name')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text(
-                'Could not load Khadim accounts. Please try again.',
-              );
-            }
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.data!.docs.isEmpty) {
-              return const Text('No Khadim accounts yet.');
+        AsyncPanel(
+          value: ref.watch(khadimAccountsProvider),
+          onRetry: () => ref.invalidate(khadimAccountsProvider),
+          builder: (accounts) {
+            if (accounts.isEmpty) {
+              return const EmptyState(title: 'No Khadim accounts yet.');
             }
             return Column(
               children: [
-                for (final doc in snapshot.data!.docs)
-                  ListTile(
-                    title: Text(doc.data()['name'] as String),
-                    subtitle: Text(
-                      '${doc.data()['phone']} · ${doc.data()['enabled'] == true ? 'Enabled' : 'Disabled'}\n${(doc.data()['permissions'] as List).map((p) => _permissions[p] ?? p).join(', ')}',
-                    ),
-                    isThreeLine: true,
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          tooltip: 'Delete Khadim',
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
+                for (final doc in accounts)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: SurfaceCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppText(
+                            doc['name'] as String,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
-                          onPressed: busy
-                              ? null
-                              : () => deleteKhadim(
-                                  doc.id,
-                                  doc.data()['name'] as String,
-                                ),
-                        ),
-                        IconButton(
-                          tooltip: 'Edit access or reset password',
-                          icon: const Icon(Icons.edit_outlined),
-                          onPressed: busy
-                              ? null
-                              : () => setState(() {
-                                  uid = doc.id;
-                                  name.text = doc.data()['name'];
-                                  phone.text = doc.data()['phone'];
-                                  password.clear();
-                                  enabled = doc.data()['enabled'] == true;
-                                  selected = Set<String>.from(
-                                    doc.data()['permissions'],
-                                  );
-                                }),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Text('${doc['phone']}'),
+                          const SizedBox(height: 8),
+                          StatusBadge(
+                            doc['enabled'] == true ? 'Enabled' : 'Disabled',
+                            neutral: doc['enabled'] != true,
+                          ),
+                          const SizedBox(height: 8),
+                          AppText(
+                            (doc['permissions'] as List)
+                                .map((p) => tr(context, _permissions[p] ?? p))
+                                .join(', '),
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            alignment: WrapAlignment.end,
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              TextButton.icon(
+                                onPressed: busy
+                                    ? null
+                                    : () => deleteKhadim(
+                                        doc['uid'] as String,
+                                        doc['name'] as String,
+                                      ),
+                                icon: const Icon(Icons.delete_outline),
+                                label: const AppText('Delete'),
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton.icon(
+                                onPressed: busy
+                                    ? null
+                                    : () => setState(() {
+                                        uid = doc['uid'];
+                                        name.text = doc['name'];
+                                        phone.text = doc['phone'];
+                                        password.clear();
+                                        enabled = doc['enabled'] == true;
+                                        selected = Set<String>.from(
+                                          doc['permissions'],
+                                        );
+                                      }),
+                                icon: const Icon(Icons.edit_outlined),
+                                label: const AppText('Edit Khadim'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
               ],

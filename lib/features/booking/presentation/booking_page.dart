@@ -9,6 +9,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../../core/widgets/components.dart';
 import 'slot_card.dart';
+import 'visit_form_state.dart';
 
 class BookingPage extends ConsumerStatefulWidget {
   const BookingPage({super.key});
@@ -24,13 +25,33 @@ class _BookingPageState extends ConsumerState<BookingPage> {
   final _continueFocus = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    final selection = ref.read(visitSelectionProvider);
+    date = selection.day;
+    selectedId = selection.slotId;
+    visitors = selection.visitors;
+    periodFilter = selection.period;
+  }
+
+  void updateSelection(VoidCallback change) {
+    setState(change);
+    ref.read(visitSelectionProvider.notifier).save((
+      day: date,
+      slotId: selectedId,
+      visitors: visitors,
+      period: periodFilter,
+    ));
+  }
+
+  @override
   void dispose() {
     _continueFocus.dispose();
     super.dispose();
   }
 
   void _selectSlot(String id) {
-    setState(() => selectedId = id);
+    updateSelection(() => selectedId = id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || selectedId != id) return;
       final buttonContext = _continueKey.currentContext;
@@ -71,6 +92,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           value: ref.watch(configurationProvider),
           onRetry: () => ref.invalidate(configurationProvider),
           builder: (config) {
+            visitors = visitors.clamp(1, config.maxVisitorsPerBooking);
             final dates = config.dates(),
                 closed =
                     ref.watch(closedDaysProvider).asData?.value ?? <String>{};
@@ -121,7 +143,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               !closed.contains(VisitClock.dayKey(d)),
                         );
                         if (picked != null && mounted) {
-                          setState(() {
+                          updateSelection(() {
                             date = VisitClock.dayKey(picked);
                             selectedId = null;
                           });
@@ -151,14 +173,14 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                           child: OutlinedButton(
                             onPressed: closed.contains(d)
                                 ? null
-                                : () => setState(() {
+                                : () => updateSelection(() {
                                     date = d;
                                     selectedId = null;
                                   }),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               side: BorderSide(
                                 color: selected
@@ -168,6 +190,8 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               ),
                               backgroundColor: selected
                                   ? AppColors.emerald
+                                  : SanctuaryLayout.mobile(context)
+                                  ? AppColors.cream
                                   : AppColors.white,
                               foregroundColor: selected
                                   ? AppColors.white
@@ -254,7 +278,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                 label: AppText(label),
                                 selected: periodFilter == label,
                                 onSelected: (_) =>
-                                    setState(() => periodFilter = label),
+                                    updateSelection(() => periodFilter = label),
                               ),
                           ],
                         ),
@@ -313,11 +337,17 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                 final scaledWidth =
                                     210 *
                                     MediaQuery.textScalerOf(context).scale(1);
-                                final cols =
-                                    ((constraints.maxWidth + 12) /
-                                            (scaledWidth + 12))
-                                        .floor()
-                                        .clamp(1, 3);
+                                final cols = SanctuaryLayout.mobile(context)
+                                    ? (MediaQuery.textScalerOf(
+                                                context,
+                                              ).scale(1) >
+                                              1.3
+                                          ? 1
+                                          : 2)
+                                    : ((constraints.maxWidth + 12) /
+                                              (scaledWidth + 12))
+                                          .floor()
+                                          .clamp(1, 3);
                                 return Wrap(
                                   spacing: 12,
                                   runSpacing: 12,
@@ -355,21 +385,30 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                               'Your visit',
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
-                            const SizedBox(height: 24),
-                            InfoLine(
-                              Icons.schedule,
-                              'Visiting hours',
-                              config.hoursForDate(day),
-                            ),
-                            const SizedBox(height: 22),
-                            InfoLine(
-                              Icons.hourglass_empty,
-                              'Duration',
-                              '${config.slotDurationMinutes} minutes · India time',
-                            ),
-                            const SizedBox(height: 24),
-                            const Divider(),
-                            const SizedBox(height: 16),
+                            if (!SanctuaryLayout.mobile(context)) ...[
+                              const SizedBox(height: 24),
+                              InfoLine(
+                                Icons.schedule,
+                                'Visiting hours',
+                                config.hoursForDate(day),
+                              ),
+                              const SizedBox(height: 22),
+                              InfoLine(
+                                Icons.hourglass_empty,
+                                'Duration',
+                                '${config.slotDurationMinutes} minutes · India time',
+                              ),
+                              const SizedBox(height: 24),
+                              const Divider(),
+                              const SizedBox(height: 16),
+                            ] else ...[
+                              const SizedBox(height: 12),
+                              AppText(
+                                '${config.hoursForDate(day)} · ${tr(context, '${config.slotDurationMinutes} minutes · India time')}',
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                              const Divider(height: 28),
+                            ],
                             const AppText(
                               'Number of visitors',
                               style: TextStyle(fontWeight: FontWeight.w600),
@@ -381,7 +420,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                   tooltip: tr(context, 'Remove one visitor'),
                                   onPressed: visitors <= 1
                                       ? null
-                                      : () => setState(() => visitors--),
+                                      : () => updateSelection(() => visitors--),
                                   icon: const Icon(Icons.remove),
                                 ),
                                 Expanded(
@@ -401,7 +440,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
                                           (selected != null &&
                                               visitors >= selected.remaining)
                                       ? null
-                                      : () => setState(() => visitors++),
+                                      : () => updateSelection(() => visitors++),
                                   icon: const Icon(Icons.add),
                                 ),
                               ],

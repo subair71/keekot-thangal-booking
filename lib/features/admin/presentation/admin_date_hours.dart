@@ -1,3 +1,4 @@
+import '../../../core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -119,18 +120,18 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          AppText(
             'Hours for a specific date',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 12),
-          const Text(
+          const AppText(
             'Choose a date, then set its visiting hours. For example: Wednesday, 8:00 AM–5:00 PM. Other dates keep their default hours.',
           ),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             icon: const Icon(Icons.calendar_today),
-            label: Text(VisitClock.dayLabel(day)),
+            label: AppText(VisitClock.dayLabel(day)),
             onPressed: busy
                 ? null
                 : () async {
@@ -150,7 +151,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
                     }
                   },
           ),
-          Text(
+          AppText(
             hours == null
                 ? 'Current hours: ${widget.config.hours} (default)'
                 : 'Current hours: ${VisitClock.timeLabel(hours['openingTime'] as String)} – ${VisitClock.timeLabel(hours['closingTime'] as String)}',
@@ -158,11 +159,11 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
           const SizedBox(height: 12),
           OutlinedButton(
             onPressed: busy ? null : () => pickTime(true),
-            child: Text('Start: ${VisitClock.timeLabel(value(start))}'),
+            child: AppText('Start: ${VisitClock.timeLabel(value(start))}'),
           ),
           OutlinedButton(
             onPressed: busy ? null : () => pickTime(false),
-            child: Text('End: ${VisitClock.timeLabel(value(end))}'),
+            child: AppText('End: ${VisitClock.timeLabel(value(end))}'),
           ),
           const SizedBox(height: 12),
           SurfaceCard(
@@ -170,7 +171,7 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
             padding: 16,
             child: Semantics(
               liveRegion: true,
-              child: Text(
+              child: AppText(
                 complete
                     ? 'Proposed hours: ${VisitClock.timeLabel(value(start))} – ${VisitClock.timeLabel(value(end))} · ${minutes ~/ widget.config.slotDurationMinutes} complete slots, ${widget.config.slotDurationMinutes} minutes each. Availability still depends on closures and capacity.'
                     : 'Choose an end time after the start time with complete ${widget.config.slotDurationMinutes}-minute slots.',
@@ -180,18 +181,18 @@ class _AdminDateHoursState extends ConsumerState<AdminDateHours> {
           const SizedBox(height: 12),
           FilledButton(
             onPressed: busy || !complete ? null : () => save(false),
-            child: Text(busy ? 'Saving…' : 'Save date hours'),
+            child: AppText(busy ? 'Saving…' : 'Save date hours'),
           ),
           TextButton(
             onPressed: busy || hours == null ? null : () => save(true),
-            child: const Text('Restore default hours'),
+            child: const AppText('Restore default hours'),
           ),
-          const Text(
+          const AppText(
             'Whole-day closures and blocked slots still apply. Changes affecting confirmed visitors or active holds cannot be saved.',
           ),
           if (message != null) ...[
             const SizedBox(height: 12),
-            Semantics(liveRegion: true, child: Text(message!)),
+            Semantics(liveRegion: true, child: AppText(message!)),
           ],
         ],
       ),
