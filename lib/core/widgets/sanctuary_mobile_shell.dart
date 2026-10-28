@@ -280,7 +280,7 @@ class SanctuaryMobileNavigation extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   AppText(
                                     [
-                                      'Sanctuary',
+                                      'Home',
                                       'Book Slot',
                                       'Remembrance',
                                       'Etiquette',
