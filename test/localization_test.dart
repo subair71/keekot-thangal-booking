@@ -9,6 +9,7 @@ import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
 
 import 'fixtures.dart';
+import 'navigation_helpers.dart';
 
 void main() {
   setUpAll(() async {
@@ -56,17 +57,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final toggle = find.byKey(const ValueKey('language-toggle'));
-      await tester.tap(toggle);
+      final menu = find.byKey(const ValueKey('header-menu'));
+      await selectDrawerLanguage(tester, 'ml');
       await tester.pumpAndSettle();
       expect(
         find.text('ശാന്തമായ ഒരിടം.\nഹൃദയപൂർവമായ സന്ദർശനം.'),
         findsOneWidget,
       );
-      expect(
-        Localizations.localeOf(tester.element(toggle)),
-        const Locale('ml'),
-      );
+      expect(Localizations.localeOf(tester.element(menu)), const Locale('ml'));
       expect(tester.takeException(), isNull);
       final booking = find
           .text(width < 768 ? 'ബുക്കിംഗ്' : 'സന്ദർശനം ബുക്ക് ചെയ്യുക')
@@ -83,7 +81,7 @@ void main() {
       await tester.pumpAndSettle();
       final remove = find.widgetWithIcon(IconButton, Icons.remove);
       expect(tester.widget<IconButton>(remove).onPressed, isNotNull);
-      await tester.tap(toggle);
+      await selectDrawerLanguage(tester, 'en');
       await tester.pumpAndSettle();
       expect(tester.state(find.byType(BookingPage)), same(state));
       expect(find.text('Select your visit'), findsOneWidget);
@@ -105,7 +103,7 @@ void main() {
         await tester.tap(find.widgetWithText(ListTile, item.$1));
         await tester.pumpAndSettle();
         final uri = GoRouter.of(
-          tester.element(toggle),
+          tester.element(menu),
         ).routeInformationProvider.value.uri;
         expect(uri.path, '/');
         expect(uri.queryParameters['section'], item.$2);

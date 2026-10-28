@@ -171,7 +171,6 @@ class AppShell extends ConsumerWidget {
                                   : Axis.vertical,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const HeaderLanguageToggle(),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
