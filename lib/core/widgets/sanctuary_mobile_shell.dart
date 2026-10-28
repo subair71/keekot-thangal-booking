@@ -28,13 +28,20 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                 icon: const Icon(Icons.menu),
               ),
               const Expanded(
-                child: AppText(
-                  AppBrand.name,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    fontFamily: 'Playfair Display',
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      AppBrand.name,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.primary,
+                        fontFamily: 'Playfair Display',
+                      ),
+                    ),
+                    _MaqamSubtitle(),
+                  ],
                 ),
               ),
               const _LanguageToggle(),
@@ -43,15 +50,22 @@ class SanctuaryMobileHeader extends ConsumerWidget {
         ),
       );
     }
-    final identity = AppText(
-      ml ? AppBrand.name : 'KEEKKOTT SAYYID\nATTAKOYA THANGAL',
-      style: const TextStyle(
-        fontFamily: 'Playfair Display',
-        fontSize: 12,
-        height: 1.35,
-        color: AppColors.primary,
-        fontWeight: FontWeight.w600,
-      ),
+    final identity = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          ml ? AppBrand.name : 'KEEKKOTT SAYYID\nATTAKOYA THANGAL',
+          style: const TextStyle(
+            fontFamily: 'Playfair Display',
+            fontSize: 12,
+            height: 1.35,
+            color: AppColors.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const _MaqamSubtitle(),
+      ],
     );
     final controls = Row(
       mainAxisSize: MainAxisSize.min,
@@ -121,6 +135,22 @@ class SanctuaryMobileHeader extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Matches the compact web header subtitle; wraps with accessible text sizes.
+class _MaqamSubtitle extends StatelessWidget {
+  const _MaqamSubtitle();
+
+  @override
+  Widget build(BuildContext context) => const AppText(
+    'Chavakkad Maqam',
+    style: TextStyle(
+      fontFamily: 'Plus Jakarta Sans',
+      fontSize: 11,
+      height: 1.2,
+      color: AppColors.muted,
+    ),
+  );
 }
 
 class _LanguageToggle extends StatelessWidget {
