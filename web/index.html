@@ -2,6 +2,22 @@
 <html lang="en">
 <head>
   <script>
+    // FlutterFire restores the saved provider during Firebase.initializeApp.
+    // Clear only the obsolete provider so main.dart can activate Enterprise.
+    for (const storageName of ['localStorage', 'sessionStorage']) {
+      try {
+        const storage = window[storageName];
+        const prefix = 'FlutterFire-[DEFAULT]-';
+        if (storage.getItem(prefix + 'recaptchaType') === 'recaptcha-v3') {
+          storage.removeItem(prefix + 'recaptchaType');
+          storage.removeItem(prefix + 'recaptchaSiteKey');
+        }
+      } catch (_) {
+        // Storage can be unavailable in restricted browser contexts.
+      }
+    }
+  </script>
+  <script>
     if (/^\/(login|auth|admin|khadim|my-bookings|booking|pass|notifications)(\/|$)|^\/book\/(confirmation|success)/.test(location.pathname)) {
       const tag = document.createElement('meta'); tag.name = 'robots'; tag.content = 'noindex,nofollow'; document.head.appendChild(tag);
     }
