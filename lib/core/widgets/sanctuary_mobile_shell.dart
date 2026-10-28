@@ -54,7 +54,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
       );
     }
     final identity = AppText(
-      AppBrand.name,
+      ml ? AppBrand.name : 'KEEKKOTT SAYYID\nATTAKOYA THANGAL',
       style: const TextStyle(
         fontFamily: 'Playfair Display',
         fontSize: 17,
