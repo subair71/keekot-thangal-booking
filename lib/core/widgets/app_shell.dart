@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/bootstrap/providers.dart';
 import '../../app/theme/app_theme.dart';
 import 'components.dart';
 import 'sanctuary_mobile_shell.dart';
+import 'sanctuary_navigation_drawer.dart';
 
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.child});
@@ -36,155 +36,12 @@ class AppShell extends ConsumerWidget {
         : 0;
     final textScale = MediaQuery.textScalerOf(context).scale(1);
     final wide = MediaQuery.sizeOf(context).width > 1200 && textScale <= 1.15;
-    final user = ref.watch(authProvider).asData?.value;
     final mobile = MediaQuery.sizeOf(context).width < 768;
     final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
-    final drawer = Drawer(
-      width: (MediaQuery.sizeOf(context).width * 0.88)
-          .clamp(0.0, 360.0)
-          .toDouble(),
-      backgroundColor: mobile ? AppColors.ivory : AppColors.white,
-      surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(
-          left: Radius.circular(mobile ? 0 : 24),
-          right: Radius.circular(mobile ? 24 : 0),
-        ),
-      ),
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          children: [
-            Row(
-              children: [
-                const Emblem(size: 36),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: AppText(
-                    'KEEKKOTT SAYYID ATTAKOYA THANGAL',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      height: 1.4,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.emerald,
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Builder(
-                    builder: (drawerContext) => IconButton(
-                      tooltip: MaterialLocalizations.of(
-                        context,
-                      ).closeButtonTooltip,
-                      onPressed: () => Navigator.of(drawerContext).pop(),
-                      icon: const Icon(Icons.close, size: 20),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            for (final item in const [
-              ('Book a visit', Icons.calendar_month_outlined, '/book'),
-              ('Visitor guide', Icons.menu_book_outlined, '/?section=guide'),
-              ('Videos', Icons.play_circle_outline, '/?section=videos'),
-              (
-                'Questions before you visit',
-                Icons.help_outline,
-                '/?section=questions',
-              ),
-            ])
-              Builder(
-                builder: (drawerContext) => _MenuItem(
-                  icon: item.$2,
-                  label: item.$1,
-                  primary: item.$3 == '/book',
-                  selected: GoRouterState.of(context).uri.toString() == item.$3,
-                  onTap: () {
-                    Navigator.of(drawerContext).pop();
-                    context.go(item.$3);
-                  },
-                ),
-              ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Divider(height: 1, color: AppColors.outline),
-            ),
-            for (final item in [
-              ('My Pass', Icons.confirmation_number_outlined, '/my-bookings'),
-              ('Notifications', Icons.notifications_none, '/notifications'),
-              ('Contact us', Icons.mail_outline, '/contact'),
-              if (user == null) ('Sign in with mobile', Icons.login, '/auth'),
-              if (user?.staff == true)
-                (
-                  'Administration',
-                  Icons.admin_panel_settings_outlined,
-                  '/admin',
-                ),
-              if (user?.gate == true && user?.admin != true)
-                ('Validate visitor pass', Icons.qr_code_scanner, '/admin/gate'),
-            ])
-              Builder(
-                builder: (drawerContext) => _MenuItem(
-                  icon: item.$2,
-                  label: item.$1,
-                  primary: item.$3 == '/book',
-                  selected: GoRouterState.of(context).uri.toString() == item.$3,
-                  onTap: () {
-                    Navigator.of(drawerContext).pop();
-                    context.go(item.$3);
-                  },
-                ),
-              ),
-            if (user != null) ...[
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Divider(height: 1, color: AppColors.outline),
-              ),
-              SurfaceCard(
-                child: InfoLine(
-                  Icons.account_circle_outlined,
-                  user.admin
-                      ? 'Administrator'
-                      : user.khadim
-                      ? 'Khadim'
-                      : 'Your account',
-                  user.maskedPhone,
-                ),
-              ),
-              Builder(
-                builder: (drawerContext) => ListTile(
-                  leading: const Icon(Icons.logout, color: AppColors.emerald),
-                  title: const AppText('Sign out'),
-                  onTap: () async {
-                    Navigator.of(drawerContext).pop();
-                    try {
-                      try {
-                        await ref
-                            .read(notificationRepositoryProvider)
-                            .disable();
-                      } catch (_) {
-                        // Notification network failure must not prevent local sign-out.
-                      }
-                      await ref.read(authRepositoryProvider).signOut();
-                      ref.read(draftProvider.notifier).clear();
-                      if (context.mounted) context.go('/');
-                    } catch (e) {
-                      if (context.mounted) {
-                        showMessage(context, failureMessage(e));
-                      }
-                    }
-                  },
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+    const drawer = SanctuaryNavigationDrawer();
     return Scaffold(
       backgroundColor: mobile ? AppColors.canvas : null,
+      drawerScrimColor: AppColors.forest.withValues(alpha: .46),
       drawer: mobile ? drawer : null,
       endDrawer: mobile ? null : drawer,
       appBar: mobile
@@ -195,7 +52,7 @@ class AppShell extends ConsumerWidget {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.ivory,
+                  color: AppColors.canvas,
                   border: const Border(
                     bottom: BorderSide(color: AppColors.outline),
                   ),
@@ -255,16 +112,17 @@ class AppShell extends ConsumerWidget {
                                                 color: AppColors.emerald,
                                               ),
                                             ),
-                                            AppText(
-                                              'MAQAM · CHAVAKKAD',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: wide ? 12 : 11,
-                                                height: 1.2,
-                                                color: AppColors.muted,
+                                            if (AppLanguage.of(context) != 'ml')
+                                              AppText(
+                                                'MAQAM · CHAVAKKAD',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: wide ? 12 : 11,
+                                                  height: 1.2,
+                                                  color: AppColors.muted,
+                                                ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -317,18 +175,7 @@ class AppShell extends ConsumerWidget {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Builder(
-                                      builder: (scaffoldContext) => IconButton(
-                                        key: const ValueKey('header-menu'),
-                                        tooltip: AppLanguage.of(context) == 'ml'
-                                            ? 'മെനു'
-                                            : 'Menu',
-                                        onPressed: () => Scaffold.of(
-                                          scaffoldContext,
-                                        ).openEndDrawer(),
-                                        icon: const Icon(Icons.menu),
-                                      ),
-                                    ),
+                                    const SanctuaryMenuButton(),
                                     IconButton(
                                       tooltip: tr(context, 'Notifications'),
                                       onPressed: () =>
@@ -393,64 +240,6 @@ class AppShell extends ConsumerWidget {
                   ),
               ],
             ),
-    );
-  }
-}
-
-class _MenuItem extends StatelessWidget {
-  const _MenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.primary = false,
-    this.selected = false,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final bool primary;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final foreground = primary ? AppColors.white : AppColors.emerald;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Semantics(
-        selected: selected,
-        child: Material(
-          color: primary
-              ? AppColors.emerald
-              : selected
-              ? AppColors.mint
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
-          clipBehavior: Clip.antiAlias,
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 2,
-            ),
-            minLeadingWidth: 24,
-            horizontalTitleGap: 12,
-            leading: Icon(icon, size: 22, color: foreground),
-            title: AppText(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                fontWeight: primary || selected
-                    ? FontWeight.w600
-                    : FontWeight.w500,
-                color: foreground,
-              ),
-            ),
-            trailing: Icon(Icons.chevron_right, size: 18, color: foreground),
-            onTap: onTap,
-          ),
-        ),
-      ),
     );
   }
 }
