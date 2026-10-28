@@ -44,6 +44,11 @@ class PassDownload {
             pw.Text(
               '${VisitClock.timeLabel(booking.startTime)} - ${VisitClock.timeLabel(booking.endTime)} (India time)',
             ),
+            pw.SizedBox(height: 10),
+            pw.Text(
+              'Token number: ${booking.tokenLabel}',
+              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+            ),
             pw.SizedBox(height: 8),
             pw.Text(
               booking.visitorName,
