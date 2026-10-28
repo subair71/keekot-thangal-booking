@@ -200,9 +200,8 @@ class _GateStatus extends ConsumerWidget {
             ),
           ),
           const AppText(
-            'സൗജന്യ പ്രവേശനം',
+            'Free entry',
             style: TextStyle(
-              fontFamily: 'Noto Sans Malayalam',
               fontSize: 9,
               height: 1.6,
               color: AppColors.secondary,

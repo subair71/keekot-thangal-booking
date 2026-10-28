@@ -109,9 +109,10 @@ class SanctuaryHeading extends StatelessWidget {
     super.key,
     this.dark = false,
     this.center = false,
+    this.showSubtitleInEnglish = false,
   });
   final String eyebrow, title, subtitle;
-  final bool dark, center;
+  final bool dark, center, showSubtitleInEnglish;
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: center
@@ -142,12 +143,15 @@ class SanctuaryHeading extends StatelessWidget {
           ),
         ),
       ),
-      if (subtitle.isNotEmpty)
+      if (subtitle.isNotEmpty &&
+          (showSubtitleInEnglish || AppLanguage.of(context) == 'ml'))
         AppText(
           subtitle,
           textAlign: center ? TextAlign.center : null,
           style: TextStyle(
-            fontFamily: 'Noto Sans Malayalam',
+            fontFamily: AppLanguage.of(context) == 'ml'
+                ? 'Noto Sans Malayalam'
+                : 'Plus Jakarta Sans',
             fontSize: 12,
             height: 1.65,
             color: dark ? AppColors.mintStrong : AppColors.muted,
@@ -222,15 +226,16 @@ class _HeritageHero extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const AppText(
-                  'സമാധാനപൂർണ്ണമായ ഒരിടം. ഹൃദയസ്പർശിയായ സന്ദർശനം.',
-                  style: TextStyle(
-                    fontFamily: 'Noto Sans Malayalam',
-                    fontSize: 12,
-                    height: 1.65,
-                    color: AppColors.mintStrong,
+                if (AppLanguage.of(context) == 'ml')
+                  const AppText(
+                    'സമാധാനപൂർണ്ണമായ ഒരിടം. ഹൃദയസ്പർശിയായ സന്ദർശനം.',
+                    style: TextStyle(
+                      fontFamily: 'Noto Sans Malayalam',
+                      fontSize: 12,
+                      height: 1.65,
+                      color: AppColors.mintStrong,
+                    ),
                   ),
-                ),
                 const SizedBox(height: 10),
                 const AppText(
                   'Plan a reverent visit with Mr. Sayyid Ali Noufal Thangal Al-Aidrose Keekkott for spiritual counsel, guidance, and authentic dua at the sanctified family bungalow.',
@@ -388,7 +393,8 @@ class _VisualArchiveState extends ConsumerState<_VisualArchive> {
         const SanctuaryHeading(
           'MEDIA SANCTUARY ARCHIVE',
           'Sanctified Visual Archive',
-          'ദൃശ്യാവിഷ്കാരം · Official Visitor Walkthrough & Sanctum Etiquette',
+          'Official Visitor Walkthrough & Sanctum Etiquette',
+          showSubtitleInEnglish: true,
         ),
         const SizedBox(height: 12),
         Container(
@@ -599,13 +605,14 @@ class _VisualArchiveState extends ConsumerState<_VisualArchive> {
                             guides[i].$3,
                             style: _small.copyWith(fontWeight: FontWeight.w600),
                           ),
-                          AppText(
-                            guides[i].$4,
-                            style: _small.copyWith(
-                              fontFamily: 'Noto Sans Malayalam',
-                              fontSize: 10,
+                          if (AppLanguage.of(context) == 'ml')
+                            AppText(
+                              guides[i].$4,
+                              style: _small.copyWith(
+                                fontFamily: 'Noto Sans Malayalam',
+                                fontSize: 10,
+                              ),
                             ),
-                          ),
                           if (i >= content.guideIds.length ||
                               content.guideIds[i].isEmpty)
                             const AppText(
@@ -713,14 +720,15 @@ class _VisitSteps extends ConsumerWidget {
                         ),
                         AppText(steps[i].$2, style: _small),
                         const SizedBox(height: 4),
-                        AppText(
-                          steps[i].$3,
-                          style: _small.copyWith(
-                            fontFamily: 'Noto Sans Malayalam',
-                            fontSize: 10,
-                            color: AppColors.secondary,
+                        if (AppLanguage.of(context) == 'ml')
+                          AppText(
+                            steps[i].$3,
+                            style: _small.copyWith(
+                              fontFamily: 'Noto Sans Malayalam',
+                              fontSize: 10,
+                              color: AppColors.secondary,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -791,14 +799,15 @@ class _Programmes extends ConsumerWidget {
                     ),
                   ],
                 ),
-                AppText(
-                  p.$2,
-                  style: _small.copyWith(
-                    fontFamily: 'Noto Sans Malayalam',
-                    fontSize: 10,
-                    color: AppColors.mintStrong,
+                if (AppLanguage.of(context) == 'ml')
+                  AppText(
+                    p.$2,
+                    style: _small.copyWith(
+                      fontFamily: 'Noto Sans Malayalam',
+                      fontSize: 10,
+                      color: AppColors.mintStrong,
+                    ),
                   ),
-                ),
                 const SizedBox(height: 6),
                 AppText(
                   p.$4,
@@ -893,14 +902,15 @@ class _Etiquette extends StatelessWidget {
                           ),
                           AppText(r.$3, style: _small.copyWith(fontSize: 11)),
                           const SizedBox(height: 5),
-                          AppText(
-                            r.$4,
-                            style: _small.copyWith(
-                              fontFamily: 'Noto Sans Malayalam',
-                              fontSize: 10,
-                              color: AppColors.secondary,
+                          if (AppLanguage.of(context) == 'ml')
+                            AppText(
+                              r.$4,
+                              style: _small.copyWith(
+                                fontFamily: 'Noto Sans Malayalam',
+                                fontSize: 10,
+                                color: AppColors.secondary,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -938,7 +948,7 @@ class _QuestionsState extends ConsumerState<_Questions> {
       ),
       (
         'Are there any fees or donations required for booking?',
-        'Absolutely not. Visiting Keekkott Maqam and receiving spiritual advice is completely free (സൗജന്യം). The digital pass exists solely for crowd management and orderly pilgrim reception.',
+        'Absolutely not. Visiting Keekkott Maqam and receiving spiritual advice is completely free. The digital pass exists solely for crowd management and orderly pilgrim reception.',
       ),
       (
         'Can I bring elderly family members or wheelchairs?',

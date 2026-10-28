@@ -10,6 +10,10 @@ Mobile navigation maps Remembrance, Etiquette and Heritage to anchored sections;
 
 The mobile selector reads configuration, closed days and polled availability. It retains selection across navigation, clamps the visitor count to backend limits, displays disabled closed/full/past slots, and revalidates the selection whenever capacity changes. Proceed writes the existing draft and enters existing login/confirmation, server-side holds and atomic booking confirmation. No booking writes happen during browsing. Confirmation now also guards against a repeated submit while busy.
 
+## Language display
+
+English mode shows English interface text without Malayalam subtitles or mixed-language labels. The language switch remains discoverable in both languages. Selecting Malayalam retains the translated interface and Malayalam captions.
+
 ## Intentional data-dependent differences
 
 - Configured dates, slot durations, capacity and visiting hours replace the mock October 2024 values. Status uses server time and schedule data; it says “Within visiting hours” rather than claiming to observe a physical gate.

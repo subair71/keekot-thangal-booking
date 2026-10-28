@@ -81,15 +81,16 @@ class MobileQuickBooking extends ConsumerWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    const AppText(
-                      'സന്ദർശന സമയം തിരഞ്ഞെടുക്കുക',
-                      style: TextStyle(
-                        fontFamily: 'Noto Sans Malayalam',
-                        fontSize: 10,
-                        height: 1.7,
-                        color: AppColors.muted,
+                    if (AppLanguage.of(context) == 'ml')
+                      const AppText(
+                        'സന്ദർശന സമയം തിരഞ്ഞെടുക്കുക',
+                        style: TextStyle(
+                          fontFamily: 'Noto Sans Malayalam',
+                          fontSize: 10,
+                          height: 1.7,
+                          color: AppColors.muted,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -115,7 +116,7 @@ class MobileQuickBooking extends ConsumerWidget {
                     children: [
                       const Expanded(
                         child: AppText(
-                          'Select Date · തീയതി',
+                          'Select date',
                           style: TextStyle(
                             fontSize: 13,
                             color: AppColors.primary,
@@ -315,7 +316,7 @@ class MobileQuickBooking extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       const AppText(
-                                        'Visitors / സന്ദർശകർ',
+                                        'Visitors',
                                         style: TextStyle(
                                           fontSize: 10,
                                           color: AppColors.muted,
@@ -388,7 +389,7 @@ class MobileQuickBooking extends ConsumerWidget {
                               size: 18,
                             ),
                             label: const AppText(
-                              'Proceed to Instant Verification · തുടരുക',
+                              'Proceed to Instant Verification',
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 12),
                             ),

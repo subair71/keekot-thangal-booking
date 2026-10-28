@@ -1,5 +1,6 @@
 /// Mobile Sanctuary Heritage editorial and interaction copy.
 const sanctuaryMalayalam = <String, String>{
+  'Free entry': 'സൗജന്യ പ്രവേശനം',
   'KEEKKOTT MAQAM': 'കീക്കോട്ട് മഖാം',
   'Sanctuary Home': 'മഖാം ഹോം',
   'Sanctuary': 'മഖാം',
@@ -19,7 +20,7 @@ const sanctuaryMalayalam = <String, String>{
   'Digital Pass': 'ഡിജിറ്റൽ പാസ്',
   'Instant QR gate': 'ക്യുആർ പ്രവേശനം',
   'Reserve a Visit Slot': 'സന്ദർശന സമയം തിരഞ്ഞെടുക്കുക',
-  'Select Date · തീയതി': 'തീയതി തിരഞ്ഞെടുക്കുക',
+  'Select date': 'തീയതി തിരഞ്ഞെടുക്കുക',
   'Select': 'തിരഞ്ഞെടുക്കുക',
   'Today': 'ഇന്ന്',
   'Closed': 'അടച്ചിരിക്കുന്നു',
@@ -27,12 +28,11 @@ const sanctuaryMalayalam = <String, String>{
   'Available Time Slots': 'ലഭ്യമായ സമയങ്ങൾ',
   'Mins': 'മിനിറ്റ്',
   '● Live': '● തത്സമയം',
-  'Visitors / സന്ദർശകർ': 'സന്ദർശകർ',
+  'Visitors': 'സന്ദർശകർ',
   'Person (Individual)': 'വ്യക്തി',
   'Persons (Family)': 'പേർ (കുടുംബം)',
   'Persons (Group)': 'പേർ (സംഘം)',
-  'Proceed to Instant Verification · തുടരുക':
-      'മൊബൈൽ സ്ഥിരീകരണത്തിലേക്ക് തുടരുക',
+  'Proceed to Instant Verification': 'മൊബൈൽ സ്ഥിരീകരണത്തിലേക്ക് തുടരുക',
   '100% Free Booking · No fees required at any stage':
       'പൂർണ്ണമായും സൗജന്യം · ഒരു ഘട്ടത്തിലും ഫീസ് ഇല്ല',
   'Time passed': 'സമയം കഴിഞ്ഞു',
@@ -43,7 +43,7 @@ const sanctuaryMalayalam = <String, String>{
   'Outside visiting hours': 'സന്ദർശന സമയത്തിന് പുറത്ത്',
   'MEDIA SANCTUARY ARCHIVE': 'മഖാമിന്റെ ദൃശ്യശേഖരം',
   'Sanctified Visual Archive': 'ദൃശ്യാവിഷ്കാരം',
-  'ദൃശ്യാവിഷ്കാരം · Official Visitor Walkthrough & Sanctum Etiquette':
+  'Official Visitor Walkthrough & Sanctum Etiquette':
       'സന്ദർശന മാർഗനിർദേശങ്ങളും മര്യാദകളും',
   'This recording is not available yet.': 'ഈ വീഡിയോ ഇതുവരെ ലഭ്യമല്ല.',
   'Walkthrough · Recording coming soon':
@@ -120,7 +120,7 @@ const sanctuaryMalayalam = <String, String>{
       'ഓരോ കുടുംബത്തിനും തിരക്കില്ലാതെ ദുആയ്ക്കും ആത്മീയ ഉപദേശത്തിനും സമയം ലഭിക്കാൻ നിശ്ചിത സമയക്രമം സഹായിക്കുന്നു. എല്ലാവരുടെയും സമയവും ഭക്തിയും മാനിക്കുന്നു.',
   'Are there any fees or donations required for booking?':
       'ബുക്കിംഗിന് ഫീസോ സംഭാവനയോ ആവശ്യമുണ്ടോ?',
-  'Absolutely not. Visiting Keekkott Maqam and receiving spiritual advice is completely free (സൗജന്യം). The digital pass exists solely for crowd management and orderly pilgrim reception.':
+  'Absolutely not. Visiting Keekkott Maqam and receiving spiritual advice is completely free. The digital pass exists solely for crowd management and orderly pilgrim reception.':
       'ഇല്ല. മഖാം സന്ദർശനവും ആത്മീയ ഉപദേശവും പൂർണ്ണമായും സൗജന്യമാണ്. തിരക്ക് നിയന്ത്രിക്കാനും ക്രമമായ പ്രവേശനത്തിനും മാത്രമാണ് ഡിജിറ്റൽ പാസ്.',
   'Can I bring elderly family members or wheelchairs?':
       'പ്രായമായവരെയും വീൽചെയർ ഉപയോഗിക്കുന്നവരെയും കൊണ്ടുവരാമോ?',
