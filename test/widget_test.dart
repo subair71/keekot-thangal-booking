@@ -21,6 +21,8 @@ import 'package:keekot_thangal/features/my_bookings/data/pass_download.dart';
 
 import 'fixtures.dart';
 
+import 'package:keekot_thangal/core/widgets/sanctuary_mobile_shell.dart';
+
 import 'package:keekot_thangal/core/utils/visit_clock.dart';
 
 final captureKey = GlobalKey();
@@ -35,6 +37,22 @@ Future<void> capturePage(WidgetTester tester, String name) async {
       const AssetImage('assets/brand/maqam-hero.png'),
       context,
     );
+    for (final name in [
+      'hero',
+      'walkthrough',
+      'pass-guide',
+      'etiquette',
+      'dhikr',
+      'arrival',
+      'map',
+    ]) {
+      if (context.mounted) {
+        await precacheImage(
+          AssetImage('assets/brand/stitch/$name.jpg'),
+          context,
+        );
+      }
+    }
     if (context.mounted) {
       await precacheImage(
         const AssetImage('assets/brand/official-logo.png'),
@@ -120,32 +138,68 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byType(NavigationBar),
+        find.byType(width < 768 ? SanctuaryMobileNavigation : NavigationBar),
         width <= 1200 ? findsOneWidget : findsNothing,
       );
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_$width');
-      await tester.ensureVisible(find.text('Videos').first);
-      await tester.tap(find.text('Videos').first);
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      await tester.ensureVisible(find.text('Questions before you visit').last);
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('How do I reserve a visit?'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('follow the steps to verify'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-      await capturePage(tester, 'home_details_$width');
-      await tester.ensureVisible(
-        find.text('All visit times are in India Standard Time.'),
-      );
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      await capturePage(tester, 'home_footer_$width');
-      await tester.ensureVisible(find.text('Plan my visit'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Plan my visit'));
-      await tester.pumpAndSettle();
+      if (width < 768) {
+        for (final section in [
+          'Sanctified Visual Archive',
+          '3 Simple Steps to Visit',
+          'Programmes & Gatherings',
+          'Visiting Etiquette',
+        ]) {
+          await tester.ensureVisible(find.text(section));
+          await tester.pumpAndSettle();
+          await capturePage(
+            tester,
+            'mobile_${width}_${section.split(' ').first}',
+          );
+          expect(tester.takeException(), isNull);
+        }
+        final faq = find.text(
+          'Are there any fees or donations required for booking?',
+        );
+        await tester.ensureVisible(faq);
+        await tester.tap(faq);
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Absolutely not.'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await capturePage(tester, 'home_details_$width');
+        await tester.ensureVisible(find.text('Open in Google Maps'));
+        await tester.pumpAndSettle();
+        await capturePage(tester, 'home_footer_$width');
+        await tester.tap(find.text('Book Slot'));
+        await tester.pumpAndSettle();
+      } else {
+        await tester.ensureVisible(find.text('Videos').first);
+        await tester.tap(find.text('Videos').first);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.ensureVisible(
+          find.text('Questions before you visit').last,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('How do I reserve a visit?'));
+        await tester.pumpAndSettle();
+        expect(
+          find.textContaining('follow the steps to verify'),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+        await capturePage(tester, 'home_details_$width');
+        await tester.ensureVisible(
+          find.text('All visit times are in India Standard Time.'),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await capturePage(tester, 'home_footer_$width');
+        await tester.ensureVisible(find.text('Plan my visit'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Plan my visit'));
+        await tester.pumpAndSettle();
+      }
       expect(find.text('Select your visit'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
@@ -212,7 +266,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     await capturePage(tester, 'home_malayalam_large_text_375');
-    final book = find.text('സന്ദർശനം ബുക്ക് ചെയ്യുക').first;
+    final book = find.text('ബുക്കിംഗ്').first;
     await tester.ensureVisible(book);
     await tester.tap(book);
     await tester.pumpAndSettle();

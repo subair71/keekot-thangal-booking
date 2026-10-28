@@ -46,6 +46,7 @@ class _PassCardState extends ConsumerState<PassCard> {
   Widget build(BuildContext context) {
     final b = widget.booking;
     return SurfaceCard(
+      color: AppColors.ivory,
       borderColor: AppColors.brass,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -122,7 +123,9 @@ class _PassCardState extends ConsumerState<PassCard> {
                   padding: const EdgeInsets.all(12),
                   child: QrImageView(
                     data: b.qrToken,
-                    size: 210,
+                    size: (MediaQuery.sizeOf(context).width - 110)
+                        .clamp(120, 210)
+                        .toDouble(),
                     backgroundColor: AppColors.white,
                     eyeStyle: const QrEyeStyle(
                       eyeShape: QrEyeShape.square,

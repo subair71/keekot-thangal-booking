@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'malayalam.dart';
+import 'sanctuary_malayalam.dart';
 import 'language_storage.dart';
 
 class LanguageRoot extends StatefulWidget {
@@ -44,9 +45,18 @@ String tr(BuildContext context, String text) =>
     AppLanguage.of(context) == 'ml' ? translateMalayalam(text) : text;
 
 String translateMalayalam(String text) {
-  final direct = malayalam[text];
+  final direct = sanctuaryMalayalam[text] ?? malayalam[text];
   if (direct != null) return direct;
   final patterns = <(RegExp, String Function(RegExpMatch))>[
+    (RegExp(r'^(\d+)-Min Slots$'), (m) => '${m[1]} മിനിറ്റ് സമയം'),
+    (
+      RegExp(r'^Select Date & (\d+)-Minute Slot$'),
+      (m) => 'തീയതിയും ${m[1]} മിനിറ്റ് സമയവും തിരഞ്ഞെടുക്കുക',
+    ),
+    (
+      RegExp(r'^Why are visits scheduled in (\d+)-minute slots\?$'),
+      (m) => 'സന്ദർശനം ${m[1]} മിനിറ്റായി നിശ്ചയിക്കുന്നത് എന്തുകൊണ്ട്?',
+    ),
     (
       RegExp(r'^(\d+) available time slots$'),
       (m) => '${m[1]} സമയങ്ങൾ ലഭ്യമാണ്',
@@ -171,7 +181,9 @@ class AppText extends StatelessWidget {
           height: (value?.height ?? 1.5) < 1.6 ? 1.6 : value!.height,
           letterSpacing: 0,
         )
-      : value;
+      : (value ?? const TextStyle()).copyWith(
+          fontFamilyFallback: const ['Noto Sans Malayalam'],
+        );
   InlineSpan translatedSpan(BuildContext context, InlineSpan value) {
     if (value is! TextSpan) return value;
     return TextSpan(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
+  static const canvas = Color(0xFFF4FBF3), primary = Color(0xFF002219);
   static const emerald = Color(0xFF13382D),
-      secondary = Color(0xFF386653),
+      secondary = Color(0xFF396754),
       ivory = Color(0xFFFBF9F5);
   static const white = Color(0xFFFFFFFF),
       cream = Color(0xFFF3EFE6),

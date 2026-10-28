@@ -12,6 +12,18 @@ import 'fixtures.dart';
 
 void main() {
   setUpAll(() async {
+    for (final font in {
+      'Playfair Display': 'PlayfairDisplay.ttf',
+      'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
+    }.entries) {
+      final loader = FontLoader(font.key)
+        ..addFont(rootBundle.load('assets/fonts/${font.value}'));
+      await loader.load();
+    }
+  });
+
+  setUpAll(() async {
     final font = FontLoader('Noto Sans Malayalam')
       ..addFont(rootBundle.load('assets/fonts/NotoSansMalayalam.ttf'));
     await font.load();
@@ -56,7 +68,9 @@ void main() {
         const Locale('ml'),
       );
       expect(tester.takeException(), isNull);
-      final booking = find.text('സന്ദർശനം ബുക്ക് ചെയ്യുക').first;
+      final booking = find
+          .text(width < 768 ? 'ബുക്കിംഗ്' : 'സന്ദർശനം ബുക്ക് ചെയ്യുക')
+          .first;
       await tester.ensureVisible(booking);
       await tester.tap(booking);
       await tester.pumpAndSettle();
