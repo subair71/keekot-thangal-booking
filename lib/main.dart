@@ -59,8 +59,9 @@ Future<void> main() async {
         throw StateError('App Check configuration is required');
       }
       await FirebaseAppCheck.instance.activate(
-        providerWeb: ReCaptchaV3Provider(config.appCheckKey),
+        providerWeb: ReCaptchaEnterpriseProvider(config.appCheckKey),
       );
+      await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
       await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(
         config.analytics,
       );
