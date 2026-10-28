@@ -23,6 +23,8 @@ export async function readTokenSequence(db: Firestore, tx: Transaction, slotId: 
   let nextToken = 1;
   for (const booking of ordered) {
     const b = booking.data();
+    // New schedule tokens do not participate in the legacy visitor counter.
+    if (b.tokenScheme === 'time-slot-v1') continue;
     if (!Number.isSafeInteger(b.visitorCount) || b.visitorCount < 1) throw new DomainError('failed-precondition', 'Visitor count needs administrator review.');
     if (b.tokenStart != null || b.tokenEnd != null) {
       // Never silently renumber an issued pass if a counter was removed.

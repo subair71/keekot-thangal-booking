@@ -140,17 +140,20 @@ See `docs/design-review.md`, `docs/architecture.md` and `docs/validation.md` for
 
 ### Visitor token numbers
 
-Each date/time slot has its own sequence starting at 1. Tokens are assigned per
-visitor when confirmation commits, not when a temporary hold is created. Group
-bookings receive a consecutive range. Cancellation never reuses or renumbers
-issued tokens. The server-only `slotTokenCounters` collection is updated in the
-same Firestore transaction as the booking, so concurrent bookings cannot collide.
+New bookings use the scheduled time-slot number, starting at 1 from that date's
+opening time. For 12-minute slots starting at 09:00, 09:00–09:12 is token 1,
+09:12–09:24 is token 2, and 09:24–09:36 is token 3. Custom date hours determine
+the opening time for that date. Unbooked or blocked earlier slots still count.
 
-Bookings made before this feature are assigned tokens in `createdAt` order
-(document ID breaks exact timestamp ties), including cancelled records, when a
-pass is opened, staff validate it, the daily report is exported, or the slot gets
-its next booking. Existing QR credentials remain unchanged. Until the backend is
-deployed, passes and exports remain available and say “Not assigned yet”.
+Every booking and visitor group in the same slot shares its token number. Visitor
+counts, booking references and QR credentials remain separate. The server stores
+the number on confirmation and copies it to the public pass, so booking order,
+cancellations and capacity do not alter the token assigned to that time slot.
+Issued passes retain their saved numbers if hours are changed later.
+
+Existing passes retain their issued visitor-sequence tokens. Missing legacy tokens
+are still backfilled using the legacy counter; new `time-slot-v1` bookings are
+excluded from that counter. No existing booking or public pass is renumbered.
 
 Deploy the backend before relying on token numbers in production:
 

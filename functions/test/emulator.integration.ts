@@ -151,8 +151,13 @@ test('Firestore transactions and rules',async t=>{
     const bookings=await Promise.all(successful.map(x=>service.createBooking(x.a,x.h.holdId,'Test Visitor','  12 Test Street, Chavakkad  ')));bookingId=bookings[0].bookingId;
     const slot=await db.doc(`visitSlots/${day}_0700`).get();assert.equal(slot.data()!.occupancy,3);
     const records=await Promise.all(bookings.map(b=>db.doc(`bookings/${b.bookingId}`).get()));
-    assert.deepEqual(records.map(b=>b.data()!.tokenStart).sort((a,b)=>a-b),[1,2,3]);
+    assert.deepEqual(records.map(b=>b.data()!.tokenStart).sort((a,b)=>a-b),[1,1,1]);
     assert.ok(records.every(b=>b.data()!.tokenStart===b.data()!.tokenEnd));
+    for(const record of records){
+      const b=record.data()!;assert.equal(b.tokenScheme,'time-slot-v1');
+      const pass=(await db.doc(`publicPasses/${b.passViewToken}`).get()).data()!;
+      assert.equal(pass.tokenStart,b.tokenStart);assert.equal(pass.tokenEnd,b.tokenEnd);
+    }
   });
   await t.test('address is trimmed and stored with the booking',async()=>{
     assert.equal((await db.doc(`bookings/${bookingId}`).get()).data()!.visitorAddress,'12 Test Street, Chavakkad');
@@ -166,29 +171,29 @@ test('Firestore transactions and rules',async t=>{
     await queueNotice(db,bookingId,'confirmed',(await db.doc(`bookings/${bookingId}`).get()).data()!);
     assert.equal((await db.collection('notifications').where('bookingId','==',bookingId).where('kind','==','confirmed').get()).size,1);
     assert.equal((await db.doc(`visitSlots/${day}_0700`).get()).data()!.occupancy,3);
-    assert.equal((await db.doc(`slotTokenCounters/${day}_0700`).get()).data()!.nextToken,4);
+    assert.equal((await db.doc(`slotTokenCounters/${day}_0700`).get()).exists,false);
   });
   await t.test('cross-user cancellation fails; simultaneous retries restore capacity once',async()=>{
     await assert.rejects(()=>service.cancelBooking(actor(999),bookingId,'Test'));
     await Promise.all([service.cancelBooking(owner,bookingId,'Changed plans'),service.cancelBooking(owner,bookingId,'Retry')]);
     assert.equal((await db.doc(`visitSlots/${day}_0700`).get()).data()!.occupancy,2);
   });
-  await t.test('cancelled tokens are not reused',async()=>{
+  await t.test('a cancellation does not change the time-slot token',async()=>{
     const h=await hold(30);const r=await service.createBooking(actor(30),h.holdId,'Later Visitor');
     const b=(await db.doc(`bookings/${r.bookingId}`).get()).data()!;
-    assert.equal(b.tokenStart,4);assert.equal(b.tokenEnd,4);
+    assert.equal(b.tokenStart,1);assert.equal(b.tokenEnd,1);
   });
-  await t.test('groups get consecutive individual tokens; every slot starts at one',async()=>{
+  await t.test('groups and separate bookings share their slot token; numbering resets each day',async()=>{
     const h=await hold(31,5,2);const r=await service.createBooking(actor(31),h.holdId,'Group Visitor');
     const b=(await db.doc(`bookings/${r.bookingId}`).get()).data()!;
-    assert.equal(b.tokenStart,1);assert.equal(b.tokenEnd,2);
+    assert.equal(b.tokenStart,6);assert.equal(b.tokenEnd,6);
     const next=await hold(32,5,1);const r2=await service.createBooking(actor(32),next.holdId,'Next Visitor');
-    assert.equal((await db.doc(`bookings/${r2.bookingId}`).get()).data()!.tokenStart,3);
+    assert.equal((await db.doc(`bookings/${r2.bookingId}`).get()).data()!.tokenStart,6);
     const tomorrow='2030-01-11';const another=await service.createHold(actor(33),{visitDate:tomorrow,slotId:`${tomorrow}_0700`,visitorCount:1,requestId:'tomorrow-request-1234567890'});
     const r3=await service.createBooking(actor(33),another.holdId,'Tomorrow Visitor');
     assert.equal((await db.doc(`bookings/${r3.bookingId}`).get()).data()!.tokenStart,1);
   });
-  await t.test('legacy bookings backfill by booking time safely alongside new confirmations',async()=>{
+  await t.test('issued legacy tokens stay independent of new timing tokens',async()=>{
     const slotId=`${day}_1000`;
     await db.doc('bookings/legacy-later').set({userId:actor(34).uid,slotId,visitorCount:1,status:'cancelled',createdAt:Timestamp.fromMillis(2000)});
     await db.doc('bookings/legacy-first').set({userId:actor(34).uid,slotId,visitorCount:2,status:'cancelled',createdAt:Timestamp.fromMillis(1000)});
@@ -197,7 +202,7 @@ test('Firestore transactions and rules',async t=>{
     const [tokens,r]=await Promise.all([service.ensureBookingTokens(actor(34),'legacy-first'),service.createBooking(actor(35),h.holdId,'New Visitor')]);
     assert.deepEqual(tokens,{tokenStart:1,tokenEnd:2});
     assert.deepEqual(await service.ensureBookingTokens(actor(34),'legacy-later'),{tokenStart:3,tokenEnd:3});
-    assert.equal((await db.doc(`bookings/${r.bookingId}`).get()).data()!.tokenStart,4);
+    assert.equal((await db.doc(`bookings/${r.bookingId}`).get()).data()!.tokenStart,7);
     assert.deepEqual(await service.ensureBookingTokens(actor(34),'legacy-first'),tokens);
   });
   await t.test('expired hold disappears without scheduler and cannot confirm',async()=>{
