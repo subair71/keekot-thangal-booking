@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import 'mobile_quick_booking.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -13,8 +16,13 @@ import '../../booking/domain/booking_models.dart';
 /// A presentation of the same live availability and draft used by /book.
 /// Authentication, holds and all booking enforcement remain in confirmation.
 class QuickBookingCard extends ConsumerStatefulWidget {
-  const QuickBookingCard({super.key, required this.config});
+  const QuickBookingCard({
+    super.key,
+    required this.config,
+    this.mobileDesign = false,
+  });
   final BookingConfiguration config;
+  final bool mobileDesign;
 
   @override
   ConsumerState<QuickBookingCard> createState() => _QuickBookingCardState();
@@ -27,6 +35,7 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
   @override
   Widget build(BuildContext context) {
     final config = widget.config;
+    if (widget.mobileDesign) return MobileQuickBooking(config: config);
     final dates = config.dates();
     if (!config.bookingEnabled || dates.isEmpty) {
       return const EmptyState(

@@ -80,7 +80,10 @@ class _ConfirmationPageState extends ConsumerState<ConfirmationPage> {
   }
 
   Future<void> submit() async {
-    if (hold == null || remaining == 0 || !form.currentState!.validate()) {
+    if (busy ||
+        hold == null ||
+        remaining == 0 ||
+        !form.currentState!.validate()) {
       return;
     }
     setState(() {

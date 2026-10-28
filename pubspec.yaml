@@ -41,6 +41,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/brand/
+    - assets/brand/stitch/
   fonts:
     - family: Playfair Display
       fonts:

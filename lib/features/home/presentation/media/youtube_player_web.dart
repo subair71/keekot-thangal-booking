@@ -7,11 +7,13 @@ Widget youtubePlayer(
   bool controls = true,
   bool loop = false,
   bool mute = false,
+  int startSeconds = 0,
 }) => HtmlElementView.fromTagName(
   tagName: 'iframe',
   onElementCreated: (element) {
     final frame = element as web.HTMLIFrameElement;
     final params = <String>[
+      if (startSeconds > 0) 'start=$startSeconds',
       if (autoplay) 'autoplay=1',
       if (mute || (!controls && autoplay)) 'mute=1',
       if (!controls) ...['controls=0', 'disablekb=1', 'fs=0'],

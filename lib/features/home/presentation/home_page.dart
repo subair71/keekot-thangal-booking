@@ -8,6 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import 'quick_booking_card.dart';
+import 'mobile_sanctuary_home.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
 import 'home_footer.dart';
@@ -67,6 +68,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.sizeOf(context).width < 768) {
+      return MobileSanctuaryHome(section: widget.section);
+    }
     final config = ref.watch(configurationProvider);
     return PageContainer(
       width: 1280,
