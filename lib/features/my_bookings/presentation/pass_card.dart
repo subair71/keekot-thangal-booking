@@ -89,6 +89,12 @@ class _PassCardState extends ConsumerState<PassCard> {
           ),
           const SizedBox(height: 22),
           InfoLine(
+            Icons.confirmation_number_outlined,
+            'Token number: ${b.tokenLabel}',
+            'For your scheduled visit time',
+          ),
+          const SizedBox(height: 22),
+          InfoLine(
             Icons.person_outline,
             b.visitorName,
             '${b.visitors} ${b.visitors == 1 ? 'visitor' : 'visitors'}',

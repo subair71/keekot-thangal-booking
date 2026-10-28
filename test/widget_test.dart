@@ -326,8 +326,7 @@ void main() {
       ),
     );
     expect(find.text('Download pass (PDF)'), findsOneWidget);
-    expect(find.text('TOKEN NUMBERS'), findsNothing);
-    expect(find.text('1–2'), findsNothing);
+    expect(find.text('Token number: 1–2'), findsOneWidget);
     expect(find.text('Show this pass to entry staff'), findsOneWidget);
     expect(
       find.text('Booking reference: ${sampleBooking().reference}'),
