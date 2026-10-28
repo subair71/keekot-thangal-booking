@@ -1,5 +1,10 @@
 /// Mobile Sanctuary Heritage editorial and interaction copy.
 const sanctuaryMalayalam = <String, String>{
+  'Full-length videos from Keekkott Bungalow Online':
+      'കീക്കോട്ട് ബംഗ്ലാവ് ഓൺലൈനിൽ നിന്നുള്ള പൂർണ്ണ വീഡിയോകൾ',
+  'Full-length recordings': 'പൂർണ്ണ വീഡിയോകൾ',
+  'YouTube · Full video': 'YouTube · പൂർണ്ണ വീഡിയോ',
+  'No recordings available yet.': 'വീഡിയോകൾ ഇതുവരെ ലഭ്യമല്ല.',
   'Free entry': 'സൗജന്യ പ്രവേശനം',
   'KEEKKOTT MAQAM': 'കീക്കോട്ട് മഖാം',
   'Sanctuary Home': 'മഖാം ഹോം',

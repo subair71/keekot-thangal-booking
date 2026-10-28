@@ -1,14 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Editorial content supplied by the Stitch reference. Keep media IDs empty
-/// until the corresponding recording (and its chapter timestamps) is verified.
+/// Editorial programme and contact content supplied by the Stitch reference.
 /// This provider can be overridden by a CMS without changing the mobile UI.
 final sanctuaryContentProvider = Provider((ref) => const SanctuaryContent());
 
 class SanctuaryContent {
   const SanctuaryContent({
-    this.walkthroughId = '',
-    this.guideIds = const ['', '', '', ''],
     this.programmes = const [
       (
         'Weekly Majlis',
@@ -36,7 +33,6 @@ class SanctuaryContent {
         'Khadim Desk Assistance available daily 8:30 AM – 8:30 PM',
     this.email = 'keekkottbungalowonline@gmail.com',
   });
-  final String walkthroughId, assistanceHours, email;
-  final List<String> guideIds;
+  final String assistanceHours, email;
   final List<(String, String, String, String, String)> programmes;
 }
