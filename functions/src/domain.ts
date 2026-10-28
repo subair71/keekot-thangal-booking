@@ -94,6 +94,15 @@ export function generateSlots(day: string, c: BookingSettings): Slot[] {
 export function activeHolds(holds: HoldMap, now: number): HoldMap {
   return Object.fromEntries(Object.entries(holds).filter(([, h]) => h.expiresAt > now));
 }
+
+// The token identifies the visit's scheduled time, independently of booking
+// order, visitor count, capacity, cancellations, or gaps in availability.
+export function timeSlotToken(slot: Pick<Slot, 'visitDate' | 'slotId' | 'startTime' | 'endTime'>, c: BookingSettings): number {
+  const schedule = generateSlots(slot.visitDate, c);
+  const index = schedule.findIndex(s => s.slotId === slot.slotId && s.startTime === slot.startTime && s.endTime === slot.endTime);
+  if (index < 0) throw new DomainError('failed-precondition', 'This time slot has changed. Please refresh and choose a slot again.');
+  return index + 1;
+}
 export const heldCount = (holds: HoldMap) => Object.values(holds).reduce((sum, h) => sum+h.visitorCount, 0);
 export function requireCapacity(slot: Slot, holds: HoldMap, count: number, now: number): void {
   if (slot.blocked || slot.startAt <= now) throw new DomainError('failed-precondition', slot.blocked ? (slot.blockReason || 'This slot is blocked.') : 'This slot has already started.');

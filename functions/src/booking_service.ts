@@ -2,7 +2,7 @@ import {noticeData} from './notifications.js';
 import {readTokenSequence, writeLegacyTokens} from './visitor_tokens.js';
 import {Actor, assertCanBook, bookingIdentity} from './booking_identity.js';
 import {Firestore, FieldValue, Timestamp, Transaction} from 'firebase-admin/firestore';
-import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, tokenHash, validDate, validateDay} from './domain.js';
+import {activeHolds, addDays, BookingSettings, dateKey, DomainError, generateSlots, HoldMap, integer, makeToken, maskPhone, publicSlot, referenceFor, requireCapacity, settingsFrom, Slot, textValue, timeSlotToken, tokenHash, validDate, validateDay} from './domain.js';
 
 export type {Actor} from './booking_identity.js';
 export class BookingService {
@@ -111,25 +111,23 @@ export class BookingService {
       if(!holds[holdId]) throw new DomainError('failed-precondition','Your hold has expired.');
       delete holds[holdId]; requireCapacity(slot,holds,hold.visitorCount,now);
       const daily=await this.dailyBookings(tx,actor,slot.visitDate,identity.visitorPhone);
-      const sequence=await readTokenSequence(this.db,tx,slot.slotId);
-      const tokenStart=sequence.nextToken, tokenEnd=tokenStart+hold.visitorCount-1;
+      const tokenStart=timeSlotToken(slot,c), tokenEnd=tokenStart;
+      const tokenScheme='time-slot-v1';
       const bookingReference=referenceFor(hold.visitDate);
       const passViewToken=makeToken();
       // userId remains the access owner/creator; an entered phone never grants
       // ownership to a different Firebase account.
       const booking={bookingId:bookingRef.id,bookingReference,userId:actor.uid,...identity,visitorName,visitorAddress:address,phoneNumberMasked:maskPhone(identity.visitorPhone),
         visitDate:slot.visitDate,slotId:slot.slotId,startTime:slot.startTime,endTime:slot.endTime,startAt:slot.startAt,endAt:slot.endAt,
-        timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
+        timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,tokenScheme,status:'confirmed',qrToken,qrTokenHash:tokenHash(qrToken),
         passViewToken,
         reminderAt:slot.startAt-c.reminderMinutes*60_000,reminderQueued:false,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()};
-      writeLegacyTokens(tx,sequence.assignments);
-      tx.set(sequence.counter,{nextToken:tokenEnd+1});
       tx.set(daily.ref,{count:daily.count+1,visitDate:slot.visitDate,updatedAt:FieldValue.serverTimestamp()});
       tx.create(bookingRef,booking);
       tx.create(this.db.doc(`publicPasses/${passViewToken}`),{
         bookingId:bookingRef.id,bookingReference,visitorName,visitorAddress:address,visitorPhone:identity.visitorPhone,
         visitDate:slot.visitDate,slotId:slot.slotId,startTime:slot.startTime,endTime:slot.endTime,startAt:slot.startAt,endAt:slot.endAt,
-        timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,status:'confirmed',qrToken,passViewToken,
+        timezone:c.timezone,visitorCount:hold.visitorCount,tokenStart,tokenEnd,tokenScheme,status:'confirmed',qrToken,passViewToken,
         createdAt:FieldValue.serverTimestamp()
       });
       tx.create(this.db.doc(`notifications/${bookingRef.id}_confirmed`),noticeData(bookingRef.id,'confirmed',booking));

@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {activeHolds, BookingSettings, dateKey, generateSlots, makeToken, referenceFor, requireCapacity, settingsFrom, tokenHash, validDate, validateDay} from '../src/domain.js';
+import {activeHolds, BookingSettings, dateKey, generateSlots, makeToken, referenceFor, requireCapacity, settingsFrom, timeSlotToken, tokenHash, validDate, validateDay} from '../src/domain.js';
 export const settings: BookingSettings={timezone:'Asia/Kolkata',openingTime:'07:00',closingTime:'19:00',slotDurationMinutes:30,bookingWindowDays:7,
   allowSameDayBooking:true,maxVisitorsPerBooking:3,defaultSlotCapacity:3,bookingEnabled:true,reminderEnabled:true,reminderMinutes:60,arrivalMinutes:10,
   environment:'development',locationUrl:'',contactPhone:''};
@@ -72,4 +72,23 @@ test('date hours reject reversed, malformed and incomplete slot periods',()=>{
     assert.throws(()=>generateSlots('2030-01-16',{...settings,dateHours:{'2030-01-16':hours}}));
   const slots=generateSlots('2030-01-16',{...settings,slotDurationMinutes:12,dateHours:{'2030-01-16':{openingTime:'08:00',closingTime:'17:00'}}});
   assert.equal(slots.length,45);assert.equal(slots.at(-1)!.endTime,'17:00');
+});
+
+
+test('12-minute time tokens follow the schedule, not confirmation order',()=>{
+  const c={...settings,openingTime:'09:00',closingTime:'20:00',slotDurationMinutes:12};
+  const slots=generateSlots('2030-01-10',c);
+  assert.equal(timeSlotToken(slots[2],c),3);
+  assert.equal(timeSlotToken(slots[0],c),1);
+  assert.equal(timeSlotToken(slots[1],c),2);
+  assert.equal(timeSlotToken({...slots[2],blocked:true,occupancy:3} as typeof slots[number],c),3);
+  assert.equal(timeSlotToken(slots.at(-1)!,c),55);
+  assert.throws(()=>timeSlotToken({...slots[2],endTime:'09:48'},c));
+});
+test('a date-specific opening time starts token numbering at one',()=>{
+  const c={...settings,openingTime:'09:00',closingTime:'20:00',slotDurationMinutes:12,
+    dateHours:{'2030-01-11':{openingTime:'10:00',closingTime:'20:00'}}};
+  const custom=generateSlots('2030-01-11',c), standard=generateSlots('2030-01-10',c);
+  assert.equal(custom[0].startTime,'10:00');assert.equal(timeSlotToken(custom[0],c),1);
+  assert.equal(timeSlotToken(custom[2],c),3);assert.equal(timeSlotToken(standard[5],c),6);
 });
