@@ -303,7 +303,8 @@ class AppText extends StatelessWidget {
 
 /// Compact header control; retains the existing persisted language setting.
 class HeaderLanguageToggle extends StatelessWidget {
-  const HeaderLanguageToggle({super.key});
+  const HeaderLanguageToggle({super.key, this.compact = false});
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -316,9 +317,12 @@ class HeaderLanguageToggle extends StatelessWidget {
         key: const ValueKey('language-toggle'),
         onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
         style: TextButton.styleFrom(
-          minimumSize: const Size(88, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          tapTargetSize: MaterialTapTargetSize.padded,
+          minimumSize: Size(compact ? 44 : 64, 44),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 2 : 8,
+            vertical: 4,
+          ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           backgroundColor: colors.primary.withValues(alpha: 0.06),
           shape: const StadiumBorder(),
         ),
@@ -328,20 +332,27 @@ class HeaderLanguageToggle extends StatelessWidget {
             Text(
               'EN',
               style: TextStyle(
-                fontSize: 11,
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: compact ? 10 : 11,
                 fontWeight: ml ? FontWeight.w400 : FontWeight.w700,
                 color: ml ? colors.onSurfaceVariant : colors.primary,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Text('|', style: TextStyle(color: colors.outline)),
+              padding: EdgeInsets.symmetric(horizontal: compact ? 2 : 5),
+              child: Text(
+                '/',
+                style: TextStyle(
+                  fontSize: compact ? 10 : 11,
+                  color: colors.outline,
+                ),
+              ),
             ),
             Text(
-              'മലയാളം',
+              'MA',
               style: TextStyle(
-                fontFamily: 'Noto Sans Malayalam',
-                fontSize: 11,
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: compact ? 10 : 11,
                 fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
                 color: ml ? colors.primary : colors.onSurfaceVariant,
               ),

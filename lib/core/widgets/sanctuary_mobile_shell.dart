@@ -8,6 +8,7 @@ import '../../app/bootstrap/providers.dart';
 import '../../app/theme/app_theme.dart';
 import '../localization/app_language.dart';
 import '../utils/visit_clock.dart';
+import 'sanctuary_navigation_drawer.dart';
 
 class SanctuaryMobileHeader extends ConsumerWidget {
   const SanctuaryMobileHeader({super.key, this.keyboardOpen = false});
@@ -22,11 +23,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             children: [
-              IconButton(
-                tooltip: tr(context, 'Menu'),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-                icon: const Icon(Icons.menu),
-              ),
+              const SanctuaryMenuButton(),
               const Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -40,11 +37,10 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                         fontFamily: 'Playfair Display',
                       ),
                     ),
-                    _MaqamSubtitle(),
                   ],
                 ),
               ),
-              const _LanguageToggle(),
+              const HeaderLanguageToggle(compact: true),
             ],
           ),
         ),
@@ -64,13 +60,14 @@ class SanctuaryMobileHeader extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const _MaqamSubtitle(),
+        if (!ml && MediaQuery.textScalerOf(context).scale(1) <= 1.3)
+          const _MaqamSubtitle(),
       ],
     );
     final controls = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const _LanguageToggle(),
+        const HeaderLanguageToggle(compact: true),
         IconButton(
           constraints: const BoxConstraints.tightFor(width: 44, height: 44),
           padding: EdgeInsets.zero,
@@ -111,17 +108,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
                   ),
                   child: Row(
                     children: [
-                      IconButton(
-                        key: const ValueKey('header-menu'),
-                        constraints: const BoxConstraints.tightFor(
-                          width: 44,
-                          height: 44,
-                        ),
-                        padding: EdgeInsets.zero,
-                        tooltip: ml ? 'മെനു' : 'Menu',
-                        onPressed: () => Scaffold.of(context).openDrawer(),
-                        icon: const Icon(Icons.menu, size: 20),
-                      ),
+                      const SanctuaryMenuButton(),
                       Expanded(child: identity),
                       controls,
                     ],
@@ -151,60 +138,6 @@ class _MaqamSubtitle extends StatelessWidget {
       color: AppColors.muted,
     ),
   );
-}
-
-class _LanguageToggle extends StatelessWidget {
-  const _LanguageToggle();
-
-  @override
-  Widget build(BuildContext context) {
-    final ml = AppLanguage.of(context) == 'ml';
-    return Semantics(
-      toggled: ml,
-      label: ml ? 'Switch to English' : 'മലയാളത്തിലേക്ക് മാറ്റുക',
-      child: TextButton(
-        key: const ValueKey('language-toggle'),
-        onPressed: () => AppLanguage.select(context, ml ? 'en' : 'ml'),
-        style: TextButton.styleFrom(
-          minimumSize: const Size(44, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: const StadiumBorder(),
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-          decoration: BoxDecoration(
-            color: AppColors.disabled,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'EN',
-                  style: TextStyle(
-                    fontWeight: ml ? FontWeight.w400 : FontWeight.w700,
-                  ),
-                ),
-                const TextSpan(text: ' / '),
-                TextSpan(
-                  text: 'MA',
-                  style: TextStyle(
-                    fontWeight: ml ? FontWeight.w700 : FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontSize: 10,
-              height: 1.4,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _GateStatus extends ConsumerWidget {

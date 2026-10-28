@@ -15,6 +15,14 @@ abstract final class SanctuaryLayout {
       MediaQuery.sizeOf(context).width < mobileBreakpoint;
 }
 
+/// Shared Stitch navigation surfaces for both the desktop and mobile shells.
+abstract final class SanctuaryNavigationColors {
+  static const container = Color(0xFFEEF6ED);
+  static const border = Color(0xFFD5DCD4);
+  static const gold = Color(0xFFCBA135);
+  static const goldLight = Color(0xFFDFBF6B);
+}
+
 /// Scoped to phones. Desktop retains the existing theme and layout.
 ThemeData mobileSanctuaryTheme(ThemeData base) => base.copyWith(
   scaffoldBackgroundColor: AppColors.canvas,
