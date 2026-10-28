@@ -13,6 +13,13 @@ class MaqamVideo {
 }
 
 const maqamVideos = <MaqamVideo>[
+  // The first full-length recording is the home archive's featured video.
+  MaqamVideo(
+    "xrsTvpbTsO0",
+    "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം |കീക്കോട്ട് ബംഗ്ലാവ്",
+    false,
+    englishTitle: "Keekkott Attakoya Thangal Maqam",
+  ),
   MaqamVideo(
     "JYaokXAxFYs",
     "ശൈഖ് അബ്ദുൽ ഖാദർ ജീലാനി (റ) ആണ്ട് നേർച്ച, റബീഉൽ ആഖിർ 11",
@@ -60,12 +67,6 @@ const maqamVideos = <MaqamVideo>[
     "കീക്കോട്ടിന്റെ  സ്നേഹാദരവ്",
     false,
     englishTitle: "A tribute from Keekkott",
-  ),
-  MaqamVideo(
-    "xrsTvpbTsO0",
-    "കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ മഖാം |കീക്കോട്ട് ബംഗ്ലാവ്",
-    false,
-    englishTitle: "Keekkott Attakoya Thangal Maqam",
   ),
   MaqamVideo(
     "mQ9lQkqI2MA",

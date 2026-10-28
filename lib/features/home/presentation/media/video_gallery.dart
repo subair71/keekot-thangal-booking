@@ -54,8 +54,6 @@ class VideoGallery extends StatelessWidget {
         'Watch glimpses of the Maqam, gatherings and moments of remembrance from our YouTube channel.',
       ),
       const SizedBox(height: 32),
-      const _ShortsSection(),
-      const SizedBox(height: 32),
       _heading(context, 'Videos', 'Watch, reflect and reconnect'),
       const SizedBox(height: 16),
       if (SanctuaryLayout.mobile(context))
@@ -75,6 +73,8 @@ class VideoGallery extends StatelessWidget {
             );
           },
         ),
+      const SizedBox(height: 32),
+      const _ShortsSection(),
     ],
   );
 
