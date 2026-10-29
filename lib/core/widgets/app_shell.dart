@@ -199,10 +199,10 @@ class AppShell extends ConsumerWidget {
           ? Column(
               children: [
                 SanctuaryMobileHeader(keyboardOpen: keyboardOpen),
-                Expanded(child: child),
+                Expanded(child: RepaintBoundary(child: child)),
               ],
             )
-          : child,
+          : RepaintBoundary(child: child),
       bottomNavigationBar: keyboardOpen && mobile
           ? null
           : mobile
