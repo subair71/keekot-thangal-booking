@@ -27,6 +27,9 @@ class _ProgrammeCarouselState extends State<ProgrammeCarousel> {
   void initState() {
     super.initState();
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+      final lifecycle = WidgetsBinding.instance.lifecycleState;
+      if (lifecycle != null && lifecycle != AppLifecycleState.resumed) return;
+      if (!TickerMode.valuesOf(context).enabled) return;
       if (_hovering || _touching || _reduceMotion) return;
       if (!_controller.hasClients) return;
       final position = _controller.position;

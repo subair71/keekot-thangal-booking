@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -90,10 +88,9 @@ class SanctuaryMobileHeader extends ConsumerWidget {
       ],
     );
     return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+      child: RepaintBoundary(
         child: ColoredBox(
-          color: AppColors.canvas.withValues(alpha: .96),
+          color: AppColors.canvas,
           child: SafeArea(
             bottom: false,
             child: Column(
@@ -229,11 +226,10 @@ class SanctuaryMobileNavigation extends ConsumerWidget {
     final index = destinations.indexWhere((item) => item.$1 == selectedRoute);
     // Natural-height cells allow Malayalam and accessibility text to wrap.
     return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+      child: RepaintBoundary(
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.canvas.withValues(alpha: .96),
+            color: AppColors.canvas,
             border: const Border(top: BorderSide(color: AppColors.outline)),
             boxShadow: [
               BoxShadow(

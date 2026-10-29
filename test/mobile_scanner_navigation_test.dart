@@ -12,7 +12,12 @@ void main() {
     const AppUser('visitor', ''),
     const AppUser('admin', '', admin: true),
     const AppUser('khadim', '', khadim: true),
-    const AppUser('booking-khadim', '', khadim: true, permissions: ['bookings']),
+    const AppUser(
+      'booking-khadim',
+      '',
+      khadim: true,
+      permissions: ['bookings'],
+    ),
     const AppUser('scanner-khadim', '', khadim: true, permissions: ['gate']),
     const AppUser('gate-khadim', '', khadim: true, gate: true),
   ]) {
@@ -53,8 +58,7 @@ void main() {
         const ValueKey('bottom-navigation-/admin/gate'),
       );
       final allowed =
-          user?.admin == true ||
-          (user?.khadim == true && user!.can('gate'));
+          user != null && (user.admin || (user.khadim && user.can('gate')));
       expect(scanner, allowed ? findsOneWidget : findsNothing);
       if (allowed) {
         expect(tester.getCenter(scanner).dx, closeTo(187.5, 1));
