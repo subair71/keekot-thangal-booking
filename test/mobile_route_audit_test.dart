@@ -9,6 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/app/router/app_router.dart';
 import 'package:keekot_thangal/app/theme/app_theme.dart';
+import 'package:keekot_thangal/app/theme/mobile_text_scaler.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:keekot_thangal/features/admin/domain/admin_repository.dart';
 import 'package:keekot_thangal/features/admin/presentation/khadim_page.dart';
@@ -155,9 +156,12 @@ Future<ProviderContainer> auditApp(
                 ),
                 routerConfig: ref.watch(routerProvider),
                 builder: (context, child) => MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: TextScaler.linear(scale)),
+                  data: mobileEnglishTypography(
+                    MediaQuery.of(
+                      context,
+                    ).copyWith(textScaler: TextScaler.linear(scale)),
+                    ml ? 'ml' : 'en',
+                  ),
                   child: Column(
                     children: [
                       const Material(

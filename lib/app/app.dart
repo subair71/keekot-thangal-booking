@@ -8,6 +8,7 @@ import '../core/config/app_config.dart';
 import 'router/app_router.dart';
 import 'bootstrap/providers.dart';
 import 'theme/app_theme.dart';
+import 'theme/mobile_text_scaler.dart';
 
 class KeekotApp extends ConsumerWidget {
   const KeekotApp({super.key});
@@ -43,12 +44,19 @@ class KeekotApp extends ConsumerWidget {
           routerConfig: ref.watch(routerProvider),
           builder: (context, child) {
             final config = ref.watch(appConfigProvider);
-            final content = SanctuaryLayout.mobile(context)
+            final themedContent = SanctuaryLayout.mobile(context)
                 ? Theme(
                     data: mobileSanctuaryTheme(Theme.of(context)),
                     child: child!,
                   )
                 : child!;
+            final content = MediaQuery(
+              data: mobileEnglishTypography(
+                MediaQuery.of(context),
+                AppLanguage.of(context),
+              ),
+              child: themedContent,
+            );
             if (config.environment == 'production') return content;
             return Column(
               children: [
