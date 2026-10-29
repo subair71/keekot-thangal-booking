@@ -451,7 +451,8 @@ class _Programmes extends ConsumerWidget {
                     AppText(
                       p.$1,
                       style: _small.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.mintStrong,
                       ),
                     ),
