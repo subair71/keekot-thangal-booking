@@ -203,26 +203,30 @@ class _GateStatus extends ConsumerWidget {
   }
 }
 
-class SanctuaryMobileNavigation extends StatelessWidget {
+class SanctuaryMobileNavigation extends ConsumerWidget {
   const SanctuaryMobileNavigation({super.key});
-  static const routes = [
-    '/',
-    '/book',
-    '/?section=remembrance',
-    '/?section=guide',
-    '/?section=heritage',
-  ];
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).asData?.value;
+    final showScanner =
+        user != null && (user.admin || (user.khadim && user.can('gate')));
+    final destinations = [
+      ('/', 'Home', Icons.temple_buddhist_outlined),
+      ('/book', 'Book Slot', Icons.calendar_month_outlined),
+      if (showScanner)
+        ('/admin/gate', 'Scan visitor pass', Icons.qr_code_scanner),
+      ('/?section=remembrance', 'Remembrance', Icons.auto_stories_outlined),
+      ('/?section=guide', 'Etiquette', Icons.volunteer_activism_outlined),
+    ];
     final uri = GoRouterState.of(context).uri;
-    final index = uri.path.startsWith('/book')
-        ? 1
-        : switch (uri.queryParameters['section']) {
-            'remembrance' => 2,
-            'guide' => 3,
-            'heritage' => 4,
-            _ => uri.path == '/' ? 0 : -1,
-          };
+    final selectedRoute = uri.path.startsWith('/book')
+        ? '/book'
+        : uri.path == '/'
+        ? (['remembrance', 'guide'].contains(uri.queryParameters['section'])
+              ? '/?section=${uri.queryParameters['section']}'
+              : '/')
+        : uri.path;
+    final index = destinations.indexWhere((item) => item.$1 == selectedRoute);
     // Natural-height cells allow Malayalam and accessibility text to wrap.
     return ClipRect(
       child: BackdropFilter(
@@ -245,12 +249,15 @@ class SanctuaryMobileNavigation extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (var i = 0; i < routes.length; i++)
+                  for (var i = 0; i < destinations.length; i++)
                     Expanded(
                       child: Semantics(
                         selected: i == index,
                         child: InkWell(
-                          onTap: () => context.go(routes[i]),
+                          key: ValueKey(
+                            'bottom-navigation-${destinations[i].$1}',
+                          ),
+                          onTap: () => context.go(destinations[i].$1),
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(
                               minHeight: 52,
@@ -265,13 +272,7 @@ class SanctuaryMobileNavigation extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    [
-                                      Icons.temple_buddhist_outlined,
-                                      Icons.calendar_month_outlined,
-                                      Icons.auto_stories_outlined,
-                                      Icons.volunteer_activism_outlined,
-                                      Icons.history_edu_outlined,
-                                    ][i],
+                                    destinations[i].$3,
                                     size: 22,
                                     color: i == index
                                         ? AppColors.primary
@@ -279,13 +280,7 @@ class SanctuaryMobileNavigation extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 4),
                                   AppText(
-                                    [
-                                      'Home',
-                                      'Book Slot',
-                                      'Remembrance',
-                                      'Etiquette',
-                                      'Heritage',
-                                    ][i],
+                                    destinations[i].$2,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 9,
