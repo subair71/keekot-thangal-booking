@@ -243,7 +243,9 @@ class MobileQuickBooking extends ConsumerWidget {
                     builder: (availability) {
                       final slots = availability.closed
                           ? <VisitSlot>[]
-                          : availability.slots;
+                          : availability.slots
+                                .where((s) => s.accepts(count))
+                                .toList();
                       final selected = slots
                           .where(
                             (s) => s.id == state.slotId && s.accepts(count),
@@ -435,7 +437,7 @@ class _Slot extends StatelessWidget {
     final status = switch (slot.status) {
       SlotStatus.full => 'Fully booked',
       SlotStatus.blocked => 'Closed',
-      SlotStatus.past => 'Time passed',
+      SlotStatus.past => '',
       SlotStatus.available =>
         enabled
             ? limited
