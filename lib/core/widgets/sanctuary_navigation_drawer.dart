@@ -46,6 +46,9 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
           },
         );
 
+    Widget loginLink(String label, IconData icon, String route) =>
+        link(label, icon, uri.path == route ? uri.toString() : route);
+
     final entries = <Widget>[
       link('Book a visit', Icons.edit_calendar_outlined, '/book'),
       const SizedBox(height: 8),
@@ -71,17 +74,17 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
       ),
       link('Contact us', Icons.mail_outline, '/contact'),
       if (user == null) ...[
-        link('Visitor login', Icons.login, '/login'),
+        loginLink('Visitor login', Icons.login, '/login'),
         // Staff login links belong only to their dedicated entry pages.
         // Public and signed-in visitor navigation never lists staff logins.
         if (uri.path == '/admin/login')
-          link(
+          loginLink(
             'Admin login',
             Icons.admin_panel_settings_outlined,
             '/admin/login',
           ),
         if (uri.path == '/khadim/login')
-          link('Khadim login', Icons.badge_outlined, '/khadim/login'),
+          loginLink('Khadim login', Icons.badge_outlined, '/khadim/login'),
       ],
       if (user?.staff == true)
         link(
@@ -206,7 +209,9 @@ class SanctuaryLoginButton extends ConsumerWidget {
         : 'Visitor login';
     return TextButton(
       key: const ValueKey('navigation-login'),
-      onPressed: () => context.go(route),
+      onPressed: () {
+        if (path != route) context.go(route);
+      },
       style: TextButton.styleFrom(
         minimumSize: const Size(44, 44),
         foregroundColor: AppColors.emerald,

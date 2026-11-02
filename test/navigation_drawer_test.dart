@@ -278,14 +278,19 @@ void main() {
     );
   }
 
-  for (final route in ['/login', '/admin/login', '/khadim/login']) {
+  for (final (route, label, next) in [
+    ('/login', 'Visitor login', '/book/confirmation'),
+    ('/admin/login', 'Admin login', '/admin/assignments'),
+    ('/khadim/login', 'Khadim login', '/khadim/availability'),
+  ]) {
     testWidgets('login navigation stays scoped to $route', (tester) async {
       await openNavigation(tester, user: null);
       final router = GoRouter.of(
         tester.element(find.byType(SanctuaryNavigationDrawer)),
       );
       await tester.tap(find.byKey(const ValueKey('close-navigation')));
-      router.go(route);
+      final destination = Uri(path: route, queryParameters: {'next': next});
+      router.go(destination.toString());
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('header-menu')));
       await tester.pumpAndSettle();
@@ -301,6 +306,13 @@ void main() {
               : findsNothing,
         );
       }
+      final currentLogin = find.widgetWithText(ListTile, label);
+      await revealNavigation(tester, currentLogin);
+      await tester.tap(currentLogin);
+      await tester.pumpAndSettle();
+      expect(router.routeInformationProvider.value.uri, destination);
+      await tester.tap(find.byKey(const ValueKey('header-menu')));
+      await tester.pumpAndSettle();
       final visitorLogin = find.widgetWithText(ListTile, 'Visitor login');
       await revealNavigation(tester, visitorLogin);
       await tester.tap(visitorLogin);
@@ -322,10 +334,16 @@ void main() {
       await tester.pumpAndSettle();
       for (final entry in [
         ('/', 'Visitor login', '/login'),
-        ('/admin/login', 'Admin login', '/admin/login'),
-        ('/khadim/login', 'Khadim login', '/khadim/login'),
+        ('/login', 'Visitor login', '/book/confirmation'),
+        ('/admin/login', 'Admin login', '/admin/assignments'),
+        ('/khadim/login', 'Khadim login', '/khadim/availability'),
       ]) {
-        router.go(entry.$1);
+        final publicHome = entry.$1 == '/';
+        final location = Uri(
+          path: entry.$1,
+          queryParameters: publicHome ? null : {'next': entry.$3},
+        );
+        router.go(location.toString());
         await tester.pumpAndSettle();
         final login = find.byKey(const ValueKey('navigation-login'));
         expect(login, findsOneWidget);
@@ -333,13 +351,16 @@ void main() {
           find.descendant(of: login, matching: find.text(entry.$2)),
           findsOneWidget,
         );
-        if (entry.$1 == '/') {
+        if (publicHome) {
           expect(find.text('Admin login'), findsNothing);
           expect(find.text('Khadim login'), findsNothing);
         }
         await tester.tap(login);
         await tester.pumpAndSettle();
-        expect(router.routeInformationProvider.value.uri.path, entry.$3);
+        expect(
+          router.routeInformationProvider.value.uri,
+          publicHome ? Uri(path: '/login') : location,
+        );
         expect(tester.takeException(), isNull);
       }
       await tester.pumpWidget(const SizedBox());
