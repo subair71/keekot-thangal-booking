@@ -207,6 +207,7 @@ class SanctuaryLoginButton extends ConsumerWidget {
         : route == '/khadim/login'
         ? 'Khadim login'
         : 'Visitor login';
+    final maxWidth = MediaQuery.sizeOf(context).width / 3;
     return TextButton(
       key: const ValueKey('navigation-login'),
       onPressed: () {
@@ -214,10 +215,15 @@ class SanctuaryLoginButton extends ConsumerWidget {
       },
       style: TextButton.styleFrom(
         minimumSize: const Size(44, 44),
+        maximumSize: Size(maxWidth, double.infinity),
         foregroundColor: AppColors.emerald,
         padding: const EdgeInsets.symmetric(horizontal: 8),
       ),
-      child: AppText(label, style: const TextStyle(fontSize: 12)),
+      child: AppText(
+        label,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 12),
+      ),
     );
   }
 }
