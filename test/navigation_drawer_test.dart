@@ -312,6 +312,40 @@ void main() {
     });
   }
 
+  for (final width in [375.0, 1440.0]) {
+    testWidgets('header login is scoped at width $width', (tester) async {
+      await openNavigation(tester, user: null, width: width);
+      final router = GoRouter.of(
+        tester.element(find.byType(SanctuaryNavigationDrawer)),
+      );
+      await tester.tap(find.byKey(const ValueKey('close-navigation')));
+      await tester.pumpAndSettle();
+      for (final entry in [
+        ('/', 'Visitor login', '/login'),
+        ('/admin/login', 'Admin login', '/admin/login'),
+        ('/khadim/login', 'Khadim login', '/khadim/login'),
+      ]) {
+        router.go(entry.$1);
+        await tester.pumpAndSettle();
+        final login = find.byKey(const ValueKey('navigation-login'));
+        expect(login, findsOneWidget);
+        expect(
+          find.descendant(of: login, matching: find.text(entry.$2)),
+          findsOneWidget,
+        );
+        if (entry.$1 == '/') {
+          expect(find.text('Admin login'), findsNothing);
+          expect(find.text('Khadim login'), findsNothing);
+        }
+        await tester.tap(login);
+        await tester.pumpAndSettle();
+        expect(router.routeInformationProvider.value.uri.path, entry.$3);
+        expect(tester.takeException(), isNull);
+      }
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+
   for (final failCleanup in [false, true]) {
     testWidgets(
       'sign-out clears the draft with notification cleanup failure: $failCleanup',

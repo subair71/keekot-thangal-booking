@@ -14,6 +14,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ml = AppLanguage.of(context) == 'ml';
+    final user = ref.watch(authProvider).asData?.value;
     if (keyboardOpen) {
       return SafeArea(
         bottom: false,
@@ -22,6 +23,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
           child: Row(
             children: [
               const SanctuaryMenuButton(),
+              const SanctuaryLoginButton(),
               const Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -71,20 +73,23 @@ class SanctuaryMobileHeader extends ConsumerWidget {
           onPressed: () => context.go('/my-bookings'),
           icon: const Icon(Icons.confirmation_number_outlined, size: 19),
         ),
-        IconButton(
-          constraints: const BoxConstraints.tightFor(width: 44, height: 44),
-          padding: EdgeInsets.zero,
-          tooltip: tr(context, 'Profile'),
-          onPressed: () {
-            final user = ref.read(authProvider).asData?.value;
-            if (user == null) {
-              context.go('/auth');
-            } else {
-              Scaffold.of(context).openDrawer();
-            }
-          },
-          icon: const Icon(Icons.account_circle, size: 23),
-        ),
+        if (user == null)
+          const SanctuaryLoginButton()
+        else
+          IconButton(
+            constraints: const BoxConstraints.tightFor(width: 44, height: 44),
+            padding: EdgeInsets.zero,
+            tooltip: tr(context, 'Profile'),
+            onPressed: () {
+              final user = ref.read(authProvider).asData?.value;
+              if (user == null) {
+                context.go('/auth');
+              } else {
+                Scaffold.of(context).openDrawer();
+              }
+            },
+            icon: const Icon(Icons.account_circle, size: 23),
+          ),
       ],
     );
     return ClipRect(

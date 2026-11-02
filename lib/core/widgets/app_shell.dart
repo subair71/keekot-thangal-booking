@@ -174,6 +174,7 @@ class AppShell extends ConsumerWidget {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    const SanctuaryLoginButton(),
                                     const SanctuaryMenuButton(),
                                     IconButton(
                                       tooltip: tr(context, 'Notifications'),

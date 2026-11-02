@@ -186,6 +186,37 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
   }
 }
 
+/// Shows staff entry points only within their dedicated login routes.
+class SanctuaryLoginButton extends ConsumerWidget {
+  const SanctuaryLoginButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (ref.watch(authProvider).asData?.value != null) {
+      return const SizedBox.shrink();
+    }
+    final path = GoRouterState.of(context).uri.path;
+    final route = path == '/admin/login' || path == '/khadim/login'
+        ? path
+        : '/login';
+    final label = route == '/admin/login'
+        ? 'Admin login'
+        : route == '/khadim/login'
+        ? 'Khadim login'
+        : 'Visitor login';
+    return TextButton(
+      key: const ValueKey('navigation-login'),
+      onPressed: () => context.go(route),
+      style: TextButton.styleFrom(
+        minimumSize: const Size(44, 44),
+        foregroundColor: AppColors.emerald,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+      child: AppText(label, style: const TextStyle(fontSize: 12)),
+    );
+  }
+}
+
 class SanctuaryMenuButton extends StatelessWidget {
   const SanctuaryMenuButton({super.key});
 
