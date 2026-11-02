@@ -1,5 +1,9 @@
 /// Staff controls use the same language selection as the visitor journey.
 const staffMalayalam = <String, String>{
+  'Visitor login': 'സന്ദർശക ലോഗിൻ',
+  'Admin login': 'അഡ്മിൻ ലോഗിൻ',
+  'Khadim login': 'ഖാദിം ലോഗിൻ',
+  'Khadim dashboard': 'ഖാദിം ഡാഷ്ബോർഡ്',
   'Keekkott Sayyid Attakoya Thangal': 'കീക്കോട്ട് സയ്യിദ് ആറ്റക്കോയ തങ്ങൾ',
   'Online Booking': 'ഓൺലൈൻ ബുക്കിംഗ്',
   'Your account': 'നിങ്ങളുടെ അക്കൗണ്ട്',

@@ -252,10 +252,15 @@ void main() {
         await openNavigation(tester, user: user, active: false, height: 640);
         expect(find.text('Active pass'), findsNothing);
         expect(drawerText('1'), findsNothing);
-        final adminLink = find.widgetWithText(ListTile, 'Administration');
+        final adminLink = find.widgetWithText(
+          ListTile,
+          user?.khadim == true ? 'Khadim dashboard' : 'Administration',
+        );
         if (user?.staff == true) await revealNavigation(tester, adminLink);
         expect(adminLink, user?.staff == true ? findsOneWidget : findsNothing);
-        final signIn = find.widgetWithText(ListTile, 'Sign in with mobile');
+        expect(drawerText('Admin login'), findsNothing);
+        expect(drawerText('Khadim login'), findsNothing);
+        final signIn = find.widgetWithText(ListTile, 'Visitor login');
         if (user == null) await revealNavigation(tester, signIn);
         expect(signIn, user == null ? findsOneWidget : findsNothing);
         await revealNavigation(
@@ -271,6 +276,40 @@ void main() {
         await tester.pumpWidget(const SizedBox());
       },
     );
+  }
+
+  for (final route in ['/login', '/admin/login', '/khadim/login']) {
+    testWidgets('login navigation stays scoped to $route', (tester) async {
+      await openNavigation(tester, user: null);
+      final router = GoRouter.of(
+        tester.element(find.byType(SanctuaryNavigationDrawer)),
+      );
+      await tester.tap(find.byKey(const ValueKey('close-navigation')));
+      router.go(route);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('header-menu')));
+      await tester.pumpAndSettle();
+      for (final entry in [
+        ('Visitor login', '/login'),
+        ('Admin login', '/admin/login'),
+        ('Khadim login', '/khadim/login'),
+      ]) {
+        expect(
+          drawerText(entry.$1),
+          entry.$2 == '/login' || entry.$2 == route
+              ? findsOneWidget
+              : findsNothing,
+        );
+      }
+      final visitorLogin = find.widgetWithText(ListTile, 'Visitor login');
+      await revealNavigation(tester, visitorLogin);
+      await tester.tap(visitorLogin);
+      await tester.pumpAndSettle();
+      expect(router.routeInformationProvider.value.uri.path, '/login');
+      expect(find.byType(Drawer), findsNothing);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    });
   }
 
   for (final failCleanup in [false, true]) {

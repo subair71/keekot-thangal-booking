@@ -70,9 +70,25 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
         badge: unread > 0 ? _NavigationBadge('$unread', dark: true) : null,
       ),
       link('Contact us', Icons.mail_outline, '/contact'),
-      if (user == null) link('Sign in with mobile', Icons.login, '/auth'),
+      if (user == null) ...[
+        link('Visitor login', Icons.login, '/login'),
+        // Staff login links belong only to their dedicated entry pages.
+        // Public and signed-in visitor navigation never lists staff logins.
+        if (uri.path == '/admin/login')
+          link(
+            'Admin login',
+            Icons.admin_panel_settings_outlined,
+            '/admin/login',
+          ),
+        if (uri.path == '/khadim/login')
+          link('Khadim login', Icons.badge_outlined, '/khadim/login'),
+      ],
       if (user?.staff == true)
-        link('Administration', Icons.verified_user_outlined, '/admin'),
+        link(
+          user!.khadim ? 'Khadim dashboard' : 'Administration',
+          Icons.verified_user_outlined,
+          user.staffHome,
+        ),
       if (user?.gate == true && user?.admin != true)
         link('Validate visitor pass', Icons.qr_code_scanner, '/admin/gate'),
       if (user != null) ...[
