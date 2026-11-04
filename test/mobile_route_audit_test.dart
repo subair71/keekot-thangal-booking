@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:keekot_thangal/features/admin/data/slot_closures.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -114,6 +116,9 @@ Future<ProviderContainer> auditApp(
             FakeBookings(items: [sampleBooking(visitorName: 'DEMO · Ameen')]),
           ),
           adminRepositoryProvider.overrideWithValue(AuditAdmin()),
+          adminSlotBlocksProvider.overrideWith(
+            (ref, day) => Stream.value(<String, String>{}),
+          ),
           notificationRepositoryProvider.overrideWithValue(
             AuditNotifications(),
           ),

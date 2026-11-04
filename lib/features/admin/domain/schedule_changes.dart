@@ -1,5 +1,15 @@
 import '../../booking/domain/booking_models.dart';
 
+/// Match booking expiry: a slot is past as soon as its start time is reached.
+List<VisitSlot> upcomingScheduleSlots(
+  String day,
+  BookingConfiguration config,
+  int now,
+) => const SlotGenerator()
+    .generate(day, config)
+    .where((slot) => slot.startAt > now)
+    .toList();
+
 /// Group adjacent slots, without including unselected gaps.
 List<Map<String, dynamic>> scheduleChanges({
   required Set<String> dates,
