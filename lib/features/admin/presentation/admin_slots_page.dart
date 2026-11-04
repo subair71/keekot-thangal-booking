@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../core/localization/app_language.dart';
 import 'admin_date_hours.dart';
 
@@ -9,6 +11,7 @@ import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../booking/domain/booking_models.dart';
 import '../domain/schedule_changes.dart';
+import '../data/slot_closures.dart';
 
 class AdminSlots extends ConsumerStatefulWidget {
   const AdminSlots({super.key});
@@ -23,9 +26,34 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
   bool blocked = true, wholeDay = false, busy = false;
   String? result;
   List<Map<String, dynamic>> failed = [];
+  Timer? expiryTimer;
+  late final AppLifecycleListener lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    lifecycle = AppLifecycleListener(
+      onResume: () {
+        if (mounted) setState(() {});
+      },
+    );
+  }
+
+  void refreshAtNextSlot(List<VisitSlot> slots, int now) {
+    expiryTimer?.cancel();
+    if (slots.isEmpty) return;
+    final next = slots
+        .map((slot) => slot.startAt)
+        .reduce((a, b) => a < b ? a : b);
+    expiryTimer = Timer(Duration(milliseconds: next - now), () {
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   void dispose() {
+    expiryTimer?.cancel();
+    lifecycle.dispose();
     reason.dispose();
     capacity.dispose();
     super.dispose();
@@ -77,6 +105,7 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
     for (final change in changes) {
       try {
         await repository.updateSlots(change);
+        ref.invalidate(adminSlotBlocksProvider(change['visitDate'] as String));
         completed++;
       } catch (e) {
         failures.add(change);
@@ -101,17 +130,21 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
     });
   }
 
-  void save(List<VisitSlot> slots) {
+  void save(BookingConfiguration config) {
     if (!form.currentState!.validate()) return;
-    final changes = scheduleChanges(
-      dates: dates,
-      slots: slots,
-      selectedStarts: selectedStarts,
-      wholeDay: wholeDay,
-      blocked: blocked,
-      reason: reason.text,
-      capacity: int.tryParse(capacity.text.trim()),
-    );
+    final now = ref.read(adminScheduleClockProvider)().millisecondsSinceEpoch;
+    final changes = [
+      for (final day in dates)
+        ...scheduleChanges(
+          dates: {day},
+          slots: upcomingScheduleSlots(day, config, now),
+          selectedStarts: selectedStarts,
+          wholeDay: wholeDay,
+          blocked: blocked,
+          reason: reason.text,
+          capacity: int.tryParse(capacity.text.trim()),
+        ),
+    ];
     if (dates.isEmpty || changes.isEmpty) {
       showMessage(
         context,
@@ -127,8 +160,22 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
     value: ref.watch(configurationProvider),
     onRetry: () => ref.invalidate(configurationProvider),
     builder: (config) {
-      final slots = const SlotGenerator().generate(VisitClock.today(), config);
+      final now = ref.read(adminScheduleClockProvider)().millisecondsSinceEpoch;
       final sortedDates = dates.toList()..sort();
+      final slotsByDate = {
+        for (final day in sortedDates)
+          day: upcomingScheduleSlots(day, config, now),
+      };
+      final slots = slotsByDate.values.expand((items) => items).toList();
+      refreshAtNextSlot(slots, now);
+      final closedDays = ref.watch(closedDaysProvider);
+      final blocksByDate = {
+        for (final day in sortedDates)
+          day: ref.watch(adminSlotBlocksProvider(day)),
+      };
+      final scheduleReady =
+          closedDays.asData != null &&
+          blocksByDate.values.every((value) => value.asData != null);
       return TwoColumn(
         main: SurfaceCard(
           child: LocalizedForm(
@@ -173,7 +220,10 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                   children: [
                     for (final day in sortedDates)
                       InputChip(
-                        label: AppText(VisitClock.dayLabel(day)),
+                        label: Text(
+                          '${tr(context, VisitClock.dayLabel(day))}'
+                          '${closedDays.asData?.value.contains(day) == true ? ' · ${tr(context, 'Blocked')}' : ''}',
+                        ),
                         onDeleted: busy
                             ? null
                             : () => setState(() => dates.remove(day)),
@@ -220,25 +270,86 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                       ),
                     ],
                   ),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final slot in slots)
-                        FilterChip(
-                          label: AppText(slot.label),
-                          selected: selectedStarts.contains(slot.startTime),
-                          onSelected: busy
-                              ? null
-                              : (v) => setState(() {
-                                  if (v) {
-                                    selectedStarts.add(slot.startTime);
-                                  } else {
-                                    selectedStarts.remove(slot.startTime);
-                                  }
-                                }),
-                        ),
-                    ],
+                  AsyncPanel(
+                    value: closedDays,
+                    onRetry: () => ref.invalidate(closedDaysProvider),
+                    builder: (closures) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final day in sortedDates) ...[
+                          const SizedBox(height: 12),
+                          AppText(
+                            VisitClock.dayLabel(day),
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          AsyncPanel(
+                            value: blocksByDate[day]!,
+                            onRetry: () =>
+                                ref.invalidate(adminSlotBlocksProvider(day)),
+                            builder: (savedBlocks) => Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                if (slotsByDate[day]!.isEmpty)
+                                  const AppText(
+                                    'No upcoming slots on this date.',
+                                  ),
+                                for (final slot in slotsByDate[day]!)
+                                  Builder(
+                                    builder: (context) {
+                                      final isBlocked =
+                                          closures.contains(day) ||
+                                          savedBlocks.containsKey(slot.id);
+                                      return Tooltip(
+                                        message: savedBlocks[slot.id] ?? '',
+                                        child: FilterChip(
+                                          key: ValueKey(slot.id),
+                                          avatar: isBlocked
+                                              ? const Icon(Icons.lock_outline)
+                                              : null,
+                                          backgroundColor: isBlocked
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.errorContainer
+                                              : null,
+                                          label: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AppText(slot.label),
+                                              AppText(
+                                                isBlocked ? 'Blocked' : 'Open',
+                                              ),
+                                            ],
+                                          ),
+                                          selected: selectedStarts.contains(
+                                            slot.startTime,
+                                          ),
+                                          onSelected: busy
+                                              ? null
+                                              : (value) => setState(() {
+                                                  if (value) {
+                                                    selectedStarts.add(
+                                                      slot.startTime,
+                                                    );
+                                                  } else {
+                                                    selectedStarts.remove(
+                                                      slot.startTime,
+                                                    );
+                                                  }
+                                                }),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ],
                 const SizedBox(height: 24),
@@ -286,11 +397,11 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 AppText(
                   wholeDay
                       ? '${dates.length} entire days selected'
-                      : '${dates.length} dates · ${slots.where((s) => selectedStarts.contains(s.startTime)).length} slots per date',
+                      : '${dates.length} dates · ${slots.where((s) => selectedStarts.contains(s.startTime)).length} upcoming slots selected',
                 ),
                 const SizedBox(height: 12),
                 FilledButton(
-                  onPressed: busy ? null : () => save(slots),
+                  onPressed: busy || !scheduleReady ? null : () => save(config),
                   child: AppText(
                     busy
                         ? 'Saving…'

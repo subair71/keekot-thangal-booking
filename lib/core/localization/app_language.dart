@@ -51,6 +51,10 @@ String translateMalayalam(String text) {
   if (direct != null) return direct;
   final patterns = <(RegExp, String Function(RegExpMatch))>[
     (
+      RegExp(r'^(\d+) dates · (\d+) upcoming slots selected$'),
+      (m) => '${m[1]} തീയതികൾ · വരാനിരിക്കുന്ന ${m[2]} സമയങ്ങൾ തിരഞ്ഞെടുത്തു',
+    ),
+    (
       RegExp(r'^1\. Select dates \((\d+)\)$'),
       (m) => '1. തീയതികൾ തിരഞ്ഞെടുക്കുക (${m[1]})',
     ),
