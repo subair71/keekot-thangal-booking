@@ -54,9 +54,7 @@ void main() {
           }),
         ],
         child: const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(child: AdminSlots()),
-          ),
+          home: Scaffold(body: SingleChildScrollView(child: AdminSlots())),
         ),
       ),
     );

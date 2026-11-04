@@ -32,17 +32,19 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
   @override
   void initState() {
     super.initState();
-    lifecycle = AppLifecycleListener(onResume: () {
-      if (mounted) setState(() {});
-    });
+    lifecycle = AppLifecycleListener(
+      onResume: () {
+        if (mounted) setState(() {});
+      },
+    );
   }
 
   void refreshAtNextSlot(List<VisitSlot> slots, int now) {
     expiryTimer?.cancel();
     if (slots.isEmpty) return;
-    final next = slots.map((slot) => slot.startAt).reduce(
-      (a, b) => a < b ? a : b,
-    );
+    final next = slots
+        .map((slot) => slot.startAt)
+        .reduce((a, b) => a < b ? a : b);
     expiryTimer = Timer(Duration(milliseconds: next - now), () {
       if (mounted) setState(() {});
     });
@@ -171,7 +173,8 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
         for (final day in sortedDates)
           day: ref.watch(adminSlotBlocksProvider(day)),
       };
-      final scheduleReady = closedDays.asData != null &&
+      final scheduleReady =
+          closedDays.asData != null &&
           blocksByDate.values.every((value) => value.asData != null);
       return TwoColumn(
         main: SurfaceCard(
@@ -289,47 +292,58 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                               runSpacing: 8,
                               children: [
                                 if (slotsByDate[day]!.isEmpty)
-                                  const AppText('No upcoming slots on this date.'),
+                                  const AppText(
+                                    'No upcoming slots on this date.',
+                                  ),
                                 for (final slot in slotsByDate[day]!)
-                                  Builder(builder: (context) {
-                                    final isBlocked = closures.contains(day) ||
-                                        savedBlocks.containsKey(slot.id);
-                                    return Tooltip(
-                                      message: savedBlocks[slot.id] ?? '',
-                                      child: FilterChip(
-                                        key: ValueKey(slot.id),
-                                        avatar: isBlocked
-                                            ? const Icon(Icons.lock_outline)
-                                            : null,
-                                        backgroundColor: isBlocked
-                                            ? Theme.of(context)
-                                                .colorScheme.errorContainer
-                                            : null,
-                                        label: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            AppText(slot.label),
-                                            AppText(isBlocked ? 'Blocked' : 'Open'),
-                                          ],
+                                  Builder(
+                                    builder: (context) {
+                                      final isBlocked =
+                                          closures.contains(day) ||
+                                          savedBlocks.containsKey(slot.id);
+                                      return Tooltip(
+                                        message: savedBlocks[slot.id] ?? '',
+                                        child: FilterChip(
+                                          key: ValueKey(slot.id),
+                                          avatar: isBlocked
+                                              ? const Icon(Icons.lock_outline)
+                                              : null,
+                                          backgroundColor: isBlocked
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.errorContainer
+                                              : null,
+                                          label: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AppText(slot.label),
+                                              AppText(
+                                                isBlocked ? 'Blocked' : 'Open',
+                                              ),
+                                            ],
+                                          ),
+                                          selected: selectedStarts.contains(
+                                            slot.startTime,
+                                          ),
+                                          onSelected: busy
+                                              ? null
+                                              : (value) => setState(() {
+                                                  if (value) {
+                                                    selectedStarts.add(
+                                                      slot.startTime,
+                                                    );
+                                                  } else {
+                                                    selectedStarts.remove(
+                                                      slot.startTime,
+                                                    );
+                                                  }
+                                                }),
                                         ),
-                                        selected: selectedStarts
-                                            .contains(slot.startTime),
-                                        onSelected: busy
-                                            ? null
-                                            : (value) => setState(() {
-                                                if (value) {
-                                                  selectedStarts
-                                                      .add(slot.startTime);
-                                                } else {
-                                                  selectedStarts
-                                                      .remove(slot.startTime);
-                                                }
-                                              }),
-                                      ),
-                                    );
-                                  }),
+                                      );
+                                    },
+                                  ),
                               ],
                             ),
                           ),
