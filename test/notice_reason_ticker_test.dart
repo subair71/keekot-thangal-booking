@@ -1,6 +1,7 @@
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keekot_thangal/app/theme/app_theme.dart';
 import 'package:keekot_thangal/features/home/presentation/home_notice_banner.dart';
@@ -35,6 +36,16 @@ double position(WidgetTester tester) => tester
     .x;
 
 void main() {
+  setUpAll(() async {
+    for (final font in {
+      'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
+    }.entries) {
+      final loader = FontLoader(font.key)
+        ..addFont(rootBundle.load('assets/fonts/${font.value}'));
+      await loader.load();
+    }
+  });
   testWidgets('reason moves left, loops, and stays a single clipped line', (
     tester,
   ) async {

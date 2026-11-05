@@ -120,6 +120,7 @@ class HomeNoticeCard extends StatelessWidget {
                           style: TextStyle(
                             color: AppColors.ink,
                             fontSize: 13,
+                            height: 1.2,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -128,6 +129,7 @@ class HomeNoticeCard extends StatelessWidget {
                           style: const TextStyle(
                             color: Color(0xFF8C571B),
                             fontSize: 11,
+                            height: 1.2,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
