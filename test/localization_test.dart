@@ -97,10 +97,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.state(bookingForm), same(state));
       expect(
-        find.descendant(
-          of: bookingView,
-          matching: find.text(title),
-        ),
+        find.descendant(of: bookingView, matching: find.text(title)),
         findsOneWidget,
       );
       expect(
