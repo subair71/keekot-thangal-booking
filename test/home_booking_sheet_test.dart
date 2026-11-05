@@ -5,6 +5,7 @@ import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/app/router/app_router.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
+import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
 import 'package:keekot_thangal/features/home/presentation/home_booking_sheet.dart';
 import 'package:keekot_thangal/features/home/presentation/mobile_quick_booking.dart';
 import 'package:keekot_thangal/features/home/presentation/quick_booking_card.dart';
@@ -65,12 +66,32 @@ void main() {
     const Size(768, 900),
     const Size(1280, 900),
   ]) {
-    testWidgets('home booking opens and closes in a sheet at ${size.width}', (
+    testWidgets('home booking uses the correct layout at ${size.width}', (
       tester,
     ) async {
       final container = await mount(tester, size: size);
-      expect(find.byType(QuickBookingCard), findsNothing);
       final router = container.read(routerProvider);
+      if (size.width >= 768) {
+        expect(find.byType(QuickBookingCard), findsOneWidget);
+        expect(find.byType(HomeBookingSheet), findsNothing);
+        expect(find.text('View all availability'), findsOneWidget);
+        router.go('/?section=book');
+        await tester.pumpAndSettle();
+        expect(find.byType(QuickBookingCard), findsOneWidget);
+        expect(find.byType(HomeBookingSheet), findsNothing);
+        await capturePage(tester, 'home_inline_booking_${size.width.toInt()}');
+        final book = find.text('Book a visit').first;
+        await tester.ensureVisible(book);
+        await tester.tap(book);
+        await tester.pumpAndSettle();
+        expect(find.byType(BookingPage), findsOneWidget);
+        expect(find.byType(HomeBookingSheet), findsNothing);
+        expect(router.routeInformationProvider.value.uri.path, '/book');
+        expect(tester.takeException(), isNull);
+        await finish(tester, container);
+        return;
+      }
+      expect(find.byType(QuickBookingCard), findsNothing);
       final draft = container.read(draftProvider);
       await open(tester);
       expect(find.byType(HomeBookingSheet), findsOneWidget);

@@ -1,4 +1,3 @@
-import 'home_booking_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/link.dart';
@@ -49,7 +48,7 @@ class HomeFooter extends StatelessWidget {
                 runSpacing: 12,
                 children: [
                   FilledButton.icon(
-                    onPressed: () => showHomeBookingSheet(context),
+                    onPressed: () => context.go('/book'),
                     icon: const Icon(Icons.calendar_month_outlined),
                     label: const AppText('Plan my visit'),
                   ),
@@ -102,7 +101,7 @@ class HomeFooter extends StatelessWidget {
                   context,
                   'Book Visit',
                   Icons.calendar_month_outlined,
-                  () => showHomeBookingSheet(context),
+                  () => context.go('/book'),
                 ),
                 _link(
                   context,

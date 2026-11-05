@@ -61,11 +61,8 @@ void main() {
       UncontrolledProviderScope(container: container, child: const KeekotApp()),
     );
     await tester.pumpAndSettle();
-    expect(find.byType(QuickBookingCard), findsNothing);
-    final open = find.byKey(const ValueKey('home-booking-open'));
-    await tester.ensureVisible(open);
-    await tester.tap(open);
-    await tester.pumpAndSettle();
+    expect(find.byType(QuickBookingCard), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
     return container;
   }
 
