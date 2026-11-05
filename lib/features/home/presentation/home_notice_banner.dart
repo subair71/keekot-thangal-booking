@@ -8,6 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
 import '../../../core/utils/visit_clock.dart';
 import '../../notifications/domain/home_notice.dart';
+import 'notice_reason_ticker.dart';
 
 final homeNoticeClockProvider = Provider<DateTime Function()>(
   (ref) => DateTime.now,
@@ -57,7 +58,7 @@ class _HomeNoticeBannerState extends ConsumerState<HomeNoticeBanner> {
     );
     return Padding(
       key: const ValueKey('home-notice-banner'),
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 12),
       child: HomeNoticeCard(key: ValueKey(notice.identity), notice: notice),
     );
   }
@@ -90,51 +91,61 @@ class HomeNoticeCard extends StatelessWidget {
         container: true,
         liveRegion: true,
         child: Container(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFFFFF4DE),
             border: Border.all(color: const Color(0xFFE7C681)),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.campaign_outlined,
-                color: Color(0xFF8C571B),
-                size: 26,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.campaign_outlined,
+                    color: Color(0xFF8C571B),
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 2,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const AppText(
+                          'Important visit notice',
+                          style: TextStyle(
+                            color: AppColors.ink,
+                            fontSize: 13,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        AppText(
+                          VisitClock.dayLabel(notice.visitDate),
+                          style: const TextStyle(
+                            color: Color(0xFF8C571B),
+                            fontSize: 11,
+                            height: 1.2,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const AppText(
-                      'Important visit notice',
-                      style: TextStyle(
-                        color: AppColors.ink,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    AppText(
-                      VisitClock.dayLabel(notice.visitDate),
-                      style: const TextStyle(
-                        color: Color(0xFF8C571B),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      notice.reason,
-                      style: const TextStyle(
-                        color: AppColors.ink,
-                        height: 1.6,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 6),
+              NoticeReasonTicker(
+                text: notice.reason,
+                animate: animate,
+                style: const TextStyle(
+                  color: AppColors.ink,
+                  height: 1.5,
+                  fontSize: 13,
                 ),
               ),
             ],
