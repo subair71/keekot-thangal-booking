@@ -1,3 +1,4 @@
+import '../../features/home/presentation/home_booking_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -42,7 +43,11 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
           badge: badge,
           onTap: () {
             Navigator.of(context).pop();
-            context.go(route);
+            if (uri.path == '/' && route == '/book') {
+              showHomeBookingSheet(context);
+            } else {
+              context.go(route);
+            }
           },
         );
 

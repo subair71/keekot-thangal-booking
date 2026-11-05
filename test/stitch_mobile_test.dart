@@ -71,6 +71,13 @@ void main() {
     return container;
   }
 
+  Future<void> openBooking(WidgetTester tester) async {
+    final open = find.byKey(const ValueKey('home-booking-open'));
+    await tester.ensureVisible(open);
+    await tester.tap(open);
+    await tester.pumpAndSettle();
+  }
+
   Future<void> finish(WidgetTester tester, ProviderContainer c) async {
     await tester.pumpWidget(const SizedBox());
     c.dispose();
@@ -82,6 +89,7 @@ void main() {
     (tester) async {
       final repo = ChangingBookings();
       final c = await pump(tester, repo);
+      await openBooking(tester);
       final slot = find.descendant(
         of: find.byType(MobileQuickBooking),
         matching: find.text('10:00 AM'),
@@ -116,6 +124,8 @@ void main() {
       final router = GoRouter.of(
         tester.element(find.byType(MobileQuickBooking)),
       );
+      await tester.tap(find.byKey(const ValueKey('home-booking-close')));
+      await tester.pumpAndSettle();
       router.go('/book');
       await tester.pumpAndSettle();
       router.go('/');
@@ -130,6 +140,7 @@ void main() {
     'mobile verification retains real draft through anonymous login redirect',
     (tester) async {
       final c = await pump(tester, HomeBookings(), signedIn: false);
+      await openBooking(tester);
       final slot = find.descendant(
         of: find.byType(MobileQuickBooking),
         matching: find.text('10:00 AM'),
@@ -147,6 +158,7 @@ void main() {
         tester.element(find.byType(Scaffold).first),
       ).routeInformationProvider.value.uri;
       expect(uri.path, '/login');
+      expect(find.byType(BottomSheet), findsNothing);
       expect(uri.queryParameters['next'], '/book/confirmation');
       expect(tester.takeException(), isNull);
       await finish(tester, c);
