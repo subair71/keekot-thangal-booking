@@ -1,5 +1,31 @@
 /// Staff controls use the same language selection as the visitor journey.
 const staffMalayalam = <String, String>{
+  'Home notices': 'ഹോം അറിയിപ്പുകൾ',
+  'Important visit notice': 'പ്രധാന സന്ദർശന അറിയിപ്പ്',
+  'Manage home notice': 'ഹോം അറിയിപ്പ് നിയന്ത്രിക്കുക',
+  'Tell visitors about cancellations or changes before they travel.':
+      'യാത്രയ്ക്ക് മുമ്പ് റദ്ദാക്കലുകളോ മാറ്റങ്ങളോ സന്ദർശകരെ അറിയിക്കുക.',
+  'Publish a date and reason in a visible banner on the visitor home screen.':
+      'സന്ദർശകരുടെ ഹോം സ്ക്രീനിൽ തീയതിയും കാരണവും ഉൾപ്പെട്ട ബാനർ പ്രസിദ്ധീകരിക്കുക.',
+  'Update affected bookings in Bookings and availability in Slots & closures.':
+      'ബാധിക്കുന്ന ബുക്കിംഗുകൾ Bookings-ലും ലഭ്യത Slots & closures-ലും പുതുക്കുക.',
+  'Currently visible on Home': 'ഇപ്പോൾ ഹോമിൽ കാണിക്കുന്നു',
+  'Notice expired': 'അറിയിപ്പിന്റെ കാലാവധി കഴിഞ്ഞു',
+  'No active home notice': 'നിലവിൽ ഹോം അറിയിപ്പില്ല',
+  'Affected visit date': 'ബാധിക്കുന്ന സന്ദർശന തീയതി',
+  'Reason / notice for visitors': 'കാരണം / സന്ദർശകർക്കുള്ള അറിയിപ്പ്',
+  'Enter the reason visitors should see.': 'സന്ദർശകർ കാണേണ്ട കാരണം നൽകുക.',
+  'Visible immediately after publishing, until the end of the affected date in India time. You can hide it earlier.':
+      'പ്രസിദ്ധീകരിച്ച ഉടൻ മുതൽ തിരഞ്ഞെടുത്ത ദിവസം ഇന്ത്യൻ സമയം അവസാനിക്കുന്നതുവരെ കാണിക്കും. അതിനു മുമ്പും പിൻവലിക്കാം.',
+  'Banner preview': 'ബാനർ പ്രിവ്യൂ',
+  'Publish notice': 'അറിയിപ്പ് പ്രസിദ്ധീകരിക്കുക',
+  'Hide notice': 'അറിയിപ്പ് പിൻവലിക്കുക',
+  'Home notice published.': 'ഹോം അറിയിപ്പ് പ്രസിദ്ധീകരിച്ചു.',
+  'Home notice hidden.': 'ഹോം അറിയിപ്പ് പിൻവലിച്ചു.',
+  'Choose today or a future visit date.':
+      'ഇന്നത്തെയോ വരാനിരിക്കുന്നതോ ആയ തീയതി തിരഞ്ഞെടുക്കുക.',
+  'Enter a notice of up to 500 characters.':
+      '500 അക്ഷരങ്ങൾ വരെയുള്ള അറിയിപ്പ് നൽകുക.',
   'Visitor login': 'സന്ദർശക ലോഗിൻ',
   'Admin login': 'അഡ്മിൻ ലോഗിൻ',
   'Khadim login': 'ഖാദിം ലോഗിൻ',

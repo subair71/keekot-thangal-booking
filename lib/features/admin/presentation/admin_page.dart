@@ -8,6 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import 'admin_settings_page.dart';
+import 'admin_home_notices.dart';
 import 'admin_slots_page.dart';
 import 'admin_export_button.dart';
 import 'pass_scanner_dialog.dart';
@@ -26,6 +27,7 @@ class AdminPage extends ConsumerWidget {
           ('dashboard', 'Overview'),
           ('bookings', 'Bookings'),
           ('slots', 'Slots & closures'),
+          if (user?.admin == true) ('notices', 'Home notices'),
           ('settings', 'Settings'),
           ('gate', 'Scan visitor pass'),
           if (user?.admin == true) ...[
@@ -78,6 +80,7 @@ class AdminPage extends ConsumerWidget {
                   title: AppText(switch (section) {
                     'bookings' => 'Bookings',
                     'slots' => 'Slots & closures',
+                    'notices' => 'Home notices',
                     'settings' => 'Settings',
                     'gate' => 'Scan visitor pass',
                     _ => 'Overview',
@@ -93,9 +96,19 @@ class AdminPage extends ConsumerWidget {
           switch (section) {
             'bookings' => const AdminBookings(),
             'slots' => const AdminSlots(),
+            'notices' => const AdminHomeNotices(),
             'settings' => const AdminSettings(),
             'gate' => const GateValidation(),
-            _ => const AdminDashboard(),
+            _ => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (user?.admin == true) ...[
+                  const HomeNoticeShortcut(),
+                  const SizedBox(height: 20),
+                ],
+                const AdminDashboard(),
+              ],
+            ),
           },
         ],
       ),

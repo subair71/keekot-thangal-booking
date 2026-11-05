@@ -1,3 +1,4 @@
+import 'package:keekot_thangal/features/notifications/domain/home_notice.dart';
 import 'dart:async';
 
 import 'package:keekot_thangal/features/admin/data/slot_closures.dart';
@@ -51,6 +52,10 @@ class AuditAdmin implements AdminRepository {
   Future<void> setDateHours(Map<String, dynamic> change) async {}
   @override
   Future<void> updateSettings(Map<String, dynamic> settings) async {}
+  @override
+  Future<void> publishHomeNotice(HomeNotice notice) async {}
+  @override
+  Future<void> hideHomeNotice() async {}
   @override
   Future<void> setBookingStatus(String id, String status) async {}
   @override
@@ -243,6 +248,7 @@ void main() {
     '/admin',
     '/admin/bookings',
     '/admin/slots',
+    '/admin/notices',
     '/admin/settings',
     '/admin/gate',
     '/admin/khadims',

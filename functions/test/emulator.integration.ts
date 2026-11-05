@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {initializeApp,deleteApp} from 'firebase-admin/app';
 import {getFirestore, Timestamp} from 'firebase-admin/firestore';
 import {initializeTestEnvironment,assertFails,assertSucceeds} from '@firebase/rules-unit-testing';
-import {doc,getDoc,setDoc,collection,query,where,getDocs,onSnapshot} from 'firebase/firestore';
+import {doc,getDoc,setDoc,updateDoc,serverTimestamp,Timestamp as ClientTimestamp,collection,query,where,getDocs,onSnapshot} from 'firebase/firestore';
 import {BookingService} from '../src/booking_service.js';
 import {BookingSettings, generateSlots} from '../src/domain.js';
 import {queueNotice,deliverNotice} from '../src/notifications.js';
@@ -273,6 +273,27 @@ test('Firestore transactions and rules',async t=>{
       await assertFails(getDoc(doc(own,'slotState',`${day}_0700`)));await assertFails(setDoc(doc(own,'users',owner.uid,'devices','fake'),{token:'fake'}));
       const anonymous=env.unauthenticatedContext().firestore();
       await assertSucceeds(getDoc(doc(anonymous,'settings','booking')));
+      const noticeRef=doc(admin,'settings','booking');
+      const notice={visitDate:day,reason:'Visits cancelled due to essential maintenance.',active:true,updatedBy:'admin',updatedAt:serverTimestamp()};
+      const noticeStaff=env.authenticatedContext('notice-staff',{permissions:['notices','settings']}).firestore();
+      for(const client of [anonymous,own,noticeStaff]) {
+        await assertFails(updateDoc(doc(client,'settings','booking'),{homeNotice:{...notice,updatedBy:'notice-staff'}}));
+      }
+      await assertSucceeds(updateDoc(noticeRef,{homeNotice:notice}));
+      const publicNotice=(await getDoc(doc(anonymous,'settings','booking'))).data()!.homeNotice;
+      assert.equal(publicNotice.reason,notice.reason);
+      assert.equal(publicNotice.active,true);
+      await assertFails(updateDoc(noticeRef,{homeNotice:notice,defaultSlotCapacity:999}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,reason:''}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,reason:'x'.repeat(501)}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,visitDate:'not-a-date'}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,active:'yes'}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,updatedBy:'other'}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,updatedAt:ClientTimestamp.fromMillis(0)}}));
+      await assertFails(updateDoc(noticeRef,{homeNotice:{...notice,privateVisitorPhone:'+919999999999'}}));
+      await assertSucceeds(updateDoc(noticeRef,{'homeNotice.active':false,'homeNotice.updatedBy':'admin','homeNotice.updatedAt':serverTimestamp()}));
+      assert.equal((await getDoc(doc(anonymous,'settings','booking'))).data()!.homeNotice.active,false);
+
       const publicToken='a'.repeat(43);
       await db.doc(`publicPasses/${publicToken}`).set({bookingId:'synthetic-pass',visitorName:'Synthetic visitor',qrToken:'synthetic-qr'});
       await assertSucceeds(getDoc(doc(anonymous,'publicPasses',publicToken)));

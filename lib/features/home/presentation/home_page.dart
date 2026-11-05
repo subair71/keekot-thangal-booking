@@ -8,6 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
 import 'quick_booking_card.dart';
+import 'home_notice_banner.dart';
 import 'mobile_sanctuary_home.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
@@ -77,6 +78,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const HomeNoticeBanner(),
           LayoutBuilder(
             builder: (context, constraints) {
               final availability = AsyncPanel(

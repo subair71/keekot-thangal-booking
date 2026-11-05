@@ -1,3 +1,4 @@
+import '../../notifications/domain/home_notice.dart';
 import '../../../core/utils/visit_clock.dart';
 
 class BookingConfiguration {
@@ -17,8 +18,10 @@ class BookingConfiguration {
     this.contactPhone = '',
     this.environment = 'production',
     this.dateHours = const {},
+    this.homeNotice,
   });
   final Map<String, dynamic> dateHours;
+  final HomeNotice? homeNotice;
   final String openingTime, closingTime, locationUrl, contactPhone, environment;
   final int slotDurationMinutes,
       bookingWindowDays,
@@ -30,6 +33,7 @@ class BookingConfiguration {
   factory BookingConfiguration.fromMap(Map<String, dynamic> m) =>
       BookingConfiguration(
         dateHours: Map<String, dynamic>.from(m['dateHours'] as Map? ?? {}),
+        homeNotice: HomeNotice.fromMap(m['homeNotice']),
         openingTime: m['openingTime'] as String,
         closingTime: m['closingTime'] as String,
         slotDurationMinutes: (m['slotDurationMinutes'] as num).toInt(),

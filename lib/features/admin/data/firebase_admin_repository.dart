@@ -1,4 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import '../../../core/errors/app_failure.dart';
+import '../../../core/services/firebase_errors.dart';
+import '../../notifications/domain/home_notice.dart';
 
 import '../../booking/data/firebase_booking_repository.dart';
 import '../../booking/domain/booking_models.dart';
@@ -61,6 +66,38 @@ class FirebaseAdminRepository implements AdminRepository {
   Future<void> updateSettings(Map<String, dynamic> settings) async {
     await source.call('adminUpdateSettings', settings);
   }
+
+  String noticeAuthor() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) throw const AppFailure('Sign in to continue.');
+    return uid;
+  }
+
+  @override
+  Future<void> publishHomeNotice(HomeNotice notice) => protect(() async {
+    final text = notice.reason.trim();
+    if (text.isEmpty || text.length > 500) {
+      throw const AppFailure('Enter a notice of up to 500 characters.');
+    }
+    await source.db.doc('settings/booking').update({
+      'homeNotice': {
+        'visitDate': notice.visitDate,
+        'reason': text,
+        'active': true,
+        'updatedBy': noticeAuthor(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+    });
+  });
+
+  @override
+  Future<void> hideHomeNotice() => protect(() async {
+    await source.db.doc('settings/booking').update({
+      'homeNotice.active': false,
+      'homeNotice.updatedBy': noticeAuthor(),
+      'homeNotice.updatedAt': FieldValue.serverTimestamp(),
+    });
+  });
 
   @override
   Future<void> setBookingStatus(String id, String status) async {
