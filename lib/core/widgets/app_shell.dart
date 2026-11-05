@@ -1,4 +1,3 @@
-import '../../features/home/presentation/home_booking_sheet.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,14 +27,6 @@ class AppShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final path = GoRouterState.of(context).uri.path;
-    void navigate(String route) {
-      if (path == '/' && route == '/book') {
-        showHomeBookingSheet(context);
-      } else {
-        context.go(route);
-      }
-    }
-
     final selected = path.startsWith('/book')
         ? 1
         : path.startsWith('/my-bookings') || path.startsWith('/pass')
@@ -147,7 +138,7 @@ class AppShell extends ConsumerWidget {
                                   child: Semantics(
                                     selected: selected == i,
                                     child: TextButton(
-                                      onPressed: () => navigate(routes[i]),
+                                      onPressed: () => context.go(routes[i]),
                                       style: TextButton.styleFrom(
                                         backgroundColor: selected == i
                                             ? AppColors.emerald
@@ -231,7 +222,7 @@ class AppShell extends ConsumerWidget {
                     )
                   : null,
               selectedIndex: selected,
-              onDestinationSelected: (i) => navigate(routes[i]),
+              onDestinationSelected: (i) => context.go(routes[i]),
               destinations: [
                 for (var i = 0; i < routes.length; i++)
                   NavigationDestination(

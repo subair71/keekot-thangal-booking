@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
+import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
 import 'package:keekot_thangal/features/home/presentation/home_booking_sheet.dart';
 import 'package:keekot_thangal/features/home/presentation/quick_booking_card.dart';
 
@@ -73,28 +74,32 @@ void main() {
       await tester.ensureVisible(booking);
       await tester.tap(booking);
       await tester.pumpAndSettle();
-      expect(find.byType(HomeBookingSheet), findsOneWidget);
+      final mobile = width < 768;
+      final bookingView = find.byType(mobile ? HomeBookingSheet : BookingPage);
+      final bookingForm = find.byType(mobile ? QuickBookingCard : BookingPage);
+      final title = mobile ? 'Book a visit' : 'Select your visit';
+      expect(bookingView, findsOneWidget);
       expect(
         find.descendant(
-          of: find.byType(HomeBookingSheet),
-          matching: find.text(translateMalayalam('Book a visit')),
+          of: bookingView,
+          matching: find.text(translateMalayalam(title)),
         ),
         findsOneWidget,
       );
-      final state = tester.state(find.byType(QuickBookingCard));
+      final state = tester.state(bookingForm);
       final add = find.byTooltip('ഒരു സന്ദർശകനെ കൂട്ടുക');
       await tester.ensureVisible(add);
       await tester.tap(add);
       await tester.pumpAndSettle();
       final remove = find.widgetWithIcon(IconButton, Icons.remove);
       expect(tester.widget<IconButton>(remove).onPressed, isNotNull);
-      AppLanguage.select(tester.element(find.byType(HomeBookingSheet)), 'en');
+      AppLanguage.select(tester.element(bookingView), 'en');
       await tester.pumpAndSettle();
-      expect(tester.state(find.byType(QuickBookingCard)), same(state));
+      expect(tester.state(bookingForm), same(state));
       expect(
         find.descendant(
-          of: find.byType(HomeBookingSheet),
-          matching: find.text('Book a visit'),
+          of: bookingView,
+          matching: find.text(title),
         ),
         findsOneWidget,
       );
@@ -105,8 +110,10 @@ void main() {
         isNotNull,
       );
       expect(tester.takeException(), isNull);
-      await tester.tap(find.byKey(const ValueKey('home-booking-close')));
-      await tester.pumpAndSettle();
+      if (mobile) {
+        await tester.tap(find.byKey(const ValueKey('home-booking-close')));
+        await tester.pumpAndSettle();
+      }
       GoRouter.of(tester.element(menu)).go('/information');
       await tester.pumpAndSettle();
       // Header shortcuts must work from a different page and within Home.

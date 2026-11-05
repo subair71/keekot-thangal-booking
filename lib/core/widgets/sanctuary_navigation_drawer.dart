@@ -43,7 +43,7 @@ class SanctuaryNavigationDrawer extends ConsumerWidget {
           badge: badge,
           onTap: () {
             Navigator.of(context).pop();
-            if (uri.path == '/' && route == '/book') {
+            if (mobile && uri.path == '/' && route == '/book') {
               showHomeBookingSheet(context);
             } else {
               context.go(route);
