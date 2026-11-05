@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/bootstrap/providers.dart';
+import '../../booking/domain/booking_models.dart';
 
 final adminScheduleClockProvider = Provider<DateTime Function()>(
   (ref) => DateTime.now,
@@ -23,4 +24,21 @@ final adminSlotBlocksProvider = StreamProvider.autoDispose
                   doc.id: doc.data()['blockReason'] as String? ?? '',
             },
           );
+    });
+
+/// Share booking's server-calculated capacity, including active holds.
+/// Saved slot, closure and configuration changes trigger an immediate refresh;
+/// the shared availability provider also polls and refreshes on app resume.
+final adminSlotStatusProvider = Provider.autoDispose
+    .family<AsyncValue<Availability>, String>((ref, day) {
+      void refreshOnChange<T>(AsyncValue<T>? previous, AsyncValue<T> next) {
+        if (previous?.asData != null && next.asData != null) {
+          ref.invalidate(availabilityProvider(day));
+        }
+      }
+
+      ref.listen(adminSlotBlocksProvider(day), refreshOnChange);
+      ref.listen(closedDaysProvider, refreshOnChange);
+      ref.listen(configurationProvider, refreshOnChange);
+      return ref.watch(availabilityProvider(day));
     });
