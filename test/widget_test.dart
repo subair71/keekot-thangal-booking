@@ -202,7 +202,7 @@ void main() {
         await tester.tap(find.text('Plan my visit'));
         await tester.pumpAndSettle();
       }
-      expect(find.text('Select your visit'), findsOneWidget);
+      expect(find.byType(HomeBookingSheet), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     });
