@@ -9,23 +9,24 @@ import 'package:keekot_thangal/features/notifications/domain/home_notice.dart';
 
 const reason = 'Visits postponed due to maintenance.';
 
-Widget tickerApp({bool reduceMotion = false, String text = reason}) => MaterialApp(
-  theme: buildTheme(),
-  home: Scaffold(
-    body: MediaQuery(
-      data: MediaQueryData(disableAnimations: reduceMotion),
-      child: Center(
-        child: SizedBox(
-          width: 300,
-          child: NoticeReasonTicker(
-            text: text,
-            style: const TextStyle(fontSize: 13, height: 1.5),
+Widget tickerApp({bool reduceMotion = false, String text = reason}) =>
+    MaterialApp(
+      theme: buildTheme(),
+      home: Scaffold(
+        body: MediaQuery(
+          data: MediaQueryData(disableAnimations: reduceMotion),
+          child: Center(
+            child: SizedBox(
+              width: 300,
+              child: NoticeReasonTicker(
+                text: text,
+                style: const TextStyle(fontSize: 13, height: 1.5),
+              ),
+            ),
           ),
         ),
       ),
-    ),
-  ),
-);
+    );
 
 double position(WidgetTester tester) => tester
     .widget<Transform>(find.byKey(const ValueKey('notice-reason-motion')))
@@ -47,7 +48,10 @@ void main() {
     expect(text.softWrap, isFalse);
     await tester.pump(const Duration(minutes: 2));
     expect(position(tester), lessThanOrEqualTo(300));
-    expect(position(tester), greaterThan(-tester.getSize(find.text(reason)).width - 25));
+    expect(
+      position(tester),
+      greaterThan(-tester.getSize(find.text(reason)).width - 25),
+    );
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
   });
@@ -71,20 +75,21 @@ void main() {
     await tester.pumpWidget(const SizedBox());
   });
 
-  testWidgets('reduced motion stops scrolling and keeps the full reason readable', (
-    tester,
-  ) async {
-    final longReason = List.filled(10, reason).join(' ');
-    await tester.pumpWidget(tickerApp(text: longReason));
-    await tester.pump();
-    await tester.pumpWidget(tickerApp(text: longReason, reduceMotion: true));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('notice-reason-motion')), findsNothing);
-    expect(find.text(longReason), findsOneWidget);
-    expect(tester.widget<Text>(find.text(longReason)).maxLines, isNull);
-    expect(tester.takeException(), isNull);
-    await tester.pumpWidget(const SizedBox());
-  });
+  testWidgets(
+    'reduced motion stops scrolling and keeps the full reason readable',
+    (tester) async {
+      final longReason = List.filled(10, reason).join(' ');
+      await tester.pumpWidget(tickerApp(text: longReason));
+      await tester.pump();
+      await tester.pumpWidget(tickerApp(text: longReason, reduceMotion: true));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('notice-reason-motion')), findsNothing);
+      expect(find.text(longReason), findsOneWidget);
+      expect(tester.widget<Text>(find.text(longReason)).maxLines, isNull);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+    },
+  );
 
   testWidgets('long notices use a compact card on a phone', (tester) async {
     final notice = HomeNotice(

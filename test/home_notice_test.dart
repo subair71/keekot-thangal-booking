@@ -90,9 +90,7 @@ Future<ProviderContainer> noticeApp(
   // The ticker's movement and looping are exercised in its focused tests.
   tester.platformDispatcher.accessibilityFeaturesTestValue =
       const FakeAccessibilityFeatures(disableAnimations: true);
-  addTearDown(
-    tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
-  );
+  addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
   tester.view.physicalSize = Size(width, 1100);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
