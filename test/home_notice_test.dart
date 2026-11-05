@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keekot_thangal/app/app.dart';
@@ -89,30 +90,27 @@ Future<ProviderContainer> noticeApp(
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
-  final container = ProviderContainer(
-    overrides: [
-      authRepositoryProvider.overrideWithValue(FakeAuth(user: user)),
-      bookingRepositoryProvider.overrideWithValue(bookings),
-      adminRepositoryProvider.overrideWithValue(admin ?? NoticeAdmin(bookings)),
-      notificationRepositoryProvider.overrideWithValue(AuditNotifications()),
-    ],
-  );
   await tester.pumpWidget(
     RepaintBoundary(
       key: captureKey,
-      child: UncontrolledProviderScope(
-        container: container,
+      child: ProviderScope(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(FakeAuth(user: user)),
+          bookingRepositoryProvider.overrideWithValue(bookings),
+          adminRepositoryProvider.overrideWithValue(
+            admin ?? NoticeAdmin(bookings),
+          ),
+          notificationRepositoryProvider.overrideWithValue(
+            AuditNotifications(),
+          ),
+        ],
         child: const KeekotApp(),
       ),
     ),
   );
   await tester.pumpAndSettle();
-  addTearDown(() async {
-    await tester.pumpWidget(const SizedBox());
-    container.dispose();
-    await bookings.changes.close();
-  });
-  return container;
+  addTearDown(bookings.changes.close);
+  return ProviderScope.containerOf(tester.element(find.byType(KeekotApp)));
 }
 
 Future<void> tapNoticeAction(WidgetTester tester, String key) async {
@@ -123,6 +121,20 @@ Future<void> tapNoticeAction(WidgetTester tester, String key) async {
 }
 
 void main() {
+  setUpAll(() async {
+    for (final font in {
+      'Playfair Display': 'PlayfairDisplay.ttf',
+      'Plus Jakarta Sans': 'PlusJakartaSans.ttf',
+      'Noto Sans Malayalam': 'NotoSansMalayalam.ttf',
+    }.entries) {
+      final loader = FontLoader(font.key)
+        ..addFont(rootBundle.load('assets/fonts/${font.value}'));
+      await loader.load();
+    }
+    final icons = FontLoader('MaterialIcons')
+      ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
+    await icons.load();
+  });
   test('notice expires at the end of its affected date in India', () {
     final notice = noticeFor('Visits cancelled', day: '2026-11-05');
     expect(notice.visibleAt(DateTime.parse('2026-11-05T18:29:59Z')), isTrue);
@@ -245,6 +257,8 @@ void main() {
       expect(bookings.notice!.reason, reason);
       expect(bookings.notice!.visitDate, VisitClock.today());
       expect(find.text('Currently visible on Home'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
       router.go('/');
       await tester.pumpAndSettle();
       expect(find.text(reason), findsOneWidget);
