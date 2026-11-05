@@ -54,10 +54,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Future<void> finish(
-    WidgetTester tester,
-    ProviderContainer container,
-  ) async {
+  Future<void> finish(WidgetTester tester, ProviderContainer container) async {
     await tester.pumpWidget(const SizedBox());
     container.dispose();
     await tester.pump();
@@ -155,9 +152,7 @@ void main() {
     await finish(tester, container);
   });
 
-  testWidgets('home booking section link opens the same sheet', (
-    tester,
-  ) async {
+  testWidgets('home booking section link opens the same sheet', (tester) async {
     final container = await mount(tester);
     container.read(routerProvider).go('/?section=book');
     await tester.pumpAndSettle();

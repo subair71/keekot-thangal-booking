@@ -39,11 +39,7 @@ final mobileVisitSelectionProvider =
     );
 
 class MobileQuickBooking extends ConsumerWidget {
-  const MobileQuickBooking({
-    super.key,
-    required this.config,
-    this.onContinue,
-  });
+  const MobileQuickBooking({super.key, required this.config, this.onContinue});
   final BookingConfiguration config;
   final VoidCallback? onContinue;
   @override

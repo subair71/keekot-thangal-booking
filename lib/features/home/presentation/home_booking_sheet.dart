@@ -73,9 +73,8 @@ class HomeBookingSheet extends ConsumerWidget {
                     config: config,
                     mobileDesign: MediaQuery.sizeOf(context).width < 768,
                     showViewAll: false,
-                    onContinue: () => Navigator.of(context).pop(
-                      '/book/confirmation',
-                    ),
+                    onContinue: () =>
+                        Navigator.of(context).pop('/book/confirmation'),
                   ),
                 ),
               ),

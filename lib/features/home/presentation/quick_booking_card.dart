@@ -39,10 +39,7 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
   Widget build(BuildContext context) {
     final config = widget.config;
     if (widget.mobileDesign) {
-      return MobileQuickBooking(
-        config: config,
-        onContinue: widget.onContinue,
-      );
+      return MobileQuickBooking(config: config, onContinue: widget.onContinue);
     }
     final dates = config.dates();
     if (!config.bookingEnabled || dates.isEmpty) {

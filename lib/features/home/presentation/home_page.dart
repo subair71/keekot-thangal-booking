@@ -48,8 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         'questions' => questionsKey,
         _ => null,
       };
-      if (widget.section == 'book' &&
-          MediaQuery.sizeOf(context).width >= 768) {
+      if (widget.section == 'book' && MediaQuery.sizeOf(context).width >= 768) {
         showHomeBookingSheet(context);
       } else if (key != null) {
         reveal(key);

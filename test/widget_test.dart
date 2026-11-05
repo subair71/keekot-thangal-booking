@@ -274,9 +274,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(HomeBookingSheet), findsOneWidget);
     expect(tester.takeException(), isNull);
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('quick-continue')),
-    );
+    await tester.ensureVisible(find.byKey(const ValueKey('quick-continue')));
     await capturePage(tester, 'home_booking_sheet_malayalam_large_text_375');
     await tester.pumpWidget(const SizedBox());
   });
