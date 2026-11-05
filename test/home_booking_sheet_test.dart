@@ -80,7 +80,7 @@ void main() {
         expect(find.byType(QuickBookingCard), findsOneWidget);
         expect(find.byType(HomeBookingSheet), findsNothing);
         await capturePage(tester, 'home_inline_booking_${size.width.toInt()}');
-        final book = find.widgetWithText(FilledButton, 'Book a visit');
+        final book = find.text('Book a visit').first;
         await tester.ensureVisible(book);
         await tester.tap(book);
         await tester.pumpAndSettle();
