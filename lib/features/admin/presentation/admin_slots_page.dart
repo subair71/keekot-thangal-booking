@@ -155,6 +155,96 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
     apply(changes);
   }
 
+  void refreshAvailability() {
+    ref.invalidate(closedDaysProvider);
+    for (final day in dates) {
+      ref.invalidate(adminSlotBlocksProvider(day));
+      ref.invalidate(availabilityProvider(day));
+    }
+  }
+
+  Widget slotGrid(
+    String day,
+    List<VisitSlot> planned,
+    Set<String> closures,
+    Map<String, String> savedBlocks, {
+    Availability? availability,
+    String? restriction,
+  }) {
+    final live = {
+      for (final slot in availability?.slots ?? <VisitSlot>[]) slot.id: slot,
+    };
+    final visible = planned
+        .where((slot) => live[slot.id]?.status != SlotStatus.past)
+        .toList();
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        if (visible.isEmpty)
+          const AppText('No upcoming slots on this date.'),
+        for (final slot in visible)
+          Builder(
+            builder: (context) {
+              final current = live[slot.id];
+              final isBlocked =
+                  closures.contains(day) ||
+                  availability?.closed == true ||
+                  savedBlocks.containsKey(slot.id) ||
+                  current?.status == SlotStatus.blocked;
+              final status = isBlocked
+                  ? 'Blocked'
+                  : restriction ??
+                        switch (current?.status) {
+                          SlotStatus.available => 'Available',
+                          SlotStatus.full => 'Full',
+                          _ => 'Unavailable',
+                        };
+              return Tooltip(
+                message: savedBlocks[slot.id] ??
+                    (availability?.closed == true
+                        ? availability!.reason
+                        : current?.reason ?? ''),
+                child: FilterChip(
+                  key: ValueKey(slot.id),
+                  avatar: Icon(
+                    isBlocked
+                        ? Icons.lock_outline
+                        : status == 'Available'
+                        ? Icons.check_circle_outline
+                        : Icons.event_busy_outlined,
+                  ),
+                  backgroundColor: isBlocked
+                      ? Theme.of(context).colorScheme.errorContainer
+                      : null,
+                  label: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(slot.label),
+                      AppText(status),
+                      if (!isBlocked && restriction == null && current != null)
+                        AppText('${current.remaining} places left'),
+                    ],
+                  ),
+                  selected: selectedStarts.contains(slot.startTime),
+                  onSelected: busy
+                      ? null
+                      : (value) => setState(() {
+                          if (value) {
+                            selectedStarts.add(slot.startTime);
+                          } else {
+                            selectedStarts.remove(slot.startTime);
+                          }
+                        }),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) => AsyncPanel(
     value: ref.watch(configurationProvider),
@@ -173,9 +263,20 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
         for (final day in sortedDates)
           day: ref.watch(adminSlotBlocksProvider(day)),
       };
+      final indiaNow = DateTime.fromMillisecondsSinceEpoch(
+        now,
+        isUtc: true,
+      ).add(const Duration(hours: 5, minutes: 30));
+      final bookingDates = config.dates(indiaNow).toSet();
+      final availabilityByDate = {
+        for (final day in sortedDates)
+          if (config.bookingEnabled && bookingDates.contains(day))
+            day: ref.watch(adminSlotStatusProvider(day)),
+      };
       final scheduleReady =
           closedDays.asData != null &&
-          blocksByDate.values.every((value) => value.asData != null);
+          blocksByDate.values.every((value) => value.asData != null) &&
+          availabilityByDate.values.every((value) => value.asData != null);
       return TwoColumn(
         main: SurfaceCard(
           child: LocalizedForm(
@@ -186,6 +287,17 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                 AppText(
                   'Block dates & slots',
                   style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: busy ? null : refreshAvailability,
+                    icon: const Icon(Icons.refresh),
+                    label: const AppText('Refresh availability'),
+                  ),
+                ),
+                const AppText(
+                  'Availability includes confirmed visitors and active booking holds.',
                 ),
                 const SizedBox(height: 20),
                 AppText(
@@ -287,65 +399,32 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                             value: blocksByDate[day]!,
                             onRetry: () =>
                                 ref.invalidate(adminSlotBlocksProvider(day)),
-                            builder: (savedBlocks) => Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                if (slotsByDate[day]!.isEmpty)
-                                  const AppText(
-                                    'No upcoming slots on this date.',
-                                  ),
-                                for (final slot in slotsByDate[day]!)
-                                  Builder(
-                                    builder: (context) {
-                                      final isBlocked =
-                                          closures.contains(day) ||
-                                          savedBlocks.containsKey(slot.id);
-                                      return Tooltip(
-                                        message: savedBlocks[slot.id] ?? '',
-                                        child: FilterChip(
-                                          key: ValueKey(slot.id),
-                                          avatar: isBlocked
-                                              ? const Icon(Icons.lock_outline)
-                                              : null,
-                                          backgroundColor: isBlocked
-                                              ? Theme.of(
-                                                  context,
-                                                ).colorScheme.errorContainer
-                                              : null,
-                                          label: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              AppText(slot.label),
-                                              AppText(
-                                                isBlocked ? 'Blocked' : 'Open',
-                                              ),
-                                            ],
-                                          ),
-                                          selected: selectedStarts.contains(
-                                            slot.startTime,
-                                          ),
-                                          onSelected: busy
-                                              ? null
-                                              : (value) => setState(() {
-                                                  if (value) {
-                                                    selectedStarts.add(
-                                                      slot.startTime,
-                                                    );
-                                                  } else {
-                                                    selectedStarts.remove(
-                                                      slot.startTime,
-                                                    );
-                                                  }
-                                                }),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                              ],
-                            ),
+                            builder: (savedBlocks) {
+                              final availability = availabilityByDate[day];
+                              if (availability == null) {
+                                return slotGrid(
+                                  day,
+                                  slotsByDate[day]!,
+                                  closures,
+                                  savedBlocks,
+                                  restriction: config.bookingEnabled
+                                      ? 'Outside booking window'
+                                      : 'Bookings are currently paused',
+                                );
+                              }
+                              return AsyncPanel(
+                                value: availability,
+                                onRetry: () =>
+                                    ref.invalidate(availabilityProvider(day)),
+                                builder: (current) => slotGrid(
+                                  day,
+                                  slotsByDate[day]!,
+                                  closures,
+                                  savedBlocks,
+                                  availability: current,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ],
