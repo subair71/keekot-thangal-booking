@@ -43,8 +43,7 @@ const sanctuaryMalayalam = <String, String>{
   'Persons (Family)': 'പേർ (കുടുംബം)',
   'Persons (Group)': 'പേർ (സംഘം)',
   'Proceed to Instant Verification': 'മൊബൈൽ സ്ഥിരീകരണത്തിലേക്ക് തുടരുക',
-  '100% Free Booking · No fees required at any stage':
-      'പൂർണ്ണമായും സൗജന്യം · ഒരു ഘട്ടത്തിലും ഫീസ് ഇല്ല',
+  '100% Free Booking': '100% സൗജന്യ ബുക്കിംഗ്',
   'Time passed': 'സമയം കഴിഞ്ഞു',
   'Checking visiting hours…': 'സന്ദർശന സമയം പരിശോധിക്കുന്നു…',
   'Visiting hours unavailable': 'സന്ദർശന സമയം ലഭ്യമല്ല',

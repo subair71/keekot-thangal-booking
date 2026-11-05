@@ -112,7 +112,7 @@ class HomeBookingLauncher extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         const AppText(
-          '100% Free Booking · No fees required at any stage',
+          '100% Free Booking',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, color: AppColors.muted),
         ),
