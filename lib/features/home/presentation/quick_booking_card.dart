@@ -20,9 +20,12 @@ class QuickBookingCard extends ConsumerStatefulWidget {
     super.key,
     required this.config,
     this.mobileDesign = false,
+    this.onContinue,
+    this.showViewAll = true,
   });
   final BookingConfiguration config;
-  final bool mobileDesign;
+  final bool mobileDesign, showViewAll;
+  final VoidCallback? onContinue;
 
   @override
   ConsumerState<QuickBookingCard> createState() => _QuickBookingCardState();
@@ -35,7 +38,9 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
   @override
   Widget build(BuildContext context) {
     final config = widget.config;
-    if (widget.mobileDesign) return MobileQuickBooking(config: config);
+    if (widget.mobileDesign) {
+      return MobileQuickBooking(config: config, onContinue: widget.onContinue);
+    }
     final dates = config.dates();
     if (!config.bookingEnabled || dates.isEmpty) {
       return const EmptyState(
@@ -294,7 +299,11 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
                                     ref
                                         .read(draftProvider.notifier)
                                         .select(selected, count);
-                                    context.go('/book/confirmation');
+                                    if (widget.onContinue != null) {
+                                      widget.onContinue!();
+                                    } else {
+                                      context.go('/book/confirmation');
+                                    }
                                   },
                             icon: const Icon(Icons.arrow_forward, size: 18),
                             label: const AppText('Continue'),
@@ -303,10 +312,11 @@ class _QuickBookingCardState extends ConsumerState<QuickBookingCard> {
                       );
                     },
                   ),
-                  TextButton(
-                    onPressed: () => context.go('/book'),
-                    child: const AppText('View all availability'),
-                  ),
+                  if (widget.showViewAll)
+                    TextButton(
+                      onPressed: () => context.go('/book'),
+                      child: const AppText('View all availability'),
+                    ),
                   const AppText(
                     'Availability updates every 20 seconds.',
                     textAlign: TextAlign.center,

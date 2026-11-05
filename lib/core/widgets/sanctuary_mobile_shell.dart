@@ -1,3 +1,4 @@
+import '../../features/home/presentation/home_booking_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -258,7 +259,14 @@ class SanctuaryMobileNavigation extends ConsumerWidget {
                           key: ValueKey(
                             'bottom-navigation-${destinations[i].$1}',
                           ),
-                          onTap: () => context.go(destinations[i].$1),
+                          onTap: () {
+                            final route = destinations[i].$1;
+                            if (uri.path == '/' && route == '/book') {
+                              showHomeBookingSheet(context);
+                            } else {
+                              context.go(route);
+                            }
+                          },
                           child: ConstrainedBox(
                             constraints: const BoxConstraints(
                               minHeight: 52,

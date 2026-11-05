@@ -6,7 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:keekot_thangal/app/app.dart';
 import 'package:keekot_thangal/app/bootstrap/providers.dart';
 import 'package:keekot_thangal/core/localization/app_language.dart';
-import 'package:keekot_thangal/features/booking/presentation/booking_page.dart';
+import 'package:keekot_thangal/features/home/presentation/home_booking_sheet.dart';
+import 'package:keekot_thangal/features/home/presentation/quick_booking_card.dart';
 
 import 'fixtures.dart';
 import 'navigation_helpers.dart';
@@ -72,19 +73,31 @@ void main() {
       await tester.ensureVisible(booking);
       await tester.tap(booking);
       await tester.pumpAndSettle();
-      expect(find.byType(BookingPage), findsOneWidget);
-      expect(find.text('സന്ദർശനം തിരഞ്ഞെടുക്കുക'), findsOneWidget);
-      final state = tester.state(find.byType(BookingPage));
+      expect(find.byType(HomeBookingSheet), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(HomeBookingSheet),
+          matching: find.text(translateMalayalam('Book a visit')),
+        ),
+        findsOneWidget,
+      );
+      final state = tester.state(find.byType(QuickBookingCard));
       final add = find.byTooltip('ഒരു സന്ദർശകനെ കൂട്ടുക');
       await tester.ensureVisible(add);
       await tester.tap(add);
       await tester.pumpAndSettle();
       final remove = find.widgetWithIcon(IconButton, Icons.remove);
       expect(tester.widget<IconButton>(remove).onPressed, isNotNull);
-      await selectDrawerLanguage(tester, 'en');
+      AppLanguage.select(tester.element(find.byType(HomeBookingSheet)), 'en');
       await tester.pumpAndSettle();
-      expect(tester.state(find.byType(BookingPage)), same(state));
-      expect(find.text('Select your visit'), findsOneWidget);
+      expect(tester.state(find.byType(QuickBookingCard)), same(state));
+      expect(
+        find.descendant(
+          of: find.byType(HomeBookingSheet),
+          matching: find.text('Book a visit'),
+        ),
+        findsOneWidget,
+      );
       expect(
         tester
             .widget<IconButton>(find.widgetWithIcon(IconButton, Icons.remove))
@@ -92,6 +105,10 @@ void main() {
         isNotNull,
       );
       expect(tester.takeException(), isNull);
+      await tester.tap(find.byKey(const ValueKey('home-booking-close')));
+      await tester.pumpAndSettle();
+      GoRouter.of(tester.element(menu)).go('/information');
+      await tester.pumpAndSettle();
       // Header shortcuts must work from a different page and within Home.
       for (final item in const [
         ('Videos', 'videos'),

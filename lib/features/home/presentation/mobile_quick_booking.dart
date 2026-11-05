@@ -39,8 +39,9 @@ final mobileVisitSelectionProvider =
     );
 
 class MobileQuickBooking extends ConsumerWidget {
-  const MobileQuickBooking({super.key, required this.config});
+  const MobileQuickBooking({super.key, required this.config, this.onContinue});
   final BookingConfiguration config;
+  final VoidCallback? onContinue;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(mobileVisitSelectionProvider);
@@ -384,7 +385,11 @@ class MobileQuickBooking extends ConsumerWidget {
                                     ref
                                         .read(draftProvider.notifier)
                                         .select(selected, count);
-                                    context.go('/book/confirmation');
+                                    if (onContinue != null) {
+                                      onContinue!();
+                                    } else {
+                                      context.go('/book/confirmation');
+                                    }
                                   },
                             icon: const Icon(
                               Icons.how_to_reg_outlined,

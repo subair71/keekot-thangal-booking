@@ -7,7 +7,7 @@ import '../../../app/bootstrap/providers.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/widgets/components.dart';
 import '../../../core/utils/visit_clock.dart';
-import 'quick_booking_card.dart';
+import 'home_booking_sheet.dart';
 import 'mobile_sanctuary_home.dart';
 import '../../visitor_information/presentation/information_page.dart';
 import 'media/video_gallery.dart';
@@ -36,7 +36,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void didUpdateWidget(covariant HomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _revealSection();
+    if (widget.section != oldWidget.section) _revealSection();
   }
 
   void _revealSection() {
@@ -48,7 +48,11 @@ class _HomePageState extends ConsumerState<HomePage> {
         'questions' => questionsKey,
         _ => null,
       };
-      if (key != null) reveal(key);
+      if (widget.section == 'book' && MediaQuery.sizeOf(context).width >= 768) {
+        showHomeBookingSheet(context);
+      } else if (key != null) {
+        reveal(key);
+      }
     });
   }
 
@@ -79,11 +83,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         children: [
           LayoutBuilder(
             builder: (context, constraints) {
-              final availability = AsyncPanel(
-                value: config,
-                onRetry: () => ref.invalidate(configurationProvider),
-                builder: (c) => QuickBookingCard(config: c),
-              );
               final summary = AsyncPanel(
                 value: config,
                 onRetry: () => ref.invalidate(configurationProvider),
@@ -116,28 +115,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                 ),
               );
-              if (constraints.maxWidth < 1050) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const _MaqamHero(),
-                    const SizedBox(height: 20),
-                    availability,
-                    const SizedBox(height: 20),
-                    summary,
-                  ],
-                );
-              }
-              return StickyAsideLayout(
-                main: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const _MaqamHero(),
-                    const SizedBox(height: 20),
-                    summary,
-                  ],
-                ),
-                aside: availability,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _MaqamHero(),
+                  const SizedBox(height: 20),
+                  summary,
+                ],
               );
             },
           ),
@@ -396,7 +380,8 @@ class _MaqamHero extends StatelessWidget {
                     runSpacing: 8,
                     children: [
                       FilledButton.icon(
-                        onPressed: () => context.go('/book'),
+                        key: const ValueKey('home-booking-open'),
+                        onPressed: () => showHomeBookingSheet(context),
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColors.mintStrong,
                           minimumSize: const Size(48, 48),

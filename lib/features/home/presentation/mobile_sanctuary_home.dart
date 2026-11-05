@@ -8,7 +8,7 @@ import '../../../app/theme/app_theme.dart';
 import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/components.dart';
 import '../data/sanctuary_content.dart';
-import 'quick_booking_card.dart';
+import 'home_booking_sheet.dart';
 import 'media/sanctuary_video_archive.dart';
 
 const _small = TextStyle(fontSize: 12, height: 1.55);
@@ -50,6 +50,10 @@ class _MobileSanctuaryHomeState extends ConsumerState<MobileSanctuaryHome> {
 
   void reveal() => WidgetsBinding.instance.addPostFrameCallback((_) {
     if (!mounted) return;
+    if (widget.section == 'book') {
+      showHomeBookingSheet(context);
+      return;
+    }
     final target = anchors[widget.section]?.currentContext;
     if (target != null) {
       Scrollable.ensureVisible(
@@ -65,7 +69,6 @@ class _MobileSanctuaryHomeState extends ConsumerState<MobileSanctuaryHome> {
       KeyedSubtree(key: anchors[name], child: child);
   @override
   Widget build(BuildContext context) {
-    final config = ref.watch(configurationProvider);
     return SingleChildScrollView(
       key: const PageStorageKey('sanctuary-mobile-scroll'),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
@@ -74,14 +77,7 @@ class _MobileSanctuaryHomeState extends ConsumerState<MobileSanctuaryHome> {
         children: [
           section('heritage', const _HeritageHero()),
           const SizedBox(height: 16),
-          section(
-            'book',
-            AsyncPanel(
-              value: config,
-              onRetry: () => ref.invalidate(configurationProvider),
-              builder: (c) => QuickBookingCard(config: c, mobileDesign: true),
-            ),
-          ),
+          const HomeBookingLauncher(),
           const SizedBox(height: 32),
           section('videos', const SanctuaryVideoArchive()),
           const SizedBox(height: 32),
