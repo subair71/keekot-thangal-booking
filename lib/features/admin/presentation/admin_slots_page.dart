@@ -181,8 +181,7 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
       spacing: 8,
       runSpacing: 8,
       children: [
-        if (visible.isEmpty)
-          const AppText('No upcoming slots on this date.'),
+        if (visible.isEmpty) const AppText('No upcoming slots on this date.'),
         for (final slot in visible)
           Builder(
             builder: (context) {
@@ -201,7 +200,8 @@ class _AdminSlotsState extends ConsumerState<AdminSlots> {
                           _ => 'Unavailable',
                         };
               return Tooltip(
-                message: savedBlocks[slot.id] ??
+                message:
+                    savedBlocks[slot.id] ??
                     (availability?.closed == true
                         ? availability!.reason
                         : current?.reason ?? ''),
