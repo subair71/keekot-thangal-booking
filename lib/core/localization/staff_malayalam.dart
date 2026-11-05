@@ -120,6 +120,9 @@ const staffMalayalam = <String, String>{
   'Clear slots': 'സമയങ്ങൾ നീക്കുക',
   'Blocked': 'ബ്ലോക്ക് ചെയ്തു',
   'Open': 'തുറന്നിരിക്കുന്നു',
+  'Available': 'ലഭ്യമാണ്',
+  'Full': 'നിറഞ്ഞു',
+  'Bookings are currently paused': 'ഇപ്പോൾ ബുക്കിംഗ് നിർത്തിവച്ചിരിക്കുന്നു',
   'Refresh availability': 'ലഭ്യത പുതുക്കുക',
   'Availability includes confirmed visitors and active booking holds.':
       'സ്ഥിരീകരിച്ച സന്ദർശകരെയും താൽക്കാലിക ബുക്കിംഗ് സംവരണങ്ങളെയും ഉൾപ്പെടുത്തിയാണ് ലഭ്യത.',
