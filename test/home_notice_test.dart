@@ -52,7 +52,9 @@ class NoticeAdmin extends AuditAdmin {
 
   @override
   Future<void> publishHomeNotice(HomeNotice notice) async {
-    if (fail) throw const AppFailure('Please check your connection and try again.');
+    if (fail) {
+      throw const AppFailure('Please check your connection and try again.');
+    }
     publishes++;
     bookings.setNotice(notice);
   }
@@ -127,37 +129,50 @@ void main() {
     expect(notice.visibleAt(DateTime.parse('2026-11-05T18:30:00Z')), isFalse);
     expect(notice.visibleAt(DateTime.parse('2026-11-04T00:00:00Z')), isTrue);
     expect(
-      HomeNotice(visitDate: notice.visitDate, reason: notice.reason, active: false)
-          .visibleAt(DateTime.parse('2026-11-05T10:00:00Z')),
+      HomeNotice(
+        visitDate: notice.visitDate,
+        reason: notice.reason,
+        active: false,
+      ).visibleAt(DateTime.parse('2026-11-05T10:00:00Z')),
       isFalse,
     );
   });
 
-  test('malformed or empty notices are ignored without breaking booking settings', () {
-    for (final value in [
-      null,
-      'invalid',
-      {'visitDate': '2026-02-30', 'reason': 'Reason', 'active': true},
-      {'visitDate': '2026-11-05', 'reason': '   ', 'active': true},
-      {'visitDate': 20261105, 'reason': 'Reason', 'active': true},
-    ]) {
-      final config = BookingConfiguration.fromMap({
-        ...testConfig.toMap(),
-        'homeNotice': value,
-      });
-      expect(config.homeNotice, isNull);
-      expect(config.defaultSlotCapacity, testConfig.defaultSlotCapacity);
-    }
-  });
+  test(
+    'malformed or empty notices are ignored without breaking booking settings',
+    () {
+      for (final value in [
+        null,
+        'invalid',
+        {'visitDate': '2026-02-30', 'reason': 'Reason', 'active': true},
+        {'visitDate': '2026-11-05', 'reason': '   ', 'active': true},
+        {'visitDate': 20261105, 'reason': 'Reason', 'active': true},
+      ]) {
+        final config = BookingConfiguration.fromMap({
+          ...testConfig.toMap(),
+          'homeNotice': value,
+        });
+        expect(config.homeNotice, isNull);
+        expect(config.defaultSlotCapacity, testConfig.defaultSlotCapacity);
+      }
+    },
+  );
 
   for (final width in [375.0, 1280.0]) {
-    testWidgets('signed-out home shows live notices at ${width}px', (tester) async {
+    testWidgets('signed-out home shows live notices at ${width}px', (
+      tester,
+    ) async {
       final bookings = NoticeBookings()
-        ..notice = noticeFor('DEMO · ഇന്നത്തെ സന്ദർശനം മാറ്റിവെച്ചു. Please check before travel.');
+        ..notice = noticeFor(
+          'DEMO · ഇന്നത്തെ സന്ദർശനം മാറ്റിവെച്ചു. Please check before travel.',
+        );
       await noticeApp(tester, bookings, width: width);
       expect(find.byKey(const ValueKey('home-notice-banner')), findsOneWidget);
       expect(find.text(bookings.notice!.reason), findsOneWidget);
-      expect(find.text(VisitClock.dayLabel(bookings.notice!.visitDate)), findsWidgets);
+      expect(
+        find.text(VisitClock.dayLabel(bookings.notice!.visitDate)),
+        findsWidgets,
+      );
       expect(tester.takeException(), isNull);
       await capturePage(tester, 'home_notice_${width.toInt()}');
       bookings.setNotice(noticeFor('Updated reason for visitors'));
@@ -170,7 +185,9 @@ void main() {
     });
   }
 
-  testWidgets('banner disappears at midnight while Home stays open', (tester) async {
+  testWidgets('banner disappears at midnight while Home stays open', (
+    tester,
+  ) async {
     final bookings = NoticeBookings()
       ..notice = noticeFor('Maintenance', day: '2026-11-05');
     var now = DateTime.parse('2026-11-05T18:29:59Z');
@@ -195,46 +212,65 @@ void main() {
     await bookings.changes.close();
   });
 
-  testWidgets('admin publishes, revisits and hides a notice from the dashboard', (tester) async {
-    final bookings = NoticeBookings();
-    final admin = NoticeAdmin(bookings);
-    final container = await noticeApp(
-      tester,
-      bookings,
-      user: const AppUser('admin', '+919999999999', admin: true),
-      admin: admin,
-    );
-    final router = container.read(routerProvider);
-    router.go('/admin');
-    await tester.pumpAndSettle();
-    await tapNoticeAction(tester, 'home-notice-manage');
-    await tapNoticeAction(tester, 'home-notice-publish');
-    expect(find.text('Enter the reason visitors should see.'), findsOneWidget);
-    expect(admin.publishes, 0);
-    const reason = 'DEMO · Visits cancelled due to urgent maintenance.';
-    await tester.enterText(find.byKey(const ValueKey('home-notice-reason')), reason);
-    await tester.pumpAndSettle();
-    expect(find.text('Banner preview'), findsOneWidget);
-    await tapNoticeAction(tester, 'home-notice-publish');
-    expect(admin.publishes, 1);
-    expect(bookings.notice!.reason, reason);
-    expect(bookings.notice!.visitDate, VisitClock.today());
-    expect(find.text('Currently visible on Home'), findsOneWidget);
-    router.go('/');
-    await tester.pumpAndSettle();
-    expect(find.text(reason), findsOneWidget);
-    router.go('/admin/notices');
-    await tester.pumpAndSettle();
-    expect(tester.widget<TextFormField>(find.byKey(const ValueKey('home-notice-reason'))).controller!.text, reason);
-    await tapNoticeAction(tester, 'home-notice-hide');
-    expect(admin.hides, 1);
-    router.go('/');
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('home-notice-banner')), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'admin publishes, revisits and hides a notice from the dashboard',
+    (tester) async {
+      final bookings = NoticeBookings();
+      final admin = NoticeAdmin(bookings);
+      final container = await noticeApp(
+        tester,
+        bookings,
+        user: const AppUser('admin', '+919999999999', admin: true),
+        admin: admin,
+      );
+      final router = container.read(routerProvider);
+      router.go('/admin');
+      await tester.pumpAndSettle();
+      await tapNoticeAction(tester, 'home-notice-manage');
+      await tapNoticeAction(tester, 'home-notice-publish');
+      expect(
+        find.text('Enter the reason visitors should see.'),
+        findsOneWidget,
+      );
+      expect(admin.publishes, 0);
+      const reason = 'DEMO · Visits cancelled due to urgent maintenance.';
+      await tester.enterText(
+        find.byKey(const ValueKey('home-notice-reason')),
+        reason,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Banner preview'), findsOneWidget);
+      await tapNoticeAction(tester, 'home-notice-publish');
+      expect(admin.publishes, 1);
+      expect(bookings.notice!.reason, reason);
+      expect(bookings.notice!.visitDate, VisitClock.today());
+      expect(find.text('Currently visible on Home'), findsOneWidget);
+      router.go('/');
+      await tester.pumpAndSettle();
+      expect(find.text(reason), findsOneWidget);
+      router.go('/admin/notices');
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextFormField>(
+              find.byKey(const ValueKey('home-notice-reason')),
+            )
+            .controller!
+            .text,
+        reason,
+      );
+      await tapNoticeAction(tester, 'home-notice-hide');
+      expect(admin.hides, 1);
+      router.go('/');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('home-notice-banner')), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('failed publish reports the error and leaves Home unchanged', (tester) async {
+  testWidgets('failed publish reports the error and leaves Home unchanged', (
+    tester,
+  ) async {
     final bookings = NoticeBookings();
     final admin = NoticeAdmin(bookings)..fail = true;
     final container = await noticeApp(
@@ -245,9 +281,15 @@ void main() {
     );
     container.read(routerProvider).go('/admin/notices');
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const ValueKey('home-notice-reason')), 'Draft notice');
+    await tester.enterText(
+      find.byKey(const ValueKey('home-notice-reason')),
+      'Draft notice',
+    );
     await tapNoticeAction(tester, 'home-notice-publish');
-    expect(find.text('Please check your connection and try again.'), findsOneWidget);
+    expect(
+      find.text('Please check your connection and try again.'),
+      findsOneWidget,
+    );
     expect(find.text('Home notice published.'), findsNothing);
     expect(bookings.notice, isNull);
     expect(admin.publishes, 0);
@@ -259,7 +301,11 @@ void main() {
     final container = await noticeApp(
       tester,
       bookings,
-      user: const AppUser('staff', '+919999999999', permissions: ['notices', 'settings']),
+      user: const AppUser(
+        'staff',
+        '+919999999999',
+        permissions: ['notices', 'settings'],
+      ),
     );
     container.read(routerProvider).go('/admin/notices');
     await tester.pumpAndSettle();

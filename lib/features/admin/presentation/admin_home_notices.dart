@@ -17,10 +17,7 @@ class HomeNoticeShortcut extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          'Home notices',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        AppText('Home notices', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 8),
         const AppText(
           'Tell visitors about cancellations or changes before they travel.',
@@ -111,11 +108,7 @@ class _HomeNoticeEditorState extends ConsumerState<_HomeNoticeEditor> {
       final repository = ref.read(adminRepositoryProvider);
       if (publish) {
         await repository.publishHomeNotice(
-          HomeNotice(
-            visitDate: day,
-            reason: reason.text.trim(),
-            active: true,
-          ),
+          HomeNotice(visitDate: day, reason: reason.text.trim(), active: true),
         );
       } else {
         await repository.hideHomeNotice();
@@ -136,7 +129,8 @@ class _HomeNoticeEditorState extends ConsumerState<_HomeNoticeEditor> {
   @override
   Widget build(BuildContext context) {
     final current = widget.notice;
-    final visible = current?.visibleAt(ref.read(homeNoticeClockProvider)()) == true;
+    final visible =
+        current?.visibleAt(ref.read(homeNoticeClockProvider)()) == true;
     return SurfaceCard(
       child: LocalizedForm(
         formKey: form,

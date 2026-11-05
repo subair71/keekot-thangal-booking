@@ -192,7 +192,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const NotificationsPage(),
           ),
           GoRoute(path: '/admin', builder: (_, _) => const AdminPage()),
-          for (final section in ['bookings', 'slots', 'notices', 'settings', 'gate'])
+          for (final section in [
+            'bookings',
+            'slots',
+            'notices',
+            'settings',
+            'gate',
+          ])
             GoRoute(
               path: '/admin/$section',
               builder: (_, _) => AdminPage(section: section),

@@ -58,10 +58,7 @@ class _HomeNoticeBannerState extends ConsumerState<HomeNoticeBanner> {
     return Padding(
       key: const ValueKey('home-notice-banner'),
       padding: const EdgeInsets.only(bottom: 20),
-      child: HomeNoticeCard(
-        key: ValueKey(notice.identity),
-        notice: notice,
-      ),
+      child: HomeNoticeCard(key: ValueKey(notice.identity), notice: notice),
     );
   }
 }
