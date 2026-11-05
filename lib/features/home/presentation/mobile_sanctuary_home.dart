@@ -9,6 +9,7 @@ import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/components.dart';
 import '../data/sanctuary_content.dart';
 import 'home_booking_sheet.dart';
+import 'home_notice_banner.dart';
 import 'media/sanctuary_video_archive.dart';
 
 const _small = TextStyle(fontSize: 12, height: 1.55);
@@ -75,6 +76,7 @@ class _MobileSanctuaryHomeState extends ConsumerState<MobileSanctuaryHome> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const HomeNoticeBanner(),
           section('heritage', const _HeritageHero()),
           const SizedBox(height: 16),
           const HomeBookingLauncher(),

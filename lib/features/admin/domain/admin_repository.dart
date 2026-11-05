@@ -1,3 +1,4 @@
+import '../../notifications/domain/home_notice.dart';
 import '../../booking/domain/booking_models.dart';
 
 abstract interface class AdminRepository {
@@ -7,6 +8,8 @@ abstract interface class AdminRepository {
   Future<void> updateSlots(Map<String, dynamic> change);
   Future<void> setDateHours(Map<String, dynamic> change);
   Future<void> updateSettings(Map<String, dynamic> settings);
+  Future<void> publishHomeNotice(HomeNotice notice);
+  Future<void> hideHomeNotice();
   Future<void> setBookingStatus(String id, String status);
   Future<Map<String, dynamic>> validatePass(String token, bool checkIn);
 }
