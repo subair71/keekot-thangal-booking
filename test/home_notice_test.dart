@@ -86,6 +86,13 @@ Future<ProviderContainer> noticeApp(
   NoticeAdmin? admin,
   double width = 375,
 }) async {
+  // Integration flows and screenshots use the accessible static presentation.
+  // The ticker's movement and looping are exercised in its focused tests.
+  tester.platformDispatcher.accessibilityFeaturesTestValue =
+      const FakeAccessibilityFeatures(disableAnimations: true);
+  addTearDown(
+    tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+  );
   tester.view.physicalSize = Size(width, 1100);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
@@ -215,7 +222,8 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
     expect(find.byKey(const ValueKey('home-notice-banner')), findsOneWidget);
     now = DateTime.parse('2026-11-05T18:30:01Z');
     await tester.pump(const Duration(seconds: 2));
