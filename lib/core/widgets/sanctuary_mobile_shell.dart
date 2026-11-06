@@ -74,23 +74,7 @@ class SanctuaryMobileHeader extends ConsumerWidget {
           onPressed: () => context.go('/my-bookings'),
           icon: const Icon(Icons.confirmation_number_outlined, size: 19),
         ),
-        if (user == null)
-          const SanctuaryLoginButton()
-        else
-          IconButton(
-            constraints: const BoxConstraints.tightFor(width: 44, height: 44),
-            padding: EdgeInsets.zero,
-            tooltip: tr(context, 'Profile'),
-            onPressed: () {
-              final user = ref.read(authProvider).asData?.value;
-              if (user == null) {
-                context.go('/auth');
-              } else {
-                Scaffold.of(context).openDrawer();
-              }
-            },
-            icon: const Icon(Icons.account_circle, size: 23),
-          ),
+        if (user == null) const SanctuaryLoginButton(),
       ],
     );
     return ClipRect(
